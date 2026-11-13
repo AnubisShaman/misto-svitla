@@ -559,6 +559,40 @@ legend{font-weight:500;font-size:14px;padding:0;margin-bottom:8px}
   @keyframes cxFanL{50%{transform:rotate(-24deg)}}@keyframes cxFanR{50%{transform:rotate(24deg)}}
   @keyframes cxSlide{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
   @keyframes cxPin{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}}
+/* theme picker: atmosphere + live previews */
+.th-cap{font:700 12.5px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:18px 2px 10px}
+.th-sw{display:flex;flex-direction:column;gap:4px}
+.th-sw .switch{flex-direction:row-reverse;justify-content:flex-end;font-size:16px;padding:8px 0}
+.th-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.th-card{border:1.5px solid color-mix(in srgb,var(--ink) 10%,transparent);background:color-mix(in srgb,var(--surface) 70%,transparent);border-radius:22px;padding:10px 10px 14px;text-align:left;display:flex;flex-direction:column;gap:10px;transition:transform .25s var(--spring),border-color .25s,box-shadow .25s;color:var(--ink)}
+.th-card:active{transform:scale(.97)}
+.th-card[aria-pressed="true"]{border-color:#E8C77A;box-shadow:0 0 0 1px #E8C77A,0 0 22px -4px rgba(232,199,122,.65)}
+.th-card b{font:700 18px/1.15 var(--font-display);padding:0 4px}
+.th-card small{font-size:13.5px;line-height:1.35;opacity:.62;padding:0 4px}
+.thp{position:relative;display:block;height:74px;border-radius:14px;overflow:hidden}
+.thp i,.thp em{position:absolute;display:block}
+.thp-def{background:linear-gradient(180deg,#FFD9A8,#F6A26B 58%,#3A2A22 58.5%)}
+.thp-def::before{content:"";position:absolute;left:-10%;right:-10%;bottom:-42%;height:90%;border-radius:50%;background:#2A1E18}
+.thp-def i{left:50%;top:30%;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:radial-gradient(#FFF6D8,#FFC86B 60%,rgba(255,200,107,0) 72%);animation:thSun 4s ease-in-out infinite}
+.thp-def em{left:50%;bottom:22%;width:6px;height:6px;margin-left:-3px;border-radius:50%;background:#FFD27A;box-shadow:0 0 10px 3px rgba(255,200,110,.8);animation:thGlow 2.4s ease-in-out infinite}
+.thp-xmas{background:linear-gradient(#0A1530,#1C3463 70%,#E8F0FA 70.5%)}
+.thp-xmas::before{content:"";position:absolute;inset:0;background-image:radial-gradient(1.6px 1.6px at 12% 20%,#fff,transparent),radial-gradient(1.4px 1.4px at 38% 60%,#fff,transparent),radial-gradient(1.8px 1.8px at 66% 30%,#fff,transparent),radial-gradient(1.3px 1.3px at 84% 70%,#fff,transparent),radial-gradient(1.5px 1.5px at 52% 10%,#fff,transparent),radial-gradient(1.2px 1.2px at 24% 84%,#fff,transparent);background-size:100% 74px;animation:thSnow 5s linear infinite}
+.thp-xmas i{left:50%;top:18%;width:14px;height:14px;margin-left:-7px;background:#FFE2A0;clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);filter:drop-shadow(0 0 6px #FFE2A0);animation:thTwinkle 2.6s ease-in-out infinite}
+.thp-cosmos{background:radial-gradient(circle at 78% 40%,#4B33C866,transparent 55%),radial-gradient(circle at 20% 70%,#1E7BB044,transparent 50%),linear-gradient(100deg,#05050E,#1A1446)}
+.thp-cosmos::before{content:"";position:absolute;inset:0;background-image:radial-gradient(1px 1px at 10% 30%,#fff,transparent),radial-gradient(1.3px 1.3px at 30% 75%,#CDBBFF,transparent),radial-gradient(1px 1px at 70% 20%,#BFE9FF,transparent),radial-gradient(1.2px 1.2px at 88% 80%,#fff,transparent),radial-gradient(1px 1px at 55% 55%,#fff,transparent);animation:thTwinkle 3.4s ease-in-out infinite}
+.thp-cosmos i{left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#FFF4CF,#E3B85C 55%,#8A6420);box-shadow:0 0 18px rgba(230,190,100,.45);animation:thFloat 4.5s ease-in-out infinite}
+.thp-joy{background:linear-gradient(#8FBFFF,#CFE3FF 60%,#FFE0CC)}
+.thp-joy::before{content:"";position:absolute;left:50%;bottom:-60px;width:150px;height:120px;margin-left:-75px;border-radius:50%;background:radial-gradient(closest-side,transparent 70%,#C9A6FF 71% 75%,#8FD3FF 76% 80%,#9BE39A 81% 85%,#FFE07A 86% 90%,#FFA98A 91% 95%,transparent 96%);opacity:.9}
+.thp-joy i{top:16px;left:-30px;width:38px;height:16px;border-radius:999px;background:#fff;box-shadow:12px -7px 0 2px #fff;animation:thCloud 7s linear infinite}
+.thp-joy em{left:50%;bottom:6px;width:18px;height:14px;margin-left:-9px;border-radius:50% 50% 45% 45%;background:#fff;box-shadow:inset -3px -2px 0 #EEE6DA;animation:thHop 1.6s var(--spring) infinite}
+@keyframes thSun{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
+@keyframes thGlow{0%,100%{opacity:.75}50%{opacity:1;box-shadow:0 0 16px 5px rgba(255,200,110,.9)}}
+@keyframes thSnow{from{background-position:0 0}to{background-position:6px 74px}}
+@keyframes thTwinkle{0%,100%{opacity:.75}50%{opacity:1}}
+@keyframes thFloat{0%,100%{transform:translateY(-3px)}50%{transform:translateY(3px)}}
+@keyframes thCloud{from{transform:translateX(0)}to{transform:translateX(220px)}}
+@keyframes thHop{0%,70%,100%{transform:translateY(0)}35%{transform:translateY(-7px)}}
+@media (prefers-reduced-motion:reduce){.thp i,.thp em,.thp::before{animation:none!important}}
 .tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 .tile{border:0;padding:0;background:none;display:flex;flex-direction:column;gap:8px;align-items:center;font:500 13.5px/1.2 var(--font-body)}
 .tile span{display:block;width:100%;aspect-ratio:3/4;border-radius:16px;position:relative;overflow:hidden;box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ink) 14%,transparent)}
@@ -1308,7 +1342,7 @@ var PARENT={heaven:'play',devs:'play',room:'play',mission:'play'};
 function nav(v){if(TABS.indexOf(v)>-1){state.tab=v;state.sub=null;return true;}if(SUBS.indexOf(v)>-1){state.sub=v;state.tab=PARENT[v]||'more';return true;}return false;}
 var BASE_LIT=48, TRANSIENT=['bookOpen','sheet','sheetData','sel','pickBook','jump','cardAnim','confirm','bcText','img','dvNew','dvMirror','roomKey','roomPick','invites','wayAll'];
 
-function defaults(){return {bookPos:{},bookOpen:null,log:{},path:{},aseg:'events',confirm:null,bcText:'',img:null,q:'',lang:'uk',skin:'',tab:'today',sub:null,seg:{bible:'read',prayer:'needs',community:'serve',heaven:'os'},devs:{p:{},all:false},dvCard:null,day:null,name:'',
+function defaults(){return {bookPos:{},bookOpen:null,log:{},path:{},aseg:'events',confirm:null,bcText:'',img:null,q:'',lang:'uk',skin:'',sfx:true,tab:'today',sub:null,seg:{bible:'read',prayer:'needs',community:'serve',heaven:'os'},devs:{p:{},all:false},dvCard:null,day:null,name:'',
   going:{},verseOn:false,prayed:{},needs:[],testimonies:[],pastoral:null,step:{text:'',done:false},read:{},openBook:null,
   bible:{b:0,c:5},hl:{},notes:{},marks:{},fs:1,cardDay:null,done:{},serve:{},skills:{},ads:[],hello:false,sermon:false,
   thanks:{},wxLoc:null,shareWay:null,sermSaved:{},
@@ -1359,7 +1393,7 @@ var KIND_NAMES={sunday:['Синій','Синий'],heaven:['Помаранчев
 var ROLES=['member','prayer','leader','minister','admin'];
 var ROLE_NAMES={member:['Учасник','Участник'],prayer:['Молитовна команда','Молитвенная команда'],leader:['Лідер групи','Лидер группы'],minister:['Служитель','Служитель'],admin:['Адміністратор','Администратор']};
 var REQ_NAMES={pastoral:['Розмова з пастором','Разговор с пастором'],serve:['Хоче служити','Хочет служить'],hello:['Хоче познайомитися','Хочет познакомиться']};
-var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','fs','skin','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved'];
+var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved'];
 var DEFAULT_SETTINGS={playlist:'',address_uk:'Київ, пр. Степана Бандери, 23, метро «Почайна»',address_ru:'Киев, пр. Степана Бандеры, 23, метро «Почайна»',map:'проспект Степана Бандери 23 Київ',
   mono:'4441 1110 4143 8320',iban:'UA783052990000026005030102192',recipient:'РО РГ ХМЦ МІСТО СВІТЛА',edrpou:'19261358',purpose:'добровільні пожертвування',paypal:'centreofdm@gmail.com',
   verseTime:'07:30',remind:'60',cardStart:'2026-11-09',youth_uk:'Тут будуть свої події, стрічка та посилання на чат молоді.',youth_ru:'Здесь будут свои события, лента и ссылка на чат молодёжи.',
@@ -1840,7 +1874,7 @@ function mpArm(){clearTimeout(mpSleepT);if(mpSleep)mpSleepT=setTimeout(function(
 function stopMusic(){musicOn=false;mKind=null;clearInterval(musicTimer);if(!AC||!master)return;var m=master,v=voices;voices=[];try{m.gain.cancelScheduledValues(AC.currentTime);m.gain.setTargetAtTime(0,AC.currentTime,0.15);}catch(e){}
   setTimeout(function(){v.forEach(function(o){try{o.stop();}catch(e){}});try{m.disconnect();}catch(e){}},700);master=null;}
 var mKind=null;
-function startMusic(kind){kind=kind||state.skin;if(!kind)return false;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){return false;}
+function startMusic(kind){kind=kind||state.skin||'morning';try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){return false;}
   if(master)stopMusic();
   master=AC.createGain();master.gain.value=0;master.connect(AC.destination);master.gain.setTargetAtTime(0.55,AC.currentTime,0.6);
   bus=AC.createGain();bus.connect(master);var dl=AC.createDelay(1.5),fb=AC.createGain();dl.delayTime.value=kind==='cosmos'||kind==='pray'?0.62:0.36;fb.gain.value=kind==='cosmos'||kind==='pray'?0.45:0.28;bus.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(master);
@@ -1853,6 +1887,21 @@ function startMusic(kind){kind=kind||state.skin;if(!kind)return false;try{AC=AC|
     musicTimer=setInterval(scheduleCosmos,250);scheduleCosmos();}
   else{musicTimer=setInterval(scheduleXmas,200);scheduleXmas();}
   musicOn=true;return true;}
+
+/* ---------- tap sounds: tiny, generated, one timbre per theme ---------- */
+var sfxLast=0,SFX_SILENT={skin:1,sfxToggle:1,music:1,mpPlay:1,mpTrack:1,bkOpen:1,bkGo:1};
+function sfxKind(act){if(/^(tab|go|back|close|sheet|bkClose|bkGo|bkOpen)$/.test(act))return 'nav';if(/toggle|switch|verseOn|going|lang/i.test(act))return 'toggle';return 'tap';}
+function sfxPlay(k){if(state.sfx===false)return;var now=Date.now();if(now-sfxLast<45)return;sfxLast=now;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){return;}
+  var t=AC.currentTime+0.005,sk=state.skin||'',out=AC.createGain();out.gain.value=0.9;out.connect(AC.destination);
+  function v(f,f2,st,dur,vol,type,atk){var o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t+st);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+st+dur*0.6);
+    g.gain.setValueAtTime(0.0001,t+st);g.gain.exponentialRampToValueAtTime(vol,t+st+(atk||0.004));g.gain.exponentialRampToValueAtTime(0.0001,t+st+dur);o.connect(g);g.connect(out);o.start(t+st);o.stop(t+st+dur+0.03);}
+  var up=k==='toggle'||k==='pick',lo=k==='nav';
+  if(sk==='xmas'){var b=lo?1318:1568;v(b,0,0,0.55,0.05);v(b*2.76,0,0,0.25,0.012);if(up){v(b*1.335,0,0.07,0.6,0.045);v(b*1.335*2.76,0,0.07,0.25,0.01);}}
+  else if(sk==='cosmos'){var c=lo?660:880;v(c,0,0,0.9,0.035,'sine',0.02);v(c*1.5,0,0.03,0.8,0.015,'sine',0.03);if(up)v(c*2,0,0.09,0.9,0.025,'sine',0.02);}
+  else if(sk==='joy'){var j=lo?260:360;v(j,j*2.6,0,0.09,0.09);if(up)v(j*1.5,j*3.6,0.07,0.09,0.08);}
+  else{var d=lo?520:740;v(d,d*0.8,0,0.06,0.06,'triangle');if(up)v(d*1.26,d*1.1,0.06,0.07,0.05,'triangle');}
+  setTimeout(function(){try{out.disconnect();}catch(e){}},1400);}
 
 /* ---------- Pastor's books: Dmytro Mason ---------- */
 var MSBOOKS=[
@@ -2577,8 +2626,8 @@ function gIntentReply(k,n){var st=(D&&D.settings)||{};if(G.mode!=='care')G.mode=
       'В «Библии» есть весь Новый и Ветхий Завет. Коснись стиха, чтобы выделить его цветом, добавить заметку или закладку. Поиск находит слово по всей Библии, а план помогает читать по главе в день вместе с церковью.'),a:[[P2('Відкрити Біблію','Открыть Библию'),'go:bible'],[P2('План читання','План чтения'),'plan']],c:[[P2('Вірш дня','Стих дня'),'i:verse'],[P2('Що ще є?','Что ещё есть?'),'i:app']]});return;}
   if(k==='sermon'){gBot({t:P2('Після неділі тут з’являється підсумок проповіді: суть, тези, вірші й питання для роздумів. Його можна зберегти як памʼятну картку або поділитися в сторіс. Перед неділею видно тему наступної проповіді.',
       'После воскресенья здесь появляется итог проповеди: суть, тезисы, стихи и вопросы для размышления. Его можно сохранить как памятную карточку или поделиться в сторис. Перед воскресеньем видна тема следующей проповеди.'),a:[[P2('Проповіді','Проповеди'),'go:media']],c:[[P2('Коли служіння?','Когда служение?'),'i:when']]});return;}
-  if(k==='music'||k==='theme'){gBot({t:P2('У кабінеті є музичний плеєр із тихою музикою для молитви й ранку, з таймером сну. А кнопка ✦ угорі відкриває теми: Звичайна, Різдво, Космос і Радість, кожна зі своєю музикою.',
-      'В кабинете есть музыкальный плеер с тихой музыкой для молитвы и утра, с таймером сна. А кнопка ✦ вверху открывает темы: Обычная, Рождество, Космос и Радость, каждая со своей музыкой.'),a:[[P2('Мій кабінет','Мой кабинет'),'go:cabinet'],[P2('Обрати тему','Выбрать тему'),'theme']]});return;}
+  if(k==='music'||k==='theme'){gBot({t:P2('У кабінеті є музичний плеєр із тихою музикою для молитви й ранку, з таймером сну. А кнопка ✦ угорі відкриває теми: Світанок, Різдво, Космос і Радість, кожна зі своєю музикою.',
+      'В кабинете есть музыкальный плеер с тихой музыкой для молитвы и утра, с таймером сна. А кнопка ✦ вверху открывает темы: Рассвет, Рождество, Космос и Радость, каждая со своей музыкой.'),a:[[P2('Мій кабінет','Мой кабинет'),'go:cabinet'],[P2('Обрати тему','Выбрать тему'),'theme']]});return;}
   if(k==='games'){gBot({t:P2('В «Іграх» живуть Mind DEVS, домашні групи HeavenOS і «Церква в дії». Згодом тут з’являться нові ігри й інтерактивні вивчення Біблії.','В «Играх» живут Mind DEVS, домашние группы HeavenOS и «Церковь в действии». Со временем здесь появятся новые игры и интерактивные изучения Библии.'),a:[[P2('Відкрити «Ігри»','Открыть «Игры»'),'go:play']],c:[[P2('Mind DEVS','Mind DEVS'),'i:devs'],[P2('Церква в дії','Церковь в действии'),'i:mission']]});return;}
   if(k==='kind'){gBot({t:P2('«Добре слово» — одне з трьох маленьких завдань дня на головній: скажи комусь щось добре. Дрібниця, яка змінює чийсь день.','«Доброе слово» — одно из трёх маленьких заданий дня на главной: скажи кому-то что-то доброе. Мелочь, которая меняет чей-то день.'),a:[[P2('На головну','На главную'),'go:today']]});return;}
   if(k==='thanks3'){gBot({t:P2('«Три подяки» на головній: щовечора запиши три речі, за які вдячний Богові. Так око вчиться помічати добре.','«Три благодарности» на главной: каждый вечер запиши три вещи, за которые благодарен Богу. Так глаз учится замечать хорошее.'),a:[[P2('На головну','На главную'),'go:today']]});return;}
@@ -3439,13 +3488,16 @@ function sheet(){var s=state.sheet,inner='';if(!s)return '';
       '<p class="note cv-prev" id="cv-prev" aria-live="polite">'+x('Знайдено віршів: 0','Найдено стихов: 0')+'</p>'+
       '<button class="btn accent wide" type="submit">'+x('Зберегти вірші','Сохранить стихи')+'</button></form>';}
   if(s==='theme'){var sk=state.skin||'';
-    inner='<h2>'+x('Тема оформлення','Тема оформления')+'</h2><div class="tiles">'+[['','p-def',x('Звичайна','Обычная')],['xmas','p-xmas',x('Різдво','Рождество')],['cosmos','p-cosmos',x('Космос','Космос')],['joy','p-joy',x('Радість','Радость','Joy')]].map(function(t){
-        return '<button class="tile" data-act="skin" data-v="'+t[0]+'" aria-pressed="'+(sk===t[0])+'"><span class="'+t[1]+'"></span>'+t[2]+'</button>';}).join('')+'</div>'+
-      '<button class="switch" role="switch" aria-checked="'+musicOn+'" data-act="music"'+(sk?'':' disabled')+'>'+x('Музика теми','Музыка темы')+'<i></i></button>'+
-      '<p class="note">'+(sk==='xmas'?x('Різдво: сніг, Вифлеємська зоря над містом і «Тиха ніч» у звучанні музичної скриньки.','Рождество: снег, Вифлеемская звезда над городом и «Тихая ночь» в звучании музыкальной шкатулки.'):
-        sk==='joy'?x('Радість: м’який казковий світ. Веселка завіту, пухкі хмаринки, капличка на пагорбі й ягнятко, яке кліпає. Кнопки м’які, як пластилін, а музика легка, як музична скринька.','Радость: мягкий сказочный мир. Радуга завета, пухлые облачка, часовня на холме и ягнёнок, который моргает. Кнопки мягкие, как пластилин, а музыка лёгкая, как музыкальная шкатулка.','Joy: a soft storybook world. The rainbow of the covenant, puffy clouds, a little chapel on the hill and a lamb that blinks. Buttons squish like clay and the music is light as a music box.'):
-        sk==='cosmos'?x('Космос: зоряне небо, туманності й повільна атмосферна музика. Кожна молитва стає зіркою.','Космос: звёздное небо, туманности и медленная атмосферная музыка. Каждая молитва становится звездой.'):
-        x('Музика є в темах «Різдво» та «Космос». Звук створюється в застосунку й вмикається лише кнопкою.','Музыка есть в темах «Рождество» и «Космос». Звук создаётся в приложении и включается только кнопкой.'))+'</p>';}
+    var TH=[['','thp-def',x('Світанок','Рассвет','Dawn'),x('тепле світло, місто на пагорбі, ранок','тёплый свет, город на холме, утро','warm light, a city on a hill, morning')],
+      ['xmas','thp-xmas',x('Різдво','Рождество','Christmas'),x('сніг, зоря, музична скринька','снег, звезда, музыкальная шкатулка','snow, the star, a music box')],
+      ['cosmos','thp-cosmos',x('Космос','Космос','Cosmos'),x('зорі, туманності, тиша','звёзды, туманности, тишина','stars, nebulae, stillness')],
+      ['joy','thp-joy',x('Радість','Радость','Joy'),x('веселка, хмаринки, ягнятко','радуга, облачка, ягнёнок','a rainbow, clouds, a little lamb')]];
+    inner='<h2>'+x('Тема оформлення','Тема оформления','Theme')+'</h2>'+
+      '<p class="th-cap">'+x('Атмосфера','Атмосфера','Atmosphere')+'</p><div class="th-sw">'+
+      '<button class="switch" role="switch" aria-checked="'+musicOn+'" data-act="music">'+x('Фонова музика','Фоновая музыка','Background music')+'<i></i></button>'+
+      '<button class="switch" role="switch" aria-checked="'+(state.sfx!==false)+'" data-act="sfxToggle">'+x('Звуки дій','Звуки действий','Tap sounds')+'<i></i></button></div>'+
+      '<p class="th-cap">'+x('Тема','Тема','Theme')+'</p><div class="th-grid">'+TH.map(function(t){
+        return '<button class="th-card" data-act="skin" data-v="'+t[0]+'" aria-pressed="'+(sk===t[0])+'"><span class="thp '+t[1]+'"><i></i><em></em></span><b>'+t[2]+'</b><small>'+t[3]+'</small></button>';}).join('')+'</div>';}
   if(s==='picker'){var pb=state.pickBook;
     if(pb===null||pb===undefined){var grp=function(from,to){var o='';for(var i=from;i<to;i++)o+='<button class="chip" data-act="pickBook" data-v="'+i+'" aria-pressed="'+(state.bible.b===i)+'">'+bookName(i)+'</button>';return o;};
       inner='<h2>'+x('Новий Завіт','Новый Завет')+'</h2><div class="chips">'+grp(0,NT_N)+'</div><h2>'+x('Старий Завіт','Ветхий Завет')+'</h2><div class="chips">'+grp(NT_N,BOOKS.length)+'</div>';}
@@ -3706,11 +3758,12 @@ var actions={
     optimistic(function(){f.mine=f.mine||{};var on=!f.mine[kind];f.mine[kind]=on;f.cheers=Math.max(0,(f.cheers||0)+(on?1:-1));},'cheer',{key:key,kind:kind},kind==='pray'?x('Дякуємо за молитву','Спасибо за молитву'):x('Підтримку надіслано','Поддержка отправлена'));},
   lambTap:function(){var b=document.querySelector('.h-lamb');bleat();if(b){b.classList.remove('talk');void b.offsetWidth;b.classList.add('talk');}setTimeout(function(){go('newcomer');render();},motionOk()?650:0);},
   hello:function(){state.hello=!state.hello;save();run(state.hello?'request':'requestCancel',{kind:'hello',topic:''},state.hello?x('Тебе зустрінуть у неділю. Служитель напише тобі','Тебя встретят в воскресенье. Служитель напишет тебе'):'');},
-  skin:function(v){state.skin=v;MODELS={};intro.done=false;intro.t0=performance.now();if(musicOn){if(v)startMusic();else stopMusic();}commit();},
+  skin:function(v){state.skin=v;MODELS={};intro.done=false;intro.t0=performance.now();if(musicOn)startMusic();commit();sfxPlay('pick');},
+  sfxToggle:function(){state.sfx=state.sfx===false;save();render();if(state.sfx)sfxPlay('toggle');},
   mpPlay:function(){var k=mpTrack()[0];if(musicOn&&mKind===k){stopMusic();clearTimeout(mpSleepT);}else{var ok=startMusic(k);if(!ok)toast(x('Браузер не дозволив увімкнути звук','Браузер не разрешил включить звук'),1);else mpArm();}mpPaint();},
   mpStep:function(v){var playing=musicOn;mpIdx=(mpIdx+(+v)+TRACKS.length)%TRACKS.length;if(playing){startMusic(mpTrack()[0]);mpArm();}mpPaint();},
   mpSleep:function(v){mpSleep=+v;if(musicOn)mpArm();mpPaint();if(mpSleep)toast(x('Музика стихне через ','Музыка стихнет через ')+mpSleep+x(' хв',' мин'));},
-  music:function(){if(!state.skin)return;if(musicOn){stopMusic();render();}else{var ok=startMusic();render();if(!ok)toast(x('Браузер не дозволив увімкнути звук','Браузер не разрешил включить звук'));}},
+  music:function(){if(musicOn){stopMusic();render();}else{var ok=startMusic();render();if(!ok)toast(x('Браузер не дозволив увімкнути звук','Браузер не разрешил включить звук'));}},
   reset:function(){var l=state.lang,sk=state.skin;state=defaults();state.lang=l;state.skin=sk;state.tab='more';state.sub='cabinet';try{localStorage.removeItem('misto-svitla-demo');}catch(e){}DS=null;D=demoApi('load',{});applyD();commit(x('Демо скинуто','Демо сброшено'));},
   copy:function(v){copyText(/^[\d ]+$/.test(v)?v.replace(/ /g,''):v);}
 };
@@ -3749,7 +3802,7 @@ var forms={
   step:function(fd){var t=(fd.get('text')||'').trim();if(!t)return;state.step={text:t,done:false};commit(SAVED());},
   note:function(fd){var t=(fd.get('text')||'').trim(),k=state.sel;if(!k)return;if(t)state.notes[k]=t;else delete state.notes[k];state.sheet=null;commit(t?x('Нотатку збережено','Заметка сохранена'):'');},
 };
-document.addEventListener('click',function(e){var el=e.target.closest('[data-act]');if(!el||el.disabled)return;var a=actions[el.dataset.act];if(a){haptic();justKey=el.dataset.act+'|'+(el.dataset.v||'');a(el.dataset.v,el,e);}});
+document.addEventListener('click',function(e){var el=e.target.closest('[data-act]');if(!el||el.disabled)return;var a=actions[el.dataset.act];if(a){haptic();if(!SFX_SILENT[el.dataset.act])sfxPlay(sfxKind(el.dataset.act));justKey=el.dataset.act+'|'+(el.dataset.v||'');a(el.dataset.v,el,e);}});
 document.addEventListener('click',function(e){if(!LIVE)return;var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';if(/^https:\/\/t\.me\//.test(h)){e.preventDefault();tg.openTelegramLink(h);}else if(/^https?:/.test(h)){e.preventDefault();tg.openLink(h);}},true);
 document.addEventListener('change',function(e){var el=e.target;if(el&&el.dataset&&el.dataset.change==='role')run('role',{userId:el.dataset.v,role:el.value},x('Роль змінено','Роль изменена'));});
 document.addEventListener('input',function(e){if(!e.target||e.target.id!=='pq')return;var q=e.target.value.toLowerCase().trim(),n=0;document.querySelectorAll('#plist [data-s]').forEach(function(li){var ok=!q||li.dataset.s.indexOf(q)>-1;li.hidden=!ok;if(ok)n++;});var c=document.getElementById('pcount');if(c)c.textContent=x('Знайдено: ','Найдено: ')+n;});
