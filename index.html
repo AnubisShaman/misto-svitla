@@ -559,6 +559,26 @@ legend{font-weight:500;font-size:14px;padding:0;margin-bottom:8px}
   @keyframes cxFanL{50%{transform:rotate(-24deg)}}@keyframes cxFanR{50%{transform:rotate(24deg)}}
   @keyframes cxSlide{from{transform:translateX(-14px)}to{transform:translateX(14px)}}
   @keyframes cxPin{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}}
+.vt-row{display:flex;flex-direction:column;gap:10px}
+.vt-row .switch span{display:flex;flex-direction:column;gap:2px}
+.vt-row .switch b{font-weight:600}
+.vt-row .switch small{font-size:13.5px;opacity:.6}
+.vt-pill{display:flex;align-items:center;gap:12px;width:100%;border:0;border-radius:18px;padding:12px 16px;background:color-mix(in srgb,var(--accent) 10%,var(--surface));color:var(--ink);text-align:left}
+.vt-pill svg{width:26px;height:26px;fill:none;stroke:var(--accent);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.vt-t{font:700 30px/1 var(--font-display);font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.vt-c{margin-left:auto;font-size:14px;font-weight:600;color:var(--accent)}
+.wheel{position:relative;display:flex;justify-content:center;align-items:center;gap:6px;height:220px;margin:14px 0 16px;-webkit-mask-image:linear-gradient(transparent,#000 32%,#000 68%,transparent);mask-image:linear-gradient(transparent,#000 32%,#000 68%,transparent)}
+.wh-band{position:absolute;left:8%;right:8%;top:88px;height:44px;border-radius:14px;background:color-mix(in srgb,var(--accent) 14%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--accent) 22%,transparent);pointer-events:none}
+.wh-col{position:relative;width:96px;height:220px;overflow-y:auto;scroll-snap-type:y mandatory;padding:88px 0;box-sizing:border-box;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.wh-col::-webkit-scrollbar{display:none}
+.wh-col div{height:44px;line-height:44px;text-align:center;scroll-snap-align:center;font:600 30px/44px var(--font-display);font-variant-numeric:tabular-nums;opacity:.3;transform:scale(.86);transition:opacity .15s,transform .2s var(--spring);cursor:pointer}
+.wh-col div.on{opacity:1;transform:scale(1.08);color:var(--ink)}
+.wh-colon{font:700 30px/1 var(--font-display);position:relative;top:-2px;animation:whBlink 1.2s steps(2) infinite}
+@keyframes whBlink{50%{opacity:.35}}
+.wh-pre{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.wh-pre .chip{border:0;border-radius:999px;padding:9px 14px;background:color-mix(in srgb,var(--ink) 6%,transparent);color:var(--ink);font-size:14px}
+.wh-pre .chip b{font-variant-numeric:tabular-nums;margin-right:4px}
+@media (prefers-reduced-motion:reduce){.wh-colon{animation:none}}
 /* theme picker: atmosphere + live previews */
 .th-cap{font:700 12.5px/1 var(--font-body);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:18px 2px 10px}
 .th-sw{display:flex;flex-direction:column;gap:4px}
@@ -1343,7 +1363,7 @@ function nav(v){if(TABS.indexOf(v)>-1){state.tab=v;state.sub=null;return true;}i
 var BASE_LIT=48, TRANSIENT=['bookOpen','sheet','sheetData','sel','pickBook','jump','cardAnim','confirm','bcText','img','dvNew','dvMirror','roomKey','roomPick','invites','wayAll'];
 
 function defaults(){return {bookPos:{},bookOpen:null,log:{},path:{},aseg:'events',confirm:null,bcText:'',img:null,q:'',lang:'uk',skin:'',sfx:true,tab:'today',sub:null,seg:{bible:'read',prayer:'needs',community:'serve',heaven:'os'},devs:{p:{},all:false},dvCard:null,day:null,name:'',
-  going:{},verseOn:false,prayed:{},needs:[],testimonies:[],pastoral:null,step:{text:'',done:false},read:{},openBook:null,
+  going:{},verseOn:false,verseAt:'',prayed:{},needs:[],testimonies:[],pastoral:null,step:{text:'',done:false},read:{},openBook:null,
   bible:{b:0,c:5},hl:{},notes:{},marks:{},fs:1,cardDay:null,done:{},serve:{},skills:{},ads:[],hello:false,sermon:false,
   thanks:{},wxLoc:null,shareWay:null,sermSaved:{},
   sheet:null,sheetData:null,sel:null,pickBook:null,jump:null,cardAnim:false};}
@@ -1393,7 +1413,7 @@ var KIND_NAMES={sunday:['Синій','Синий'],heaven:['Помаранчев
 var ROLES=['member','prayer','leader','minister','admin'];
 var ROLE_NAMES={member:['Учасник','Участник'],prayer:['Молитовна команда','Молитвенная команда'],leader:['Лідер групи','Лидер группы'],minister:['Служитель','Служитель'],admin:['Адміністратор','Администратор']};
 var REQ_NAMES={pastoral:['Розмова з пастором','Разговор с пастором'],serve:['Хоче служити','Хочет служить'],hello:['Хоче познайомитися','Хочет познакомиться']};
-var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved'];
+var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','verseAt','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved'];
 var DEFAULT_SETTINGS={playlist:'',address_uk:'Київ, пр. Степана Бандери, 23, метро «Почайна»',address_ru:'Киев, пр. Степана Бандеры, 23, метро «Почайна»',map:'проспект Степана Бандери 23 Київ',
   mono:'4441 1110 4143 8320',iban:'UA783052990000026005030102192',recipient:'РО РГ ХМЦ МІСТО СВІТЛА',edrpou:'19261358',purpose:'добровільні пожертвування',paypal:'centreofdm@gmail.com',
   verseTime:'07:30',remind:'60',cardStart:'2026-11-09',youth_uk:'Тут будуть свої події, стрічка та посилання на чат молоді.',youth_ru:'Здесь будут свои события, лента и ссылка на чат молодёжи.',
@@ -1421,7 +1441,12 @@ function fmtD(s){var p=s.split('-');return p[2]+'.'+p[1]+'.'+p[0];}
 function dateLabel(ds){var f=function(s){var p=s.split('-');return +p[2]+'.'+p[1];};if(ds.length===1)return f(ds[0]);
   var run2=true;for(var i=1;i<ds.length;i++)if((fromIso(ds[i])-fromIso(ds[i-1]))/864e5!==1)run2=false;
   var a=ds[0].split('-'),b=ds[ds.length-1].split('-');return run2&&a[1]===b[1]?(+a[2])+'–'+f(ds[ds.length-1]):ds.map(f).join(', ');}
-function verseTime(){return (D&&D.settings&&D.settings.verseTime)||'07:30';}
+function hhmm(v){v=String(v||'');var m=v.match(/(\d{1,2}):(\d{2})/);if(m&&!/^\d{4}-/.test(v)){var h=+m[1];return (h<10?'0':'')+h+':'+m[2];}return '';}
+function verseTime(){return hhmm(D&&D.settings&&D.settings.verseTime)||'07:30';}
+function myVerseTime(){return hhmm(state.verseAt)||verseTime();}
+function verseRow(){var on=!!state.verseOn,t=myVerseTime();
+  return '<div class="vt-row"><button class="switch" role="switch" aria-checked="'+on+'" data-act="verse"><span><b>'+x('Вірш дня в Telegram','Стих дня в Telegram','Verse of the day in Telegram')+'</b><small>'+(on?x('щодня о ','каждый день в ','every day at ')+t:x('вимкнено','выключено','off'))+'</small></span><i></i></button>'+
+    (on?'<button class="vt-pill" data-act="sheet" data-v="verseAt" aria-label="'+x('Змінити час','Изменить время','Change time')+'"><svg viewBox="0 0 24 24"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M5 4 2.5 6.5M19 4l2.5 2.5"/></svg><span class="vt-t">'+t+'</span><span class="vt-c">'+x('Змінити','Изменить','Change')+'</span></button>':'')+'</div>';}
 function nm(o){return o?(state.lang==='en'?(o[2]||enT(o[0])):o[state.lang==='ru'?1:0]):'';}
 function role(){return (D&&D.me&&D.me.role)||'member';}
 var ROLE_CAN={prayer:[['Бачиш молитовні потреби «лише для команди»','Видишь молитвенные нужды «только для команды»']],
@@ -1871,11 +1896,22 @@ function scheduleMorning(){var E=0.34;while(mNext<AC.currentTime+0.7){var c=MORN
     tone(hz(n),mNext,1.6,0.11);if(st===0){tone(hz(c[0]),mNext,E*8,0.12,'triangle');tone(hz(c[0]+12),mNext,E*8,0.04);}
     mNext+=E;mIdx++;}}
 function mpArm(){clearTimeout(mpSleepT);if(mpSleep)mpSleepT=setTimeout(function(){stopMusic();mpPaint();var b=document.querySelector('[data-act=music]');if(b)b.setAttribute('aria-pressed','false');},mpSleep*6e4);}
-function stopMusic(){musicOn=false;mKind=null;clearInterval(musicTimer);if(!AC||!master)return;var m=master,v=voices;voices=[];try{m.gain.cancelScheduledValues(AC.currentTime);m.gain.setTargetAtTime(0,AC.currentTime,0.15);}catch(e){}
+function stopMusic(){musicOn=false;mKind=null;mediaChannel(false);clearInterval(musicTimer);if(!AC||!master)return;var m=master,v=voices;voices=[];try{m.gain.cancelScheduledValues(AC.currentTime);m.gain.setTargetAtTime(0,AC.currentTime,0.15);}catch(e){}
   setTimeout(function(){v.forEach(function(o){try{o.stop();}catch(e){}});try{m.disconnect();}catch(e){}},700);master=null;}
+/* iPhone mutes Web Audio on the silent switch. A looping silent <audio> tag (and audioSession "playback")
+   moves the page to the media channel, so the music plays like a video does. Only while music is on. */
+var silentEl=null;
+function silentWav(){var n=4000,b=new Uint8Array(44+n),v=new DataView(b.buffer),w=function(o,t){for(var i=0;i<t.length;i++)b[o+i]=t.charCodeAt(i);};
+  w(0,'RIFF');v.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,1,true);v.setUint32(24,8000,true);v.setUint32(28,8000,true);v.setUint16(32,1,true);v.setUint16(34,8,true);w(36,'data');v.setUint32(40,n,true);
+  for(var i=0;i<n;i++)b[44+i]=128;var bin='';for(i=0;i<b.length;i++)bin+=String.fromCharCode(b[i]);return 'data:audio/wav;base64,'+btoa(bin);}
+function mediaChannel(on){
+  try{if(navigator.audioSession)navigator.audioSession.type=on?'playback':'auto';}catch(e){}
+  try{if(on){if(!silentEl){silentEl=document.createElement('audio');silentEl.src=silentWav();silentEl.loop=true;silentEl.setAttribute('playsinline','');silentEl.setAttribute('webkit-playsinline','');silentEl.preload='auto';}
+      var pr=silentEl.play();if(pr&&pr.catch)pr.catch(function(){});}
+    else if(silentEl){silentEl.pause();}}catch(e){}}
 var mKind=null;
 function startMusic(kind){kind=kind||state.skin||'morning';try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();}catch(e){return false;}
-  if(master)stopMusic();
+  if(master)stopMusic();mediaChannel(true);
   master=AC.createGain();master.gain.value=0;master.connect(AC.destination);master.gain.setTargetAtTime(0.55,AC.currentTime,0.6);
   bus=AC.createGain();bus.connect(master);var dl=AC.createDelay(1.5),fb=AC.createGain();dl.delayTime.value=kind==='cosmos'||kind==='pray'?0.62:0.36;fb.gain.value=kind==='cosmos'||kind==='pray'?0.45:0.28;bus.connect(dl);dl.connect(fb);fb.connect(dl);dl.connect(master);
   mIdx=0;mPos=0;mNext=AC.currentTime+0.15;mKind=kind;
@@ -1888,6 +1924,18 @@ function startMusic(kind){kind=kind||state.skin||'morning';try{AC=AC||new (windo
   else{musicTimer=setInterval(scheduleXmas,200);scheduleXmas();}
   musicOn=true;return true;}
 
+/* ---------- alarm-style wheel picker ---------- */
+var WH={h:7,m:2},WH_ROW=44;
+function wheelCol(k){return document.querySelector('.wh-col[data-wh="'+k+'"]');}
+function wheelPaint(c,i){var a=c.children;for(var j=0;j<a.length;j++)a[j].classList.toggle('on',j===i);}
+function wheelTo(k,i,instant){var c=wheelCol(k);if(!c)return;c._lock=i;clearTimeout(c._lt);c._lt=setTimeout(function(){c._lock=null;},1500);c.scrollTo({top:i*WH_ROW,behavior:instant?'auto':'smooth'});}
+function wheelInit(){['h','m'].forEach(function(k){var c=wheelCol(k);if(!c||c._wh)return;c._wh=1;var t=0;
+  c._lock=WH[k];c._lt=setTimeout(function(){c._lock=null;},400);c.scrollTop=WH[k]*WH_ROW;wheelPaint(c,WH[k]);
+  c.addEventListener('scroll',function(){var i=Math.max(0,Math.min(c.children.length-1,Math.round(c.scrollTop/WH_ROW)));
+    if(c._lock!=null){if(i===c._lock){c._lock=null;}return;}
+    if(i!==WH[k]){WH[k]=i;wheelPaint(c,i);try{var h=window.Telegram&&Telegram.WebApp&&Telegram.WebApp.HapticFeedback;if(h)h.selectionChanged();}catch(e){}sfxPlay('tick');}},{passive:true});
+  c.addEventListener('click',function(e){var d=e.target.closest('[data-i]');if(d)wheelTo(k,+d.dataset.i);});});}
+
 /* ---------- tap sounds: tiny, generated, one timbre per theme ---------- */
 var sfxLast=0,SFX_SILENT={skin:1,sfxToggle:1,music:1,mpPlay:1,mpTrack:1,bkOpen:1,bkGo:1};
 function sfxKind(act){if(/^(tab|go|back|close|sheet|bkClose|bkGo|bkOpen)$/.test(act))return 'nav';if(/toggle|switch|verseOn|going|lang/i.test(act))return 'toggle';return 'tap';}
@@ -1896,6 +1944,7 @@ function sfxPlay(k){if(state.sfx===false)return;var now=Date.now();if(now-sfxLas
   var t=AC.currentTime+0.005,sk=state.skin||'',out=AC.createGain();out.gain.value=0.9;out.connect(AC.destination);
   function v(f,f2,st,dur,vol,type,atk){var o=AC.createOscillator(),g=AC.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t+st);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+st+dur*0.6);
     g.gain.setValueAtTime(0.0001,t+st);g.gain.exponentialRampToValueAtTime(vol,t+st+(atk||0.004));g.gain.exponentialRampToValueAtTime(0.0001,t+st+dur);o.connect(g);g.connect(out);o.start(t+st);o.stop(t+st+dur+0.03);}
+  if(k==='tick'){v(sk==='joy'?900:sk==='xmas'?2400:sk==='cosmos'?1600:1900,0,0,0.03,0.025,'triangle');setTimeout(function(){try{out.disconnect();}catch(e){}},300);return;}
   var up=k==='toggle'||k==='pick',lo=k==='nav';
   if(sk==='xmas'){var b=lo?1318:1568;v(b,0,0,0.55,0.05);v(b*2.76,0,0,0.25,0.012);if(up){v(b*1.335,0,0.07,0.6,0.045);v(b*1.335*2.76,0,0.07,0.25,0.01);}}
   else if(sk==='cosmos'){var c=lo?660:880;v(c,0,0,0.9,0.035,'sine',0.02);v(c*1.5,0,0.03,0.8,0.015,'sine',0.03);if(up)v(c*2,0,0.09,0.9,0.025,'sine',0.02);}
@@ -2038,7 +2087,7 @@ function vToday(){var now=new Date(),t0=day0(now),sel=state.day?fromIso(state.da
   return hero2(now,nx)+homeDay()+missionToday()+sermonToday()+gEntry()+
    '<section class="word"><p class="scripture">'+L(v.t)+'</p><p class="ref">'+L(v.ref)+'</p>'+
      '<div class="row"><button class="btn tint small" data-act="bible" data-v="'+v.loc.join(':')+'">'+x('Читати розділ','Читать главу')+'</button><button class="btn tint small" data-act="verseImg">'+x('Картинка для сторіс','Картинка для сторис')+'</button></div>'+
-     '<button class="switch" role="switch" aria-checked="'+state.verseOn+'" data-act="verse">'+x('Надсилати вірш щодня о ','Присылать стих каждый день в ')+verseTime()+'<i></i></button></section>'+thanksCard()+
+     verseRow()+'</section>'+thanksCard()+
    '<section class="stack"><div class="between"><h2>'+x('Цей тиждень','Эта неделя')+'</h2><button class="link" data-act="go" data-v="events">'+x('Увесь місяць','Весь месяц')+'</button></div>'+
      '<div class="week">'+week+'</div><ul class="mts">'+items.map(function(q){return mtRow(q,sel);}).join('')+'</ul></section>'+
    (soon.length?'<section class="stack"><h2>'+x('Не пропусти','Не пропусти')+'</h2><ul class="list">'+soon.map(specialRow).join('')+'</ul></section>':'');}
@@ -2905,7 +2954,7 @@ function vCabinet(){var mm=myMeetings(),done=readCount(),teams=TEAMS.filter(func
      '<div><span>'+x('Крок на тиждень','Шаг на неделю')+'</span><span>'+(state.step.text?esc(state.step.text)+(state.step.done?' ✓':''):x('не обрано','не выбран'))+'</span></div>'+
      '<div><span>'+x('Мої молитовні потреби','Мои молитвенные нужды')+'</span><b>'+nmine+'</b></div>'+
      '<div><span>Mind DEVS</span><span>'+dvLevelLabel()+'</span></div>'+'<div><span>'+x('Служіння','Служение')+'</span><span>'+(teams.length?esc(teams.join(', ')):x('не обрано','не выбрано'))+'</span></div></div></section>'+
-   '<section class="stack"><h2>'+x('Налаштування','Настройки')+'</h2><button class="switch" role="switch" aria-checked="'+state.verseOn+'" data-act="verse">'+x('Вірш щодня о ','Стих каждый день в ')+verseTime()+x(' у Telegram',' в Telegram')+'<i></i></button>'+
+   '<section class="stack"><h2>'+x('Налаштування','Настройки')+'</h2>'+verseRow()+
      '<div class="row"><button class="btn tint small" data-act="sheet" data-v="theme">'+x('Тема оформлення та музика','Тема оформления и музыка')+'</button>'+
        (canHome()?'<button class="btn tint small" data-act="homeIcon">'+x('Іконка на головний екран','Иконка на главный экран')+'</button>':'')+
        '<button class="btn tint small" data-act="invite">'+x('Запросити друга','Пригласить друга')+'</button></div></section>'+
@@ -3449,7 +3498,15 @@ function homeDay(){var now=new Date(),l=state.log[iso(now)]||{},nx=nextChapter()
     '<div class="weektile"><div><span>'+x('Днів поспіль','Дней подряд')+'</span><b>'+num('streak',st)+'</b></div><div class="wbars">'+bars+'</div></div></section>';}
 
 /* ---------- sheets ---------- */
-function sheet(){var s=state.sheet,inner='';if(!s)return '';
+function sheet(){var s=state.sheet,inner='';if(s!=='verseAt')WH.fresh=false;if(!s)return '';
+  if(s==='verseAt'){var cur=myVerseTime().split(':'),H='',M='',i;if(!WH.fresh){WH.h=+cur[0];WH.m=Math.round(+cur[1]/15)%4;WH.fresh=true;}
+    for(i=0;i<24;i++)H+='<div data-i="'+i+'">'+(i<10?'0':'')+i+'</div>';
+    for(i=0;i<4;i++)M+='<div data-i="'+i+'">'+['00','15','30','45'][i]+'</div>';
+    inner='<h2>'+x('Коли надсилати вірш','Когда присылать стих','When to send the verse')+'</h2><p class="sub">'+x('Бот напише в Telegram щодня в цей час.','Бот напишет в Telegram каждый день в это время.','The bot will message you every day at this time.')+'</p>'+
+      '<div class="wheel" aria-label="'+x('Час','Время','Time')+'"><div class="wh-band"></div><div class="wh-col" data-wh="h">'+H+'</div><span class="wh-colon">:</span><div class="wh-col" data-wh="m">'+M+'</div></div>'+
+      '<div class="wh-pre">'+[['06:30',x('Світанок','Рассвет','Dawn')],['08:00',x('Ранок','Утро','Morning')],['13:00',x('Обід','Обед','Noon')],['21:00',x('Вечір','Вечер','Evening')]].map(function(p){return '<button class="chip" data-act="whPreset" data-v="'+p[0]+'"><b>'+p[0]+'</b> '+p[1]+'</button>';}).join('')+'</div>'+
+      '<button class="btn accent wide" data-act="whSave">'+x('Зберегти','Сохранить','Save')+'</button>';
+    setTimeout(wheelInit,30);}
   if(s==='roomNew')inner=roomNewSheet();
   var foot=DEMO?'<p class="note">'+x('Демо: запис зберігається лише в цьому браузері.','Демо: запись хранится только в этом браузере.')+'</p>':'';
   if(s==='meet'){var p=String(state.sheetData||'').split('@'),it=byId(p[0]);if(!it||!p[1])return '';
@@ -3607,7 +3664,9 @@ var actions={
   pathStep:function(v){tog(state.path,v);commit();},
   going:function(v){var on=!isGoing(v);if(!D.att[v]){var p=v.split('@'),s0=DEMO?sampleAtt(v,byId(p[0])||{}):{n:0,names:[]};D.att[v]={n:s0.n,names:s0.names,mine:false};}var a=D.att[v];
     optimistic(function(){a.mine=on;},'going',{key:v,on:on},on?x('Позначено. Лідер побачить тебе у списку','Отмечено. Лидер увидит тебя в списке'):'');},
-  verse:function(){state.verseOn=!state.verseOn;commit(state.verseOn?(LIVE?x('Вірш приходитиме щодня о ','Стих будет приходить каждый день в ')+verseTime():x('Увімкнено. У демо повідомлення не надсилаються','Включено. В демо сообщения не отправляются')):'');},
+  whPreset:function(v){var p=v.split(':'),h=+p[0],m=Math.round(+p[1]/15)%4;WH.h=h;WH.m=m;var ch=wheelCol('h'),cm=wheelCol('m');if(ch)wheelPaint(ch,h);if(cm)wheelPaint(cm,m);wheelTo('h',h);wheelTo('m',m);},
+  whSave:function(){WH.fresh=false;var t=(WH.h<10?'0':'')+WH.h+':'+['00','15','30','45'][WH.m];state.verseAt=t;state.verseOn=true;state.sheet=null;commit(LIVE?x('Вірш приходитиме щодня о ','Стих будет приходить каждый день в ','The verse will arrive every day at ')+t:x('Збережено. У демо повідомлення не надсилаються','Сохранено. В демо сообщения не отправляются','Saved. No messages are sent in the demo'));sfxPlay('pick');},
+  verse:function(){state.verseOn=!state.verseOn;if(state.verseOn&&!hhmm(state.verseAt)){save();state.sheet='verseAt';render();return;}commit(state.verseOn?(LIVE?x('Вірш приходитиме щодня о ','Стих будет приходить каждый день в ')+myVerseTime():x('Увімкнено. У демо повідомлення не надсилаються','Включено. В демо сообщения не отправляются')):'');},
   pray:function(v){var n=findNeed(v);if(!n)return;var on=!n.prayed;if(on){logDay('p');save();}optimistic(function(){n.prayed=on;n.n+=on?1:-1;D.lit+=on?1:-1;if(on)riseT0=performance.now();},'pray',{id:v,on:on});},
   needAns:function(v){run('needAnswered',{id:v},x('Позначено. Слава Богу!','Отмечено. Слава Богу!')).then(function(ok){if(ok){state.sheet=null;state.sheetData=null;render();}});},
   delNeed:function(v){run('needDel',{id:v},x('Потребу видалено','Нужда удалена'));},
@@ -3631,7 +3690,10 @@ var actions={
     if(nm.length<2){REG.err=x('Напиши, як тебе звати','Напиши, как тебя зовут','Tell us your name');render();var j=document.getElementById('reg-name');if(j)j.focus();return;}
     if(DEMO){if(D&&D.me)D.me.name=nm;if(DS&&DS.me)DS.me.name=nm;BLOCK=null;render();toast(x('Вітаємо вдома, ','Добро пожаловать домой, ','Welcome home, ')+nm.split(' ')[0]+'! ('+x('демо','демо','demo')+')');return;}
     post('register',{name:nm}).then(function(){
-      if(tg&&tg.requestContact){tg.requestContact(function(ok){REG.step=ok?'wait':'denied';render();if(ok)regPoll(10);});}
+      if(tg&&tg.requestContact){tg.requestContact(function(ok,ev){REG.step=ok?'wait':'denied';render();if(!ok)return;
+        var signedC=ev&&ev.response;
+        var after=function(){try{if(tg.requestWriteAccess)tg.requestWriteAccess(function(){});}catch(e){}regPoll(10);};
+        if(signedC)post('contact',{contact:signedC,name:nm}).then(after,function(){regPoll(10);});else regPoll(10);});}
       else actions.regOpen();},function(e){REG.err=errText(e);render();});},
   regOpen:function(){var u='https://t.me/'+CONFIG.BOT_USERNAME+'?start=app';if(tg&&tg.openTelegramLink){tg.openTelegramLink(u);try{tg.close();}catch(e){}}else window.open(u,'_blank');},
   reload:function(){BLOCK='loading';render();boot();},
