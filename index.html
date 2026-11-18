@@ -77,10 +77,11 @@ html.kb .g-form{padding-bottom:12px}
 .top,main,.tabs{position:relative;z-index:1}
 .top{flex:none;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px 6px}
 .mark{font:800 17px/1 var(--font-display);letter-spacing:-.01em;background:none;border:0;padding:12px 0;margin:-6px 0;white-space:nowrap}
-@media (max-width:350px){.mark{font-size:15px}.top{gap:6px;padding-left:14px;padding-right:14px}.top-r{gap:5px!important}.lang button{min-width:34px;padding:8px 6px}}
+@media (max-width:350px){.tabs button{font-size:9.5px;letter-spacing:-.01em}.mark{font-size:15px}.top{gap:6px;padding-left:14px;padding-right:14px}.top-r{gap:5px!important}.lang button{min-width:34px;padding:8px 6px}}
 .mark b{color:var(--accent);font-weight:800}
 .top-r{display:flex;align-items:center;gap:6px}
 .icon-btn{width:36px;height:36px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 8%,transparent);display:grid;place-items:center}
+.icon-btn.theme-btn{width:auto;display:inline-flex;gap:6px;padding:0 14px 0 11px;border-radius:999px;font:600 13px/1 var(--font-body);color:var(--ink)}
 .icon-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .icon-btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .lang{display:flex;background:color-mix(in srgb,var(--ink) 8%,transparent);border-radius:999px;padding:2px}
@@ -1181,7 +1182,7 @@ i.add{font-style:italic;color:var(--muted)}
 .sky canvas.scene{position:absolute;inset:0;width:100%;height:100%;margin:0}
 .sky-top{position:relative;padding:22px 22px 0;pointer-events:none;display:flex;flex-direction:column;align-items:flex-start}
 .sky-date{font:500 14.5px/1.2 var(--font-body);opacity:.86}
-.sky-hi{font:900 40px/.98 var(--font-display);letter-spacing:-.035em;margin-top:8px;text-shadow:0 2px 20px rgba(0,0,0,.28);overflow-wrap:anywhere}
+.sky-hi{font:900 clamp(30px,10.5vw,40px)/.98 var(--font-display);letter-spacing:-.035em;margin-top:8px;text-shadow:0 2px 20px rgba(0,0,0,.28);overflow-wrap:break-word;hyphens:manual}
 .sky-day{margin-top:12px;font:500 13.5px/1 var(--font-body);background:rgba(8,10,24,.3);border-radius:999px;padding:7px 12px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
 .sky canvas.wx-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .sky-wx{position:absolute;right:20px;top:18px;display:grid;grid-template-columns:auto auto;grid-template-areas:"i t";align-items:center;column-gap:6px;text-align:right;perspective:600px;transition:opacity .3s}
@@ -1415,7 +1416,7 @@ var ROLE_NAMES={member:['Учасник','Участник'],prayer:['Молит
 var REQ_NAMES={pastoral:['Розмова з пастором','Разговор с пастором'],serve:['Хоче служити','Хочет служить'],hello:['Хоче познайомитися','Хочет познакомиться']};
 var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','verseAt','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved'];
 var DEFAULT_SETTINGS={playlist:'',address_uk:'Київ, пр. Степана Бандери, 23, метро «Почайна»',address_ru:'Киев, пр. Степана Бандеры, 23, метро «Почайна»',map:'проспект Степана Бандери 23 Київ',
-  mono:'4441 1110 4143 8320',iban:'UA783052990000026005030102192',recipient:'РО РГ ХМЦ МІСТО СВІТЛА',edrpou:'19261358',purpose:'добровільні пожертвування',paypal:'centreofdm@gmail.com',
+  mono:'4441 1110 4143 8320',monoJar:'',iban:'UA783052990000026005030102192',recipient:'РО РГ ХМЦ МІСТО СВІТЛА',edrpou:'19261358',purpose:'добровільні пожертвування',paypal:'centreofdm@gmail.com',
   verseTime:'07:30',remind:'60',cardStart:'2026-11-09',youth_uk:'Тут будуть свої події, стрічка та посилання на чат молоді.',youth_ru:'Здесь будут свои события, лента и ссылка на чат молодёжи.',
   tg:'https://t.me/mistosvitlachurchkyiv',ig:'https://www.instagram.com/mistosvitlachurch/',yt:'https://www.youtube.com/user/infogorodsveta',fb:'https://www.facebook.com/mistosvitlachurch/',
   teams:'Прославлення | Прославление\nЗвук | Звук\nВідео | Видео\nЗустріч гостей | Встреча гостей\nДитяче служіння | Детское служение\nМолодіжка | Молодёжка\nМолитовна команда | Молитвенная команда'};
@@ -1450,7 +1451,7 @@ function verseRow(){var on=!!state.verseOn,t=myVerseTime();
 function nm(o){return o?(state.lang==='en'?(o[2]||enT(o[0])):o[state.lang==='ru'?1:0]):'';}
 function role(){return (D&&D.me&&D.me.role)||'member';}
 var ROLE_CAN={prayer:[['Бачиш молитовні потреби «лише для команди»','Видишь молитвенные нужды «только для команды»']],
-  leader:[['Відкриваєш кімнату домашньої групи й обираєш картку тижня','Открываешь комнату домашней группы и выбираешь карточку недели'],['Бачиш, хто прийде, і відмічаєш присутніх','Видишь, кто придёт, и отмечаешь присутствующих'],['Ведеш зустріч з пульта і підводиш підсумок','Ведёшь встречу с пульта и подводишь итог']],
+  leader:[['Відкриваєш кімнату домашньої групи й обираєш картку тижня','Открываешь комнату домашней группы и выбираешь карточку недели'],['Бачиш, хто прийде, і можеш їм написати','Видишь, кто придёт, и можешь им написать'],['Ведеш зустріч з пульта і підводиш підсумок','Ведёшь встречу с пульта и подводишь итог']],
   minister:[['Усе, що може лідер, плюс молитовні потреби команди','Всё, что может лидер, плюс молитвенные нужды команды']],
   admin:[['Події, розклад і налаштування','События, расписание и настройки'],['Модерація: публікуєш і прибираєш свідчення, оголошення, потреби','Модерация: публикуешь и убираешь свидетельства, объявления, нужды'],['Люди, ролі й запрошення за посиланням','Люди, роли и приглашения по ссылке'],['Розсилка всім у Telegram','Рассылка всем в Telegram']]};
 function roleCard(){var r=role();if(r==='member')return '';var can=(ROLE_CAN[r]||[]).map(function(q){return '<li>'+nm(q)+'</li>';}).join('');
@@ -2084,13 +2085,14 @@ function vToday(){var now=new Date(),t0=day0(now),sel=state.day?fromIso(state.da
       (it.who||it.where?'<p class="when">'+(it.who?L(it.who):L(it.where))+'</p>':'')+'<div class="row">'+goingBtn(key)+'<button class="btn tint small" data-act="meet" data-v="'+key+'">'+x('Хто буде','Кто будет')+'</button></div>';}
   var items=dayItems(sel),v=verseOfDay(now),cn=weekCard(),open=cardOpen();
   var soon=SPECIALS.filter(function(s){return occDate(s.dates[s.dates.length-1],s.time)>now;});
-  return hero2(now,nx)+homeDay()+missionToday()+sermonToday()+gEntry()+
-   '<section class="word"><p class="scripture">'+L(v.t)+'</p><p class="ref">'+L(v.ref)+'</p>'+
-     '<div class="row"><button class="btn tint small" data-act="bible" data-v="'+v.loc.join(':')+'">'+x('Читати розділ','Читать главу')+'</button><button class="btn tint small" data-act="verseImg">'+x('Картинка для сторіс','Картинка для сторис')+'</button></div>'+
-     verseRow()+'</section>'+thanksCard()+
+  return hero2(now,nx)+homeDay()+
    '<section class="stack"><div class="between"><h2>'+x('Цей тиждень','Эта неделя')+'</h2><button class="link" data-act="go" data-v="events">'+x('Увесь місяць','Весь месяц')+'</button></div>'+
      '<div class="week">'+week+'</div><ul class="mts">'+items.map(function(q){return mtRow(q,sel);}).join('')+'</ul></section>'+
-   (soon.length?'<section class="stack"><h2>'+x('Не пропусти','Не пропусти')+'</h2><ul class="list">'+soon.map(specialRow).join('')+'</ul></section>':'');}
+   (soon.length?'<section class="stack"><h2>'+x('Не пропусти','Не пропусти')+'</h2><ul class="list">'+soon.map(specialRow).join('')+'</ul></section>':'')+
+   missionToday()+sermonToday()+
+   '<section class="word"><p class="scripture">'+L(v.t)+'</p><p class="ref">'+L(v.ref)+'</p>'+
+     '<div class="row"><button class="btn tint small" data-act="bible" data-v="'+v.loc.join(':')+'">'+x('Читати розділ','Читать главу')+'</button><button class="btn tint small" data-act="verseImg">'+x('Картинка для сторіс','Картинка для сторис')+'</button></div>'+
+     verseRow()+'</section>'+thanksCard();}
 
 function specialRow(s){var now=new Date(),btns=s.link?'<a class="going" href="'+esc(s.link)+'" target="_blank" rel="noopener">'+x('Відкрити','Открыть')+'</a>':s.dates.filter(function(dt){return occDate(dt,s.time)>now;}).map(function(dt){var key=s.id+'@'+dt,on=isGoing(key);
     if(s.dates.length===1)return goingBtn(key);
@@ -2439,7 +2441,7 @@ function heavenLive(){var live=liveRooms(),h='';
 function heavenPast(){var past=rooms().filter(function(r){return r.status==='ended';}).slice(0,6);if(!past.length)return '';
   return '<section class="stack"><h2>'+x('Підсумки зустрічей','Итоги встреч')+'</h2><ul class="list">'+past.map(function(r){var s=r.summary||{};
     return '<li><button class="rm-past" data-act="roomOpenView" data-v="'+esc(r.key)+'"><img src="cards/'+pad2(r.card)+'.jpg" alt="" loading="lazy"><span><strong>'+esc(roomWhen(r))+'</strong><small>'+esc(roomTitle(r))+'</small>'+
-      '<small>'+x('У залі ','В зале ')+(s.hall||0)+x(', онлайн ',', онлайн ')+(s.online||0)+(s.prayers&&s.prayers.length?x(', молитов ',', молитв ')+s.prayers.length:'')+'</small></span></button></li>';}).join('')+'</ul></section>';}
+      '<small>'+x('Збиралися ','Собирались ','Planned ')+(s.going||0)+x(', онлайн ',', онлайн ',', online ')+(s.online||0)+(s.prayers&&s.prayers.length?x(', молитов ',', молитв ')+s.prayers.length:'')+'</small></span></button></li>';}).join('')+'</ul></section>';}
 
 /* leader sheet: choose meeting, card of the week, call link */
 function roomNewSheet(){var occ=heavenOcc(DEMO?7:1),cur=state.roomPick||todayCard();
@@ -2478,7 +2480,7 @@ function roomCompose(r){var T=[['msg',P2('Думка','Мысль')],['pray',P2(
     '<div class="row"><button class="btn tint small" data-act="roomHand" aria-pressed="'+!!r.handUp+'">'+(r.handUp?x('Ти в черзі на слово','Ты в очереди на слово'):x('✋ Хочу сказати','✋ Хочу сказать'))+'</button><span class="note">'+x('Лідер побачить і дасть слово в дзвінку.','Лидер увидит и даст слово в звонке.')+'</span></div></section>';}
 function roomAfter(r){return '<section class="card"><h2 class="t3">'+x('Що тобі дала ця зустріч?','Что тебе дала эта встреча?')+'</h2><form data-form="roomComment" class="rm-form"><label class="sr" for="rm-in">'+x('Коментар','Комментарий')+'</label><input id="rm-in" name="text" type="text" maxlength="400" autocomplete="off" placeholder="'+x('Коротко, своїми словами','Коротко, своими словами')+'"><button class="btn accent" type="submit" aria-label="'+x('Надіслати','Отправить')+'"><svg viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg></button></form></section>';}
 function roomSummary(r){var s=r.summary;return '<section class="rm-sum"><p class="note">'+x('Підсумок зустрічі','Итог встречи')+(s.by?' · '+esc(s.by):'')+'</p>'+
-  '<div class="rm-stats">'+[[s.hall,P2('у залі','в зале')],[s.online,P2('онлайн','онлайн')],[(s.prayers||[]).length,P2('молитов','молитв')],[s.steps,P2('кроків','шагов')],[s.reacts,P2('реакцій','реакций')]].map(function(q){return '<div><b>'+(q[0]||0)+'</b><span>'+rL(q[1])+'</span></div>';}).join('')+'</div>'+
+  '<div class="rm-stats">'+[[s.going,P2('збиралися','собирались','planned')],[s.online,P2('онлайн','онлайн')],[(s.prayers||[]).length,P2('молитов','молитв')],[s.steps,P2('кроків','шагов')],[s.reacts,P2('реакцій','реакций')]].map(function(q){return '<div><b>'+(q[0]||0)+'</b><span>'+rL(q[1])+'</span></div>';}).join('')+'</div>'+
   (s.text?'<p class="rm-sumtext">'+esc(s.text).replace(/\n/g,'<br>')+'</p>':'')+
   ((s.pins||[]).length?'<p class="note">'+x('Питання вечора','Вопросы вечера')+'</p><ul class="rm-ul">'+s.pins.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>':'')+
   ((s.prayers||[]).length?'<p class="note">'+x('Молимося цього тижня','Молимся на этой неделе')+'</p><ul class="rm-ul">'+s.prayers.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>':'')+'</section>';}
@@ -2665,9 +2667,9 @@ function gIntentReply(k,n){var st=(D&&D.settings)||{};if(G.mode!=='care')G.mode=
   if(k==='books'){var L=gAny(n,['лідер','лидер']),Pq=gAny(n,['перлин','жемчуж']);
     gBot({t:P2('Пастор Дмитро Масон написав дві книги. «Лідер не за покликанням» — про те, як звичайна людина стає лідером, долаючи страх і невпевненість. «Таємниця перлини» — про те, як біль і труднощі перетворюються на щось прекрасне, як піщинка на перлину.','Пастор Дмитрий Масон написал две книги. «Лидер не по призванию» — о том, как обычный человек становится лидером, преодолевая страх и неуверенность. «Тайна жемчужины» — о том, как боль и трудности превращаются в нечто прекрасное, как песчинка в жемчужину.'),
       a:(Pq?[]:[[P2('Відкрити «Лідер не за покликанням»','Открыть «Лидер не по призванию»'),'book:lider:'+(L?1:0)]]).concat(L?[]:[[P2('Відкрити «Таємниця перлини»','Открыть «Тайна жемчужины»'),'book:perl:0']]).concat([[P2('Усі книги пастора','Все книги пастора'),'go:books']])});return;}
-  if(k==='app'){gBot({t:P2('Ось що тут є:\n• Сьогодні: вірш дня, розділ Біблії, добре слово, молитва за когось і погода на неділю.\n• Біблія: Новий і Старий Завіт, пошук, нотатки, закладки і план читання.\n• Ігри: Mind DEVS, домашні групи HeavenOS і «Церква в дії».\n• Розділи: події, молитва, проповіді, спільнота, пожертви і твій кабінет із музикою.\nКуди підемо?',
-      'Вот что здесь есть:\n• Сегодня: стих дня, глава Библии, доброе слово, молитва за кого-то и погода на воскресенье.\n• Библия: Новый и Ветхий Завет, поиск, заметки, закладки и план чтения.\n• Игры: Mind DEVS, домашние группы HeavenOS и «Церковь в действии».\n• Разделы: события, молитва, проповеди, сообщество, пожертвования и твой кабинет с музыкой.\nКуда пойдём?'),
-      a:[[P2('Сьогодні','Сегодня'),'go:today'],[P2('Біблія','Библия'),'go:bible'],[P2('Ігри','Игры'),'go:play'],[P2('Мій кабінет','Мой кабинет'),'go:cabinet']],
+  if(k==='app'){gBot({t:P2('Ось що тут є:\n• Сьогодні: вірш дня, розділ Біблії, добре слово, молитва за когось і погода на неділю.\n• Біблія: Новий і Старий Завіт, пошук, нотатки, закладки і план читання.\n• Зростання: Mind DEVS, домашні групи HeavenOS і «Церква в дії».\n• Розділи: події, молитва, проповіді, спільнота, пожертви і твій кабінет із музикою.\nКуди підемо?',
+      'Вот что здесь есть:\n• Сегодня: стих дня, глава Библии, доброе слово, молитва за кого-то и погода на воскресенье.\n• Библия: Новый и Ветхий Завет, поиск, заметки, закладки и план чтения.\n• Рост: Mind DEVS, домашние группы HeavenOS и «Церковь в действии».\n• Разделы: события, молитва, проповеди, сообщество, пожертвования и твой кабинет с музыкой.\nКуда пойдём?'),
+      a:[[P2('Сьогодні','Сегодня'),'go:today'],[P2('Біблія','Библия'),'go:bible'],[P2('Зростання','Рост'),'go:play'],[P2('Мій кабінет','Мой кабинет'),'go:cabinet']],
       c:[[P2('Mind DEVS','Mind DEVS'),'i:devs'],[P2('Церква в дії','Церковь в действии'),'i:mission'],[P2('Проповіді','Проповеди'),'i:sermon'],[P2('Музика і теми','Музыка и темы'),'i:theme']]});return;}
   if(k==='mission'){gBot({t:P2('«Церква в дії» — одне завдання тижня для всієї церкви, але в кожного свій шлях до нього. Витягни картку, проживи її за тиждень, а в неділю поділися, як це було. Шлях можна один раз замінити.',
       '«Церковь в действии» — одно задание недели для всей церкви, но у каждого свой путь к нему. Вытяни карточку, проживи её за неделю, а в воскресенье поделись, как это было. Путь можно один раз заменить.'),a:[[P2('Відкрити «Церкву в дії»','Открыть «Церковь в действии»'),'go:mission']],c:[[P2('Mind DEVS','Mind DEVS'),'i:devs'],[P2('Що ще є?','Что ещё есть?'),'i:app']]});return;}
@@ -2677,7 +2679,7 @@ function gIntentReply(k,n){var st=(D&&D.settings)||{};if(G.mode!=='care')G.mode=
       'После воскресенья здесь появляется итог проповеди: суть, тезисы, стихи и вопросы для размышления. Его можно сохранить как памятную карточку или поделиться в сторис. Перед воскресеньем видна тема следующей проповеди.'),a:[[P2('Проповіді','Проповеди'),'go:media']],c:[[P2('Коли служіння?','Когда служение?'),'i:when']]});return;}
   if(k==='music'||k==='theme'){gBot({t:P2('У кабінеті є музичний плеєр із тихою музикою для молитви й ранку, з таймером сну. А кнопка ✦ угорі відкриває теми: Світанок, Різдво, Космос і Радість, кожна зі своєю музикою.',
       'В кабинете есть музыкальный плеер с тихой музыкой для молитвы и утра, с таймером сна. А кнопка ✦ вверху открывает темы: Рассвет, Рождество, Космос и Радость, каждая со своей музыкой.'),a:[[P2('Мій кабінет','Мой кабинет'),'go:cabinet'],[P2('Обрати тему','Выбрать тему'),'theme']]});return;}
-  if(k==='games'){gBot({t:P2('В «Іграх» живуть Mind DEVS, домашні групи HeavenOS і «Церква в дії». Згодом тут з’являться нові ігри й інтерактивні вивчення Біблії.','В «Играх» живут Mind DEVS, домашние группы HeavenOS и «Церковь в действии». Со временем здесь появятся новые игры и интерактивные изучения Библии.'),a:[[P2('Відкрити «Ігри»','Открыть «Игры»'),'go:play']],c:[[P2('Mind DEVS','Mind DEVS'),'i:devs'],[P2('Церква в дії','Церковь в действии'),'i:mission']]});return;}
+  if(k==='games'){gBot({t:P2('У «Зростанні» живуть Mind DEVS, домашні групи HeavenOS і «Церква в дії». Згодом тут з’являться нові ігри й інтерактивні вивчення Біблії.','В «Росте» живут Mind DEVS, домашние группы HeavenOS и «Церковь в действии». Со временем здесь появятся новые игры и интерактивные изучения Библии.'),a:[[P2('Відкрити «Зростання»','Открыть «Рост»'),'go:play']],c:[[P2('Mind DEVS','Mind DEVS'),'i:devs'],[P2('Церква в дії','Церковь в действии'),'i:mission']]});return;}
   if(k==='kind'){gBot({t:P2('«Добре слово» — одне з трьох маленьких завдань дня на головній: скажи комусь щось добре. Дрібниця, яка змінює чийсь день.','«Доброе слово» — одно из трёх маленьких заданий дня на главной: скажи кому-то что-то доброе. Мелочь, которая меняет чей-то день.'),a:[[P2('На головну','На главную'),'go:today']]});return;}
   if(k==='thanks3'){gBot({t:P2('«Три подяки» на головній: щовечора запиши три речі, за які вдячний Богові. Так око вчиться помічати добре.','«Три благодарности» на главной: каждый вечер запиши три вещи, за которые благодарен Богу. Так глаз учится замечать хорошее.'),a:[[P2('На головну','На главную'),'go:today']]});return;}
   if(k==='thanks'){gBot({t:P2('Радий бути поруч. Якщо захочеш продовжити, я тут.','Рад быть рядом. Если захочешь продолжить, я здесь.'),c:[[P2('Інша тема','Другая тема'),'topics']]});return;}
@@ -2827,7 +2829,7 @@ function vPlay(){var cn=weekCard(),open=cardOpen(),cd=CARDS[cn-1],dn=0;try{dn=dv
   var hv='<button class="pj pj-heaven" data-act="go" data-v="heaven"><img src="cards/'+pad2(cn)+'.jpg" alt=""><span class="pj-in"><small>'+x('Домашні групи','Домашние группы')+'</small><strong>HeavenOS</strong><span>'+x('Одна картка на тиждень і живі зустрічі групи, також онлайн.','Одна карточка на неделю и живые встречи группы, также онлайн.')+'</span><em>'+(open?x('Картка тижня: ','Карточка недели: ')+esc(cd[0].charAt(0)+cd[0].slice(1).toLowerCase()):x('Картка тижня чекає','Карточка недели ждёт'))+'</em></span></button>';
   var dv='<button class="pj pj-devs" data-act="go" data-v="devs"><span class="pj-mark pj-jesus" aria-hidden="true">'+jesusArt()+'</span><span class="pj-in"><small>'+x('Система розвитку свідомості','Система развития сознания')+'</small><strong>Mind <b>DEVS</b></strong><span>'+x('Слова Ісуса стають ділом. Рівні відкриваються по черзі, і кожен змінює погляд на життя.','Слова Иисуса становятся делом. Уровни открываются по очереди, и каждый меняет взгляд на жизнь.','The words of Jesus become deeds. Levels open one by one, and each changes how you see life.')+'</span><em>'+dvLevelLabel()+(wayData().devs.count?' · '+x('у дорозі ','в пути ','on the way ')+wayData().devs.count:'')+'</em></span></button>';
   var soon='<div class="pj pj-soon"><span class="pj-in"><small>'+x('Незабаром','Скоро')+'</small><strong>'+x('Нові ігри','Новые игры')+'</strong><span>'+x('Тут з’являтимуться ігри та інтерактивні вивчення Біблії для себе, для групи й для всієї церкви.','Здесь будут появляться игры и интерактивные изучения Библии для себя, для группы и для всей церкви.')+'</span></span></div>';
-  return '<h1>'+x('Ігри','Игры')+'</h1><p class="sub">'+x('Ігри та живе вивчення Біблії. Кожен проєкт окремий, обирай свій.','Игры и живое изучение Библии. Каждый проект отдельный, выбирай свой.')+'</p>'+(liveRooms().length?heavenLive():'')+'<div class="pjs">'+msTile()+hv+dv+soon+'</div>';}
+  return '<h1>'+x('Зростання','Рост','Grow')+'</h1><p class="sub">'+x('Домашні групи, ігри та живе вивчення Біблії. Кожен проєкт окремий, обирай свій.','Домашние группы, игры и живое изучение Библии. Каждый проект отдельный, выбирай свой.','Home groups, games and living Bible study. Each project is separate — pick yours.')+'</p>'+(liveRooms().length?heavenLive():'')+'<div class="pjs">'+msTile()+hv+dv+soon+'</div>';}
 function msTile(){var M=msNow(),S=msData(),dn=S.done.reduce(function(a,b){return a+b;},0);return '<button class="pj pj-ms" data-act="go" data-v="mission"><span class="pj-mark" aria-hidden="true">?</span><span class="pj-in"><small>'+x('Церква в дії · вся церква','Церковь в действии · вся церковь')+'</small><strong>'+esc(rL(M.t))+'</strong><span>'+x('Одне завдання на тиждень, а шлях до нього кожному випадає свій. У неділю ділимося.','Одно задание на неделю, а путь к нему каждому выпадает свой. В воскресенье делимся.')+'</span><em>'+(S.mine?x('Твій шлях ','Твой путь ')+(S.mine.path+1)+x(' із 6',' из 6'):x('Витягни свій шлях','Вытяни свой путь'))+(dn?' · '+x('зробили ','сделали ')+dn:'')+'</em></span></button>';}
 function vHeaven(){var head=back()+'<h1>HeavenOS</h1>';
   var cn=weekCard(),gc=myGroupCard(),open=cardOpen(),cd=CARDS[cn-1],dn=!!state.done[cn];
@@ -2864,7 +2866,7 @@ function vPrayer(){var s=state.seg.prayer,body='',needs=(D&&D.needs)||[];
       '<div class="row"><button class="going" data-act="pray" data-v="'+n.id+'" aria-pressed="'+n.prayed+'">'+(n.prayed?CHECK:'')+x('Я помолився','Я помолился')+'</button>'+(isAdmin()?'<button class="link mod-x" data-act="modDel" data-v="need:'+n.id+'">'+(state.confirm==='md:need:'+n.id?x('Точно прибрати?','Точно убрать?'):x('Прибрати','Убрать'))+'</button>':'')+'</div></li>';}).join('');
     body='<button class="btn accent wide" data-act="sheet" data-v="need">'+x('Написати молитовну потребу','Написать молитвенную нужду')+'</button>'+
       (mine?'<section class="stack"><h2>'+x('Мої потреби','Мои нужды')+'</h2><ul class="list">'+mine+'</ul></section>':'')+
-      '<section class="stack"><h2>'+x('Молімося разом','Молимся вместе')+'</h2>'+(all?'<ul class="list">'+all+'</ul>':'<p class="sub">'+x('Поки немає спільних потреб. Напиши свою, і церква помолиться.','Пока нет общих нужд. Напиши свою, и церковь помолится.')+'</p>')+'</section>';
+      '<section class="stack"><h2>'+x('Молімося разом','Молимся вместе')+'</h2>'+(all?'<ul class="list">'+all+'</ul>':'<p class="sub">'+x('Поки немає спільних потреб. Напиши свою, і церква помолиться.','Пока нет общих нужд. Напиши свою, и церковь помолится.')+'</p>')+'</section>'+musicPanel();
   }else if(s==='wall'){var ST={pending:x('На модерації','На модерации'),approved:x('Опубліковано','Опубликовано'),rejected:x('Не опубліковано','Не опубликовано')};
     var my=(D.myTests||[]).map(function(t){return '<li><div class="head"><p>'+esc(t.text)+'</p><span class="tag'+(t.status==='pending'?' wait':t.status==='approved'?' t-give':'')+'">'+ST[t.status]+'</span></div><p class="note">'+(t.sign==='anon'?x('Анонімно','Анонимно'):x('З ім’ям','С именем'))+'</p>'+
       '<div class="row"><button class="link" data-act="delTest" data-v="'+t.id+'">'+x('Забрати свідчення','Забрать свидетельство')+'</button></div></li>';}).join('');
@@ -2942,6 +2944,7 @@ function musicPanel(){var tr=mpTrack(),on=musicOn&&mKind===tr[0],pl=(D&&D.settin
     '<div class="mp-foot"><div class="mp-sl" role="group" aria-label="'+x('Вимкнути через','Выключить через')+'">'+[[0,'∞'],[15,x('15 хв','15 мин')],[30,x('30 хв','30 мин')]].map(function(q){return '<button data-act="mpSleep" data-v="'+q[0]+'" aria-pressed="'+(mpSleep===q[0])+'">'+q[1]+'</button>';}).join('')+'</div>'+
       (pl?'<a class="mp-pl" href="'+esc(pl)+'" target="_blank" rel="noopener">'+x('Плейлист церкви','Плейлист церкви')+' ↗</a>':'')+'</div></section>';}
 function mpPaint(){var el=document.querySelector('.mp');if(!el)return;var t=document.createElement('div');t.innerHTML=musicPanel();el.replaceWith(t.firstChild);}
+function langSwitch(){return '<div class="lang" role="group" aria-label="'+x('Мова','Язык','Language')+'"><button data-act="lang" data-v="uk" aria-pressed="'+(state.lang==='uk')+'">UA</button><button data-act="lang" data-v="ru" aria-pressed="'+(state.lang==='ru')+'">RU</button><button data-act="lang" data-v="en" aria-pressed="'+(state.lang==='en')+'">EN</button></div>';}
 function vCabinet(){var mm=myMeetings(),done=readCount(),teams=TEAMS.filter(function(t){return state.serve[t[0]];}).map(function(t){return L(t[1]);}),cdone=Object.keys(state.done).length,me=(D&&D.me)||{};
   var nmine=((D&&D.needs)||[]).filter(function(n){return n.mine;}).length;
   return back()+'<h1>'+(me.name?esc(me.name):x('Мій кабінет','Мой кабинет'))+'</h1>'+roleCard()+
@@ -2949,12 +2952,13 @@ function vCabinet(){var mm=myMeetings(),done=readCount(),teams=TEAMS.filter(func
    '<section class="stack"><h2>'+x('Я буду','Я буду','I\'m coming')+'</h2>'+(mm.length?'<ul class="mts">'+mm.map(function(o){
       return '<li class="mt"><i class="bar b-'+o.it.kind+'"></i><button class="mt-main" data-act="meet" data-v="'+o.key+'"><strong>'+esc(L(o.it.title))+'</strong><span>'+rel(o.d)+', '+o.it.time+'</span></button>'+goingBtn(o.key)+'</li>';}).join('')+'</ul>':
      '<p class="sub">'+x('Поки що жодної позначки. Познач «Я буду» біля зустрічі, і вона з’явиться тут.','Пока ни одной отметки. Отметь «Я буду» у встречи, и она появится здесь.')+'</p>')+'</section>'+
-   musicPanel()+mySermons()+'<section class="stack"><h2>'+x('Моє','Моё')+'</h2><div class="kv">'+
+   mySermons()+'<section class="stack"><h2>'+x('Моє','Моё')+'</h2><div class="kv">'+
      '<div><span>'+x('Нотатки й виділення в Біблії','Заметки и выделения в Библии')+'</span><b>'+(Object.keys(state.notes).length+Object.keys(state.hl).length)+'</b></div>'+
      '<div><span>'+x('Крок на тиждень','Шаг на неделю')+'</span><span>'+(state.step.text?esc(state.step.text)+(state.step.done?' ✓':''):x('не обрано','не выбран'))+'</span></div>'+
      '<div><span>'+x('Мої молитовні потреби','Мои молитвенные нужды')+'</span><b>'+nmine+'</b></div>'+
      '<div><span>Mind DEVS</span><span>'+dvLevelLabel()+'</span></div>'+'<div><span>'+x('Служіння','Служение')+'</span><span>'+(teams.length?esc(teams.join(', ')):x('не обрано','не выбрано'))+'</span></div></div></section>'+
-   '<section class="stack"><h2>'+x('Налаштування','Настройки')+'</h2>'+verseRow()+
+   '<section class="stack"><h2>'+x('Налаштування','Настройки')+'</h2>'+
+     '<div class="between" style="align-items:center"><span>'+x('Мова','Язык','Language')+'</span>'+langSwitch()+'</div>'+verseRow()+
      '<div class="row"><button class="btn tint small" data-act="sheet" data-v="theme">'+x('Тема оформлення та музика','Тема оформления и музыка')+'</button>'+
        (canHome()?'<button class="btn tint small" data-act="homeIcon">'+x('Іконка на головний екран','Иконка на главный экран')+'</button>':'')+
        '<button class="btn tint small" data-act="invite">'+x('Запросити друга','Пригласить друга')+'</button></div></section>'+
@@ -2976,7 +2980,7 @@ var HUB_IC={admin:'<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="
 var hubLast=0,HUB_C={books:'#C9792E',admin:'#E0348F',leader:'#F2A237',cabinet:'#7B6CFF',prayer:'#F5A524',events:'#4F7BFF',community:'#FF5C7A',media:'#18B3A0',newcomer:'#FF8A3D',give:'#5BB318',about:'#8A93A6'};
 function vMore(){var rows=[],A=D&&D.admin,badge=A?(A.tests||[]).length+(A.ads||[]).length+((A.stats||{}).newRequests||0):0;
   if(isAdmin())rows.push(['admin','leaders',x('Адмінка','Админка'),x('Події, модерація, люди, налаштування, розсилка','События, модерация, люди, настройки, рассылка'),badge]);
-  if(isLeaderRole())rows.push(['leader','heaven',x('Кабінет лідера','Кабинет лидера'),x('Хто прийде, хто був на зустрічі','Кто придёт, кто был на встрече')]);
+  if(isLeaderRole())rows.push(['leader','heaven',x('Кабінет лідера','Кабинет лидера'),x('Хто прийде на зустріч','Кто придёт на встречу')]);
   rows=rows.concat([
   ['cabinet','prayer',x('Мій кабінет','Мой кабинет'),x('Мої зустрічі, читання, кроки','Мои встречи, чтение, шаги')],
   ['prayer','prayer',x('Молитва','Молитва'),x('Потреби, свідчення, розмова з пастором','Нужды, свидетельства, разговор с пастором')],
@@ -2990,11 +2994,12 @@ function vMore(){var rows=[],A=D&&D.admin,badge=A?(A.tests||[]).length+(A.ads||[
   var now=Date.now(),enter=now-hubLast>1500&&motionOk();hubLast=now;
   return '<h1 class="hub-h">'+x('Розділи','Разделы','Sections')+'</h1><nav class="hub'+(enter?' in':'')+'">'+rows.map(function(r,i){return '<button class="hub-row" data-act="go" data-v="'+r[0]+'" style="--c:'+(HUB_C[r[0]]||'#8A93A6')+';--d:'+(i*45)+'ms"><span class="hub-ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+(HUB_IC[r[0]]||'').replace(/<(path|circle|rect)/g,'<$1 pathLength="1"')+'</svg></span><span class="hub-t"><strong>'+r[2]+'</strong><small>'+r[3]+'</small></span>'+(r[4]?'<span class="badge">'+r[4]+'</span>':'')+CHEV+'</button>';}).join('')+'</nav>';}
 function back(to){to=to||PARENT[state.sub]||'more';return '<button class="back" data-act="go" data-v="'+to+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>'+tabName(to)+'</button>';}
-function tabName(t){return {today:x('Сьогодні','Сегодня'),bible:x('Біблія','Библия'),guide:x('Провідник','Проводник'),play:x('Ігри','Игры'),more:x('Розділи','Разделы','Sections')}[t]||'';}
-function reqRow(label,val){return '<div><div><small>'+label+'</small><code>'+val+'</code></div><button class="btn tint small" data-act="copy" data-v="'+val+'">'+x('Копіювати','Копировать')+'</button></div>';}
+function tabName(t){return {today:x('Сьогодні','Сегодня'),bible:x('Біблія','Библия'),guide:x('Провідник','Проводник'),play:x('Зростання','Рост','Grow'),more:x('Розділи','Разделы','Sections')}[t]||'';}
+function reqRow(label,val,show){return '<div><div><small>'+label+'</small><code>'+(show||val)+'</code></div><button class="btn tint small" data-act="copy" data-v="'+val+'">'+x('Копіювати','Копировать')+'</button></div>';}
 function vGive(){var st=D.settings,rows=[[x('Картка Monobank','Карта Monobank'),st.mono],['IBAN',st.iban],[x('Отримувач','Получатель'),st.recipient],[x('Код ЄДРПОУ','Код ЕГРПОУ'),st.edrpou],[x('Призначення платежу','Назначение платежа'),st.purpose],['PayPal',st.paypal]].filter(function(r){return r[1];});
   return back()+'<h1>'+x('Пожертви','Пожертвования')+'</h1>'+
-  '<div class="kv">'+rows.map(function(r){return reqRow(r[0],esc(r[1]));}).join('')+'</div>'+
+  (/^https:\/\/send\.monobank\.ua\//.test(st.monoJar||'')?'<a class="btn accent wide" href="'+esc(st.monoJar)+'" target="_blank" rel="noopener">'+x('Пожертвувати через Monobank','Пожертвовать через Monobank','Give via Monobank')+'</a><p class="note">'+x('Відкриється банка церкви: картка будь-якого банку, Apple Pay або Google Pay. Або скопіюй реквізити нижче.','Откроется банка церкви: карта любого банка, Apple Pay или Google Pay. Или скопируй реквизиты ниже.','Opens the church jar: any bank card, Apple Pay or Google Pay. Or copy the details below.')+'</p>':'')+
+  '<div class="kv">'+rows.map(function(r){var v=String(r[1]);return r[0]==='IBAN'?reqRow(r[0],esc(v.replace(/\s+/g,'')),esc(v.replace(/\s+/g,'').replace(/(.{4})(?=.)/g,'$1 '))):reqRow(r[0],esc(v));}).join('')+'</div>'+
   (DEMO?'<p class="note">'+x('Реквізити взято з опису YouTube-каналу церкви. Адміністратор змінює їх в адмінці.','Реквизиты взяты из описания YouTube-канала церкви. Администратор меняет их в админке.')+'</p>':'')+
   '<section class="card"><h2 class="t3">'+x('Проєкти та звіти','Проекты и отчёты')+'</h2><p class="sub">'+x('Тут з’являться окремі збори зі шкалою та звіти про витрати, коли церква почне їх публікувати.','Здесь появятся отдельные сборы со шкалой и отчёты о расходах, когда церковь начнёт их публиковать.')+'</p></section>';}
 /* «Я тут новий»: a comic-strip tour of the app, hosted by Benya the lamb */
@@ -3055,10 +3060,10 @@ function vNewcomer(){var sun=RULES.filter(function(r){return r.kind==='sunday';}
     [x('Бачиш круглу кнопку, що світиться внизу? Це Провідник. Шкода, що в мене такого не було, коли я пішов не туди.','Видишь круглую кнопку, которая светится внизу? Это Проводник. Жаль, у меня такого не было, когда я свернул не туда.','See the glowing round button at the bottom? That is the Guide. Wish I had one when I took the wrong turn.'),
      x('Питай, де що лежить, або просто поділись, що на серці. Він не штучний інтелект, зате ніколи не скаже «ваш дзвінок дуже важливий для нас».','Спрашивай, где что лежит, или просто поделись, что на сердце. Он не искусственный интеллект, зато никогда не скажет «ваш звонок очень важен для нас».','Ask where things are, or just share what is on your heart. It is not AI, but it will never say «your call is important to us».')],
     '<button class="btn tint small" data-act="go" data-v="guide">'+x('Привітатися з Провідником','Поздороваться с Проводником','Say hi to the Guide')+'</button>',x('Дзінь!','Дзинь!','Ding!'),-.8));
-  P.push(cxPanel(5,x('Розділ 6. Ігри','Глава 6. Игры','Chapter 6. Games'),'<div class="cx-cards"><i></i><i></i><i></i></div>',
-    [x('В «Іграх» живе Mind DEVS: слова Ісуса як тренажер для розуму. Одна картка за раз, рівні й нагороди.','В «Играх» живёт Mind DEVS: слова Иисуса как тренажёр для ума. Одна карточка за раз, уровни и награды.','«Games» is home to Mind DEVS: the words of Jesus as a gym for the mind. One card at a time, levels and rewards.'),
+  P.push(cxPanel(5,x('Розділ 6. Зростання','Глава 6. Рост','Chapter 6. Grow'),'<div class="cx-cards"><i></i><i></i><i></i></div>',
+    [x('У «Зростанні» живе Mind DEVS: слова Ісуса як тренажер для розуму. Одна картка за раз, рівні й нагороди.','В «Росте» живёт Mind DEVS: слова Иисуса как тренажёр для ума. Одна карточка за раз, уровни и награды.','«Grow» is home to Mind DEVS: the words of Jesus as a gym for the mind. One card at a time, levels and rewards.'),
      x('А ще «Церква в дії»: одне завдання тижня на всю церкву, але в кожного свій шлях.','А ещё «Церковь в действии»: одно задание недели на всю церковь, но у каждого свой путь.','And «Church in action»: one task a week for the whole church, with a path of your own.')],
-    '<button class="btn tint small" data-act="go" data-v="play">'+x('До ігор','К играм','To the games')+'</button>','',.6));
+    '<button class="btn tint small" data-act="go" data-v="play">'+x('До «Зростання»','В «Рост»','Open Grow')+'</button>','',.6));
   P.push(cxPanel(6,x('Розділ 7. Ти не з Києва?','Глава 7. Ты не из Киева?','Chapter 7. Not in Kyiv?'),'<svg class="cx-globe" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="36" fill="#9AD0FF" stroke="currentColor" stroke-width="2.5"/><g class="sp"><path d="M30 34c8 4 10 12 4 18s-2 14 6 16M58 20c-4 8 4 12 12 10s10 10 4 16" fill="none" stroke="#63B216" stroke-width="7" stroke-linecap="round"/></g><ellipse cx="50" cy="50" rx="16" ry="36" fill="none" stroke="rgba(0,0,0,.18)" stroke-width="1.6"/><path d="M14 50h72" stroke="rgba(0,0,0,.18)" stroke-width="1.6"/><g class="pin"><path d="M64 22c0-5 4-8 8-8s8 3 8 8c0 6-8 13-8 13s-8-7-8-13z" fill="#FF6F5B" stroke="currentColor" stroke-width="2"/><circle cx="72" cy="22" r="2.6" fill="#fff"/></g></svg>',
     [x('Не біда! Я он теж зараз невідомо де, і нічого, мене все одно знайдуть.','Не беда! Я вот тоже сейчас неизвестно где, и ничего, меня всё равно найдут.','No problem! I am not exactly sure where I am either, and it is fine: I will still be found.'),
      x('Служіння можна дивитися онлайн, домашня група може бути у відеодзвінку, а молитися разом можна з будь-якого міста світу.','Служение можно смотреть онлайн, домашняя группа может быть в видеозвонке, а молиться вместе можно из любого города мира.','Watch the service online, join a home group by video call, and pray together from any city in the world.')],
@@ -3093,10 +3098,10 @@ function vLeader(){if(!isLeaderRole())return back()+'<h1>'+x('Кабінет л�
   var now=new Date(),t0=day0(now),occ=[],L2=(D&&D.leader)||{};
   for(var i=0;i<14;i++){var d=addDays(t0,i);dayItems(d).forEach(function(it){if(it.link)return;var key=it.id+'@'+iso(d);
     if(occDate(iso(d),it.time).getTime()<now.getTime()-4*36e5)return;var list=L2[key]||[];if(!list.length&&it.kind!=='heaven')return;occ.push({it:it,d:d,key:key,list:list});});}
-  return back()+'<h1>'+x('Кабінет лідера','Кабинет лидера')+'</h1><p class="sub">'+x('Хто відмітив «Я буду» на найближчі два тижні. Під час зустрічі познач, хто на місці.','Кто отметил «Я буду» на ближайшие две недели. Во время встречи отметь, кто на месте.')+'</p>'+
-   (occ.length?occ.map(function(o){var came=o.list.filter(function(p){return p.present;}).length;
-     return '<section class="stack"><div class="between"><h2>'+esc(L(o.it.title))+'</h2><span class="num">'+o.list.length+'</span></div><p class="sub">'+WD[state.lang][o.d.getDay()]+', '+fmtDay(o.d)+', '+o.it.time+(o.it.who?', '+esc(L(o.it.who)):'')+(came?'. '+x('На місці: ','На месте: ')+came:'')+'</p>'+
-     (o.list.length?'<ul class="list">'+o.list.map(function(p){return '<li class="person"><div><strong>'+esc(p.name)+'</strong><p class="note">'+contactBits(p)+'</p></div><button class="going" data-act="presence" data-v="'+o.key+'|'+p.id+'" aria-pressed="'+!!p.present+'">'+(p.present?CHECK:'')+x('На місці','На месте')+'</button></li>';}).join('')+'</ul>':
+  return back()+'<h1>'+x('Кабінет лідера','Кабинет лидера')+'</h1><p class="sub">'+x('Хто відмітив «Я буду» на найближчі два тижні.','Кто отметил «Я буду» на ближайшие две недели.','Who tapped «I’m coming» for the next two weeks.')+'</p>'+
+   (occ.length?occ.map(function(o){
+     return '<section class="stack"><div class="between"><h2>'+esc(L(o.it.title))+'</h2><span class="num">'+o.list.length+'</span></div><p class="sub">'+WD[state.lang][o.d.getDay()]+', '+fmtDay(o.d)+', '+o.it.time+(o.it.who?', '+esc(L(o.it.who)):'')+'</p>'+
+     (o.list.length?'<ul class="list">'+o.list.map(function(p){return '<li class="person"><div><strong>'+esc(p.name)+'</strong><p class="note">'+contactBits(p)+'</p></div></li>';}).join('')+'</ul>':
        '<p class="note">'+x('Поки ніхто не відмітився.','Пока никто не отметился.')+'</p>')+'</section>';}).join(''):'<p class="sub">'+x('Найближчих зустрічей немає.','Ближайших встреч нет.')+'</p>')+
    (DEMO?'<p class="note">'+x('У демо імена й номери вигадані.','В демо имена и номера вымышлены.')+'</p>':'');}
 
@@ -3136,7 +3141,7 @@ function vAdmin(){if(!isAdmin())return back()+'<h1>'+x('Адмінка','Адм�
      '<p class="note">'+x('Нагадування отримують ті, хто відмітив «Я буду». 0 вимикає нагадування.','Напоминание получают те, кто отметил «Я буду». 0 выключает напоминания.')+'</p>'+
      f('cardStart',x('Картка HeavenOS №1 припадає на тиждень із датою','Карточка HeavenOS №1 приходится на неделю с датой'),'date')+
      '<h2>'+x('Адреса','Адрес')+'</h2>'+f('address_uk','Адреса (укр)')+f('address_ru','Адрес (рус)')+f('map',x('Що шукати на мапі','Что искать на карте'))+
-     '<h2>'+x('Пожертви','Пожертвования')+'</h2>'+f('mono','Monobank')+f('iban','IBAN')+f('recipient',x('Отримувач','Получатель'))+f('edrpou',x('Код ЄДРПОУ','Код ЕГРПОУ'))+f('purpose',x('Призначення платежу','Назначение платежа'))+f('paypal','PayPal')+
+     '<h2>'+x('Пожертви','Пожертвования')+'</h2>'+f('monoJar',x('Посилання на банку Monobank (send.monobank.ua/…)','Ссылка на банку Monobank (send.monobank.ua/…)','Monobank jar link (send.monobank.ua/…)'))+f('mono','Monobank')+f('iban','IBAN')+f('recipient',x('Отримувач','Получатель'))+f('edrpou',x('Код ЄДРПОУ','Код ЕГРПОУ'))+f('purpose',x('Призначення платежу','Назначение платежа'))+f('paypal','PayPal')+
      '<h2>'+x('Молодь','Молодёжь')+'</h2>'+f('youth_uk','Текст (укр)','area')+f('youth_ru','Текст (рус)','area')+
      '<h2>'+x('Команди служіння','Команды служения')+'</h2>'+f('teams',x('Кожна команда з нового рядка: Назва | Название','Каждая команда с новой строки: Назва | Название'),'area')+
      '<h2>'+x('Соцмережі','Соцсети')+'</h2>'+f('tg','Telegram','url')+f('ig','Instagram','url')+f('yt','YouTube','url')+f('playlist',x('Плейлист церкви (Spotify, YouTube Music, Apple Music)','Плейлист церкви (Spotify, YouTube Music, Apple Music)'),'url')+f('fb','Facebook','url')+
@@ -3284,7 +3289,7 @@ function wxStart(){var cv=document.getElementById('wxc');if(!cv)return;if(!motio
 /* ---------- three thanks: a short evening habit, kept with the person's notes ---------- */
 var thEdit=false;
 function thanksCard(){var t=iso(new Date()),list=(state.thanks||{})[t]||[],h=new Date().getHours(),eve=h>=17||h<4,days=Object.keys(state.thanks||{}).filter(function(k){return (state.thanks[k]||[]).some(function(q){return q;});}).length;
-  var done=list.filter(function(q){return q;}).length;
+  var done=list.filter(function(q){return q;}).length;if(!eve&&!done)return '';
   return '<section class="card thanks'+(eve?' eve':'')+'"><div class="between" style="align-items:center"><h2>'+x('Три подяки','Три благодарности')+'</h2>'+(days?'<span class="num">'+days+' '+x('дн.','дн.')+'</span>':'')+'</div>'+
     (done===3&&!thEdit?'<ol class="th-list">'+list.map(function(q){return '<li>'+esc(q)+'</li>';}).join('')+'</ol><div class="row"><button class="btn tint small" data-act="thanksEdit">'+x('Змінити','Изменить')+'</button></div>':
     '<p class="sub">'+(eve?x('День добігає кінця. За що ти сьогодні вдячний Богові? Три прості речі.','День подходит к концу. За что ты сегодня благодарен Богу? Три простые вещи.'):x('Протягом дня помічай добре. Увечері запиши три речі, за які вдячний.','В течение дня замечай хорошее. Вечером запиши три вещи, за которые благодарен.'))+'</p>'+
@@ -3317,7 +3322,7 @@ function sermonToday(){var nx=smNext(),last=smLast(7),h='';
   if(last&&(!nx||nx.date>iso(new Date()))){var P=parseSermon(last.text),saved=!!(state.sermSaved||{})[last.id];
     h+='<section class="sm sm-sum"><p class="sm-k">'+x('Підсумок проповіді','Итог проповеди')+' · '+fmtDay(smDate(last))+'</p><h2>'+esc(smTitle(last))+'</h2>'+(P.core?'<p class="sm-core">'+esc(P.core)+'</p>':'')+
       (P.points.length?'<ol class="sm-pts">'+P.points.slice(0,3).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ol>':'')+
-      '<div class="row"><button class="btn accent small" data-act="sermon" data-v="'+esc(last.id)+'">'+x('Відкрити повністю','Открыть полностью')+'</button>'+(saved?'<span class="sm-saved">'+CHECK+x('Картка збережена','Карточка сохранена')+'</span>':'<button class="btn tint small" data-act="smSave" data-v="'+esc(last.id)+'">'+x('Зберегти картку','Сохранить карточку')+'</button>')+'</div></section>';}
+      '<div class="row"><button class="btn accent small" data-act="sermon" data-v="'+esc(last.id)+'">'+x('Відкрити повністю','Открыть полностью')+'</button>'+(saved?'<span class="sm-saved">'+CHECK+x('Картка збережена','Карточка сохранена')+'</span>':'<button class="btn tint small" data-act="smSave" data-v="'+esc(last.id)+'">'+x('Зберегти в кабінет','Сохранить в кабинет','Save to my room')+'</button>')+'</div></section>';}
   if(nx&&nx.status!=='published'){var q=smAsk(nx);
     h+='<section class="sm sm-next"><p class="sm-k">'+x('Наступна проповідь','Следующая проповедь')+' · '+esc(smWhen(nx))+'</p><h2>'+esc(smTitle(nx))+'</h2>'+(nx.speaker?'<p class="sm-who">'+esc(nx.speaker)+'</p>':'')+
       (q.length?'<div class="sm-ask"><p class="note">'+x('Подумай до неділі','Подумай до воскресенья')+'</p>'+q.slice(0,3).map(function(t){return '<p>'+esc(t)+'</p>';}).join('')+'</div>':'')+
@@ -3495,7 +3500,7 @@ function homeDay(){var now=new Date(),l=state.log[iso(now)]||{},nx=nextChapter()
      lamp(!!l.r,'bible',nx?nx.b+':'+nx.c:'0:1','r',x('Розділ дня','Глава дня'),nx?bookName(nx.b)+' '+nx.c:x('Новий Завіт','Новый Завет'))+
      lamp(!!l.k,'sheet','kind','k',x('Добре слово','Доброе слово'),x('Ближньому','Ближнему'))+
      lamp(!!l.p,'go','prayer','p',x('Молитва','Молитва'),x('За когось','За кого-то'))+'</div>'+
-    '<div class="weektile"><div><span>'+x('Днів поспіль','Дней подряд')+'</span><b>'+num('streak',st)+'</b></div><div class="wbars">'+bars+'</div></div></section>';}
+    (st<1?'':'<div class="weektile"><div><span>'+x('Днів поспіль','Дней подряд')+'</span><b>'+num('streak',st)+'</b></div><div class="wbars">'+bars+'</div></div>')+'</section>';}
 
 /* ---------- sheets ---------- */
 function sheet(){var s=state.sheet,inner='';if(s!=='verseAt')WH.fresh=false;if(!s)return '';
@@ -3622,8 +3627,7 @@ function render(){var root=document.getElementById('app'),m=root.querySelector('
   var fx=document.getElementById('fx');
   root.innerHTML='<header class="top"><button class="mark" data-act="go" data-v="today" aria-label="'+x('На головну','На главную')+'">Місто <b>Світла</b></button>'+
     '<div class="top-r">'+(state.skin?'<button class="icon-btn" data-act="music" aria-pressed="'+musicOn+'" aria-label="'+x('Музика теми','Музыка темы')+'"><svg viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.500" cy="18" r="2.500"/><circle cx="16.500" cy="16" r="2.500"/></svg></button>':'')+
-    '<button class="icon-btn" data-act="sheet" data-v="theme" aria-label="'+x('Тема оформлення','Тема оформления')+'"><svg viewBox="0 0 24 24"><path d="M12 3l1.900 5.200L19 10l-5.100 1.800L12 17l-1.900-5.200L5 10l5.100-1.800z"/><path d="M19 15l.7 1.800 1.800.7-1.800.7L19 20l-.7-1.800-1.800-.7 1.800-.7z"/></svg></button>'+
-    '<div class="lang" role="group" aria-label="'+x('Мова','Язык')+'"><button data-act="lang" data-v="uk" aria-pressed="'+(state.lang==='uk')+'">UA</button><button data-act="lang" data-v="ru" aria-pressed="'+(state.lang==='ru')+'">RU</button><button data-act="lang" data-v="en" aria-pressed="'+(state.lang==='en')+'">EN</button></div>'+
+    '<button class="icon-btn theme-btn" data-act="sheet" data-v="theme" aria-label="'+x('Тема оформлення','Тема оформления','Theme')+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3l1.900 5.200L19 10l-5.100 1.800L12 17l-1.900-5.200L5 10l5.100-1.800z"/><path d="M19 15l.7 1.800 1.800.7-1.800.7L19 20l-.7-1.800-1.800-.7 1.800-.7z"/></svg><span>'+x('Тема','Тема','Theme')+'</span></button>'+
     '<button class="me" data-act="go" data-v="cabinet" aria-label="'+x('Мій кабінет','Мой кабинет')+'">'+esc(initial())+'</button></div></header>'+
     '<main id="main">'+view+'</main>'+verseBar()+
     '<nav class="tabs" aria-label="'+x('Розділи','Разделы')+'">'+TABS.map(function(t){if(t==='guide')return '<button class="g-tab" data-act="go" data-v="guide"'+(state.tab===t?' aria-current="page"':'')+'><span class="g-orb" aria-hidden="true"><svg viewBox="0 0 24 24">'+ICON.guide+'</svg></span>'+tabName(t)+'</button>';

@@ -41,6 +41,7 @@ var SETTINGS_DEFAULT = {
   address_uk: 'Київ, пр. Степана Бандери, 23, метро «Почайна»',
   address_ru: 'Киев, пр. Степана Бандеры, 23, метро «Почайна»',
   map: 'проспект Степана Бандери 23 Київ',
+  monoJar: '', // посилання на банку: https://send.monobank.ua/jar/…
   mono: '4441 1110 4143 8320',
   iban: 'UA783052990000026005030102192',
   recipient: 'РО РГ ХМЦ МІСТО СВІТЛА',
@@ -696,6 +697,7 @@ var ACTIONS = {
       if (!(k in SETTINGS_DEFAULT)) continue;
       var v = txt(s[k], 3000);
       if (k === 'verseTime' && !/^([01]\d|2[0-3]):[0-5]\d$/.test(v)) throw new Error('Час вірша вкажіть у форматі 07:30');
+      if (k === 'monoJar' && v && !/^https:\/\/send\.monobank\.ua\//.test(v)) throw new Error('Посилання на банку має починатися з https://send.monobank.ua/');
       if (k === 'cardStart' && !/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error('Дату старту карток вкажіть як 2026-11-09');
       var r = all.filter(function (x) { return x.key === k; })[0];
       if (r) { r.value = v; setRow('Settings', r); } else addRow('Settings', { key: k, value: v });
