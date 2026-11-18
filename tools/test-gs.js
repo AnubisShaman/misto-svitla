@@ -1,4 +1,6 @@
 // Mock Google Apps Script runtime to exercise Code.gs end to end in Node.
+// Сервер работает по киевскому времени; без этого тест падает на машинах в UTC.
+process.env.TZ = 'Europe/Kyiv';
 const fs = require('fs'), crypto = require('crypto'), assert = require('assert');
 const src = fs.readFileSync(__dirname + '/../server/Code.gs', 'utf8');
 const TOKEN = '123456:TEST-token', ADMIN = '1001';
