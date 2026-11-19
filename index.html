@@ -1561,7 +1561,7 @@ function demoApi(a,d){if(!DS)demoInit();if(a==='roleInvite')return {role:d.role,
   if(a==='personal'||a==='sendImage')return {ok:true};
   if(a==='verseAdd'){if(['leader','minister','admin'].indexOf(DS.me.role)<0)demoErr(x('Лише для лідерів','Только для лидеров'));var vl=DS.verses[d.card]||(DS.verses[d.card]=[]);(d.verses||[]).forEach(function(v,i){if(vl.length<30)vl.push({id:'v'+now+'_'+i,ref:v.ref,uk:v.uk,who:DS.me.name||x('Ти','Ты')});});}
   if(a==='sermonSave'){var so=d.sermon||{};if(!/^\d{4}-\d{2}-\d{2}$/.test(so.date||''))demoErr(x('Вкажіть дату проповіді','Укажите дату проповеди'));if(!String(so.title_uk||'').trim())demoErr(x('Заповніть поле «Тема»','Заполните поле «Тема»'));if(so.status==='published'&&!String(so.text||'').trim())demoErr(x('Додайте текст підсумку, щоб опублікувати','Добавьте текст итога, чтобы опубликовать'));
-    DS.sermons=DS.sermons||[];var ex=DS.sermons.filter(function(q){return q.id===so.id;})[0],rec={id:so.id||('s'+now),date:so.date,time:so.time||'11:00',title:{uk:so.title_uk,ru:so.title_ru||so.title_uk},speaker:so.speaker||'',verse:so.verse||'',ask:so.ask||'',text:so.text||'',status:so.status==='published'?'published':'announce'};
+    DS.sermons=DS.sermons||[];var ex=DS.sermons.filter(function(q){return q.id===so.id;})[0],rec={id:so.id||('s'+now),date:so.date,time:so.time||'11:00',title:{uk:so.title_uk,ru:so.title_ru||so.title_uk},speaker:so.speaker||'',verse:so.verse||'',ask:so.ask||'',text:so.text||'',video:/^https:\/\//.test(so.video||'')?so.video:'',status:so.status==='published'?'published':'announce'};
     if(ex)Object.assign(ex,rec);else DS.sermons.push(rec);DS.sermons.sort(function(p,q){return p.date<q.date?1:-1;});}
   if(a==='msDraw'){demoMission();var dm=DS.ms;if(!dm.mine)dm.mine={path:d.path,swaps:0,status:'drawn'};else if(d.swap){if(dm.mine.swaps>=1)demoErr(x('Шлях можна змінити лише один раз','Путь можно сменить только один раз'));if(dm.mine.status!=='drawn')demoErr(x('Ти вже поділився історією цього тижня','Ты уже поделился историей на этой неделе'));dm.mine.path=d.path;dm.mine.swaps=1;}}
   if(a==='msDone'){demoMission();if(!DS.ms.mine)demoErr(x('Спершу витягни свій шлях','Сначала вытяни свой путь'));DS.ms.mine.status='done';DS.ms.mine.text=String(d.text).slice(0,500);DS.ms.mine.anon=!!d.anon;}
@@ -1628,8 +1628,10 @@ function parseDates(str){var out=[],bad=false,now=new Date();String(str).split(/
     var dt=new Date(y,mo-1,d);if(dt.getMonth()!==mo-1||dt.getDate()!==d){bad=true;return;}var k=iso(dt);if(out.indexOf(k)<0)out.push(k);});
   return bad?null:out.sort();}
 function goBack(){if(state.sheet){state.sheet=null;render();return;}if(state.sub==='room'){leaveRoom();return;}if(state.sub){var to=state.sub==='admin'||state.sub==='leader'||state.sub==='cabinet'?'more':'more';go(to);commit();}}
-function openDeepLink(){var hr=(location.hash||'').replace('#','');if(hr.indexOf('room=')===0){openRoom(decodeURIComponent(hr.slice(5)));return;}var m=String(location.search).match(/[?&]v=(\d+):(\d+):(\d+)/);if(m){openBible([+m[1],+m[2],+m[3]]);render();}}
-var lastLoad=0;
+function openDeepLink(){var spm=String((tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||'').match(/^ev_([A-Za-z0-9]+)_(\d{4})(\d{2})(\d{2})$/);
+  if(spm&&!deepDone){deepDone=true;var ek=spm[1]+'@'+spm[2]+'-'+spm[3]+'-'+spm[4];if(byId(spm[1])&&occDate(ek.split('@')[1],byId(spm[1]).time).getTime()>Date.now()-4*36e5){state.tab='today';state.sub=null;state.sheet='meet';state.sheetData=ek;render();return;}}
+  var hr=(location.hash||'').replace('#','');if(hr.indexOf('room=')===0){openRoom(decodeURIComponent(hr.slice(5)));return;}var m=String(location.search).match(/[?&]v=(\d+):(\d+):(\d+)/);if(m){openBible([+m[1],+m[2],+m[3]]);render();}}
+var lastLoad=0,deepDone=false;
 /* Refresh shared data when the person comes back to the app (Telegram keeps it alive in the background). */
 document.addEventListener('visibilitychange',function(){if(!LIVE||document.hidden||BLOCK||busy||Date.now()-lastLoad<30000)return;lastLoad=Date.now();post('load').then(function(nd){D=nd;applyD();cacheD();render();}).catch(function(){});});
 function boot(){
@@ -3322,7 +3324,7 @@ function sermonToday(){var nx=smNext(),last=smLast(7),h='';
   if(last&&(!nx||nx.date>iso(new Date()))){var P=parseSermon(last.text),saved=!!(state.sermSaved||{})[last.id];
     h+='<section class="sm sm-sum"><p class="sm-k">'+x('Підсумок проповіді','Итог проповеди')+' · '+fmtDay(smDate(last))+'</p><h2>'+esc(smTitle(last))+'</h2>'+(P.core?'<p class="sm-core">'+esc(P.core)+'</p>':'')+
       (P.points.length?'<ol class="sm-pts">'+P.points.slice(0,3).map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ol>':'')+
-      '<div class="row"><button class="btn accent small" data-act="sermon" data-v="'+esc(last.id)+'">'+x('Відкрити повністю','Открыть полностью')+'</button>'+(saved?'<span class="sm-saved">'+CHECK+x('Картка збережена','Карточка сохранена')+'</span>':'<button class="btn tint small" data-act="smSave" data-v="'+esc(last.id)+'">'+x('Зберегти в кабінет','Сохранить в кабинет','Save to my room')+'</button>')+'</div></section>';}
+      '<div class="row"><button class="btn accent small" data-act="sermon" data-v="'+esc(last.id)+'">'+x('Відкрити повністю','Открыть полностью')+'</button>'+smVideo(last,'btn tint small')+(saved?'<span class="sm-saved">'+CHECK+x('Картка збережена','Карточка сохранена')+'</span>':'<button class="btn tint small" data-act="smSave" data-v="'+esc(last.id)+'">'+x('Зберегти в кабінет','Сохранить в кабинет','Save to my room')+'</button>')+'</div></section>';}
   if(nx&&nx.status!=='published'){var q=smAsk(nx);
     h+='<section class="sm sm-next"><p class="sm-k">'+x('Наступна проповідь','Следующая проповедь')+' · '+esc(smWhen(nx))+'</p><h2>'+esc(smTitle(nx))+'</h2>'+(nx.speaker?'<p class="sm-who">'+esc(nx.speaker)+'</p>':'')+
       (q.length?'<div class="sm-ask"><p class="note">'+x('Подумай до неділі','Подумай до воскресенья')+'</p>'+q.slice(0,3).map(function(t){return '<p>'+esc(t)+'</p>';}).join('')+'</div>':'')+
@@ -3336,7 +3338,8 @@ function sermonFull(s){var P=parseSermon(s.text),saved=!!(state.sermSaved||{})[s
     (P.qs.length?'<h3>'+x('Питання для групи','Вопросы для группы')+'</h3><ul class="sm-qs">'+P.qs.map(function(q){return '<li>'+esc(q)+'</li>';}).join('')+'</ul>':'')+
     (P.practice?'<div class="sm-pr"><p class="note">'+x('Практика на тиждень','Практика на неделю')+'</p><p>'+esc(P.practice)+'</p></div>':'')+
     '<div class="row">'+(saved?'<span class="sm-saved">'+CHECK+x('Пам’ятна картка збережена','Памятная карточка сохранена')+'</span>':'<button class="btn accent" data-act="smSave" data-v="'+esc(s.id)+'">'+x('Зберегти пам’ятну картку','Сохранить памятную карточку')+'</button>')+
-    '<button class="btn tint" data-act="smImg" data-v="'+esc(s.id)+'">'+x('Картинка для сторіс','Картинка для сторис')+'</button></div>';}
+    '<button class="btn tint" data-act="smImg" data-v="'+esc(s.id)+'">'+x('Картинка для сторіс','Картинка для сторис')+'</button>'+smVideo(s,'btn tint')+'</div>';}
+function smVideo(s,cls){return /^https:\/\//.test(s.video||'')?'<a class="'+cls+'" href="'+esc(s.video)+'" target="_blank" rel="noopener">'+x('Дивитися запис','Смотреть запись','Watch the video')+'</a>':'';}
 function sermonById(id){var l=(D&&D.sermons)||[];for(var i=0;i<l.length;i++)if(l[i].id===id)return l[i];return null;}
 function sermonArchive(){var l=((D&&D.sermons)||[]).filter(function(s){return s.status==='published';});
   if(!l.length)return '<p class="sub">'+x('Тут з’являтимуться підсумки проповідей: суть, головні думки, вірші й питання для групи.','Здесь будут появляться итоги проповедей: суть, главные мысли, стихи и вопросы для группы.')+'</p>';
@@ -3370,6 +3373,7 @@ function adminSermons(){var l=(D&&D.sermons)||[];
       '<h2>'+(s.id?x('Проповідь','Проповедь'):x('Нова проповідь','Новая проповедь'))+'</h2><div class="grid2"><label class="f" for="sm-date">'+x('Дата','Дата')+'<input type="date" id="sm-date" name="date" required value="'+esc(s.date)+'"></label><label class="f" for="sm-time">'+x('Час','Время')+'<input type="time" id="sm-time" name="time" value="'+esc(s.time||'11:00')+'"></label></div>'+
       '<label class="f" for="sm-t">'+x('Тема (укр)','Тема (укр)')+'<input id="sm-t" name="title_uk" required maxlength="120" value="'+esc(s.title.uk||'')+'" placeholder="Що з нами буде?"></label>'+
       '<label class="f" for="sm-tr">'+x('Тема (рос), необов’язково','Тема (рус), необязательно')+'<input id="sm-tr" name="title_ru" maxlength="120" value="'+esc(s.title.ru&&s.title.ru!==s.title.uk?s.title.ru:'')+'"></label>'+
+      '<label class="f" for="sm-vd">'+x('Посилання на запис (YouTube), можна додати пізніше','Ссылка на запись (YouTube), можно добавить позже','Video link (YouTube), can be added later')+'<input type="url" id="sm-vd" name="video" maxlength="300" value="'+esc(s.video||'')+'" placeholder="https://youtu.be/…"></label>'+
       '<label class="f" for="sm-sp">'+x('Хто проповідує','Кто проповедует')+'<input id="sm-sp" name="speaker" maxlength="80" value="'+esc(s.speaker)+'"></label>'+
       '<label class="f" for="sm-v">'+x('Вірш для підготовки','Стих для подготовки')+'<input id="sm-v" name="verse" maxlength="80" value="'+esc(s.verse)+'" placeholder="Ісаї 43:19"></label>'+
       '<label class="f" for="sm-a">'+x('Питання «подумай до неділі», кожне з нового рядка','Вопросы «подумай до воскресенья», каждый с новой строки')+'<textarea id="sm-a" name="ask" rows="3" maxlength="600">'+esc(s.ask)+'</textarea></label>'+
@@ -3523,6 +3527,8 @@ function sheet(){var s=state.sheet,inner='';if(s!=='verseAt')WH.fresh=false;if(!
       (it.who?'<p>'+esc(L(it.who))+'</p>':'')+(it.desc?'<p class="sub">'+esc(L(it.desc))+'</p>':'')+(it.where?'<p class="sub">'+esc(L(it.where))+'</p>':'')+
       '<div class="row">'+goingBtn(key)+(it.kind==='sunday'||it.kind==='teens'?'<a class="btn tint small" href="'+YT+'" target="_blank" rel="noopener">'+x('Дивитися наживо','Смотреть онлайн')+'</a>':'')+
       '<a class="btn tint small" href="'+MAP+'" target="_blank" rel="noopener">'+x('Мапа','Карта')+'</a></div>'+
+      '<div class="row"><button class="btn tint small" data-act="evInvite" data-v="'+esc(key)+'">'+x('Запросити друга','Пригласить друга','Invite a friend')+'</button>'+
+        '<button class="btn tint small" data-act="evCal" data-v="'+esc(key)+'">'+x('Додати в календар','Добавить в календарь','Add to calendar')+'</button></div>'+
       '<div class="between" style="align-items:center"><h3>'+x('Хто буде: ','Кто будет: ')+(sm.n+(mine?1:0))+'</h3>'+(DEMO?'<span class="tag">'+x('імена для прикладу','имена для примера')+'</span>':'')+'</div>'+(who?'<ul class="who">'+who+'</ul>':'<p class="sub">'+x('Поки ніхто не відмітився. Будь першим!','Пока никто не отметился. Будь первым!')+'</p>');}
   if(s==='card'){var n=+state.sheetData,cd=CARDS[n-1];if(!cd)return '';var dn=!!state.done[n];
     inner='<button class="card-big tiltable shine'+(state.cardAnim?' deal':'')+'" data-act="zoom" data-v="'+n+'" aria-label="'+x('Відкрити картку на весь екран','Открыть карточку на весь экран')+'"><img src="cards/'+pad2(n)+'.jpg" alt="'+cd[0]+'"></button>'+
@@ -3727,6 +3733,20 @@ var actions={
   day:function(v){state.day=v;commit();},
   sheet:function(v){state.sheet=v;state.sheetData=null;render();},
   meet:function(v){state.sheet='meet';state.sheetData=v;render();},
+  evInvite:function(v){var p=String(v).split('@'),it=byId(p[0]);if(!it||!p[1])return;var d=fromIso(p[1]);
+    var sp=/^[A-Za-z0-9]{1,40}$/.test(p[0])?'?startapp=ev_'+p[0]+'_'+p[1].replace(/-/g,''):'?startapp';
+    var app=CONFIG.BOT_USERNAME?'https://t.me/'+CONFIG.BOT_USERNAME+sp:'';
+    var when=WD[state.lang][d.getDay()].toLowerCase()+', '+fmtDay(d)+' '+at(it.time);
+    var txt=x('Приходь зі мною на «','Приходи со мной на «','Come with me to «')+L(it.title)+'» — '+when+(it.where&&!it.link?', '+L(it.where):'')+x('. Церква «Місто Світла».','. Церковь «Місто Світла».','. Misto Svitla church.');
+    if(!app){toast(x('У живій версії відкриється вибір чату','В живой версии откроется выбор чата','In the live app a chat picker opens'));return;}
+    var u='https://t.me/share/url?url='+encodeURIComponent(app)+'&text='+encodeURIComponent(txt);if(LIVE&&tg.openTelegramLink)tg.openTelegramLink(u);else window.open(u,'_blank');},
+  evCal:function(v){var p=String(v).split('@'),it=byId(p[0]);if(!it||!p[1])return;
+    var ios=LIVE&&tg&&/^(ios|macos)$/.test(tg.platform||''),u;
+    if(ios&&CONFIG.API_URL)u=CONFIG.API_URL+'?ics='+encodeURIComponent(v)+'&l='+state.lang;
+    else{var st=occDate(p[1],it.time),en=new Date(st.getTime()+(it.kind==='sunday'?120:90)*6e4),f=function(d){return d.getFullYear()+pad2(d.getMonth()+1)+pad2(d.getDate())+'T'+pad2(d.getHours())+pad2(d.getMinutes())+'00';};
+      var where=it.link?it.link:(it.where&&!/церкв/i.test(L(it.where))?L(it.where):((D&&D.settings&&D.settings['address_'+(state.lang==='ru'?'ru':'uk')])||'Київ, пр. Степана Бандери, 23'));
+      u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+encodeURIComponent(L(it.title))+'&dates='+f(st)+'/'+f(en)+'&ctz=Europe/Kiev&location='+encodeURIComponent(where)+'&details='+encodeURIComponent([it.who?L(it.who):'',it.desc?L(it.desc):''].filter(Boolean).join('. '));}
+    if(LIVE&&tg.openLink)tg.openLink(u);else window.open(u,'_blank');},
   close:function(){state.sheet=null;render();},
   closeBg:function(v,el,e){if(e.target===el){state.sheet=null;render();}},
   answered:function(v){state.sheet='testimony';state.sheetData=v;render();},
@@ -3836,7 +3856,7 @@ var actions={
 var forms={
   msDone:function(fd){var t=String(fd.get('text')||'').trim();if(t.length<10){toast(x('Розкажи хоча б одним реченням, як це було','Расскажи хотя бы одним предложением, как это было'),1);return;}
     run('msDone',{text:t,anon:!!fd.get('anon')},x('Дякуємо! Твою історію побачить уся церква','Спасибо! Твою историю увидит вся церковь'));},
-  sermon:function(fd){var o={};['id','date','time','title_uk','title_ru','speaker','verse','ask','text','status'].forEach(function(k){o[k]=String(fd.get(k)||'').trim();});
+  sermon:function(fd){var o={};['id','date','time','title_uk','title_ru','speaker','verse','ask','text','status','video'].forEach(function(k){o[k]=String(fd.get(k)||'').trim();});
     run('sermonSave',{sermon:o},o.status==='published'?x('Підсумок опубліковано','Итог опубликован'):x('Анонс збережено','Анонс сохранён')).then(function(ok){if(ok){smEdit=null;render();}});},
   thanks:function(fd){var l=[0,1,2].map(function(i){return String(fd.get('t'+i)||'').trim().slice(0,120);});if(!l.some(function(q){return q;})){toast(x('Напиши хоча б одну подяку','Напиши хотя бы одну благодарность'),1);return;}
     thEdit=false;var t=iso(new Date());state.thanks=state.thanks||{};state.thanks[t]=l;var old=iso(addDays(new Date(),-60));Object.keys(state.thanks).forEach(function(d){if(d<old)delete state.thanks[d];});

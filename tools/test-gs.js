@@ -14,7 +14,7 @@ function mkSheet(name) {
   const data = [];
   const sh = {
     name, data,
-    getMaxRows: () => 1000, getMaxColumns: () => 26,
+    getMaxRows: () => 1000, getMaxColumns: () => 26, getLastColumn: () => (data[0] || []).length,
     getLastRow: () => data.length,
     getRange: (r, c, nr, nc) => ({
       setNumberFormat() { return this; }, setFontWeight() { return this; },
@@ -45,7 +45,7 @@ const G = {
   PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] || null, setProperty: (k, v) => { props[k] = v; } }) },
   CacheService: { getScriptCache: () => ({ get: k => cache[k] || null, put: (k, v) => { cache[k] = v; } }) },
   LockService: { getScriptLock: () => ({ waitLock() {}, tryLock: () => true, releaseLock() {} }) },
-  ContentService: { MimeType: { JSON: 'json' }, createTextOutput: s => ({ s, setMimeType() { return this; } }) },
+  ContentService: { MimeType: { JSON: 'json', ICAL: 'ical' }, createTextOutput: s => ({ s, setMimeType() { return this; } }) },
   HtmlService: { createHtmlOutput: s => ({ s }) },
   Utilities: {
     formatDate: fmt, parseDate,
@@ -62,7 +62,7 @@ const G = {
   ScriptApp: { getProjectTriggers: () => [], newTrigger: () => ({ timeBased: () => ({ everyMinutes: () => ({ create() {} }) }) }) },
   Logger: { log() {} }
 };
-const fn = new Function(...Object.keys(G), src + '\nreturn {doPost, doGet, setup, tick, verseOfDay, rows:function(n){_cache={};return rows(n);}, resetCache:function(){_cache={};}};');
+const fn = new Function(...Object.keys(G), src + '\nreturn {doPost, doGet, setup, tick, verseOfDay, prayDigestJob, weekDigestJob, rows:function(n){_cache={};return rows(n);}, resetCache:function(){_cache={};}};');
 const S = fn(...Object.values(G));
 
 function initData(user) {
@@ -114,6 +114,7 @@ r = call(anna, 'needNew', { text: 'За роботу', vis: 'team' }); const nee
 r = call(admin, 'load'); assert.ok(r.needs.find(n => n.id === needId), 'admin sees team need');
 r = call(admin, 'pray', { id: needId, on: true }); assert.ok(r.needs.find(n => n.id === needId).prayed); assert.strictEqual(r.lit, 1);
 r = call(anna, 'testNew', { text: 'Бог дав роботу', sign: 'name', consent: true, needId }); assert.strictEqual(r.myTests[0].status, 'pending'); assert.ok(r.needs.find(n => n.id === needId).answered);
+assert.ok(sent.some(s => String(s.p.chat_id) === '1001' && /Бог ответил/.test(s.p.text || '')), 'whoever prayed hears the answer');
 r = call(anna, 'moderate', { kind: 'test', id: r.myTests[0].id, status: 'approved' }); assert.ok(/адміністратор/.test(r.error), 'member cannot moderate');
 r = call(admin, 'load'); const tid = r.admin.tests[0].id;
 r = call(admin, 'moderate', { kind: 'test', id: tid, status: 'approved' }); assert.strictEqual(r.admin.tests.length, 0);
@@ -313,6 +314,44 @@ assert.strictEqual(call(petro, 'load').me.name, 'Петро Іваненко', '
   bot(ira, { contact: { user_id: 9090, phone_number: '380671234567' } });
   const alerts = sent.slice(b0).filter(s => /Новий учасник: Ірина/.test(s.p.text || ''));
   assert.strictEqual(alerts.length, 1, 'admin alerted once, got ' + alerts.length); }
+
+// --- prayer digest at 20:00, answered prayer, English bot, weekly admin digest, calendar file, sermon video
+{ const kyiv = (iso, hm) => { for (const off of [2, 3]) { const d = new Date(Date.UTC(+iso.slice(0, 4), +iso.slice(5, 7) - 1, +iso.slice(8, 10), +hm.slice(0, 2) - off, +hm.slice(3))); if (fmt(d, '', 'HH:mm') === hm) return d; } };
+  const today = fmt(new Date(), '', 'yyyy-MM-dd');
+  let x = call(admin, 'needNew', { text: 'За здоров’я мами', vis: 'all' }); const nid = x.needs.find(n => n.mine).id;
+  call(anna, 'personal', { personal: { lang: 'en' } });
+  assert.strictEqual(S.rows('Users').find(u => u.id === '2002').lang, 'en', 'English kept for the bot');
+  call(anna, 'pray', { id: nid, on: true }); call(olga, 'pray', { id: nid, on: true }); call(admin, 'pray', { id: nid, on: true });
+  delete props.prayDigest; props.prayDigestAt = String(Date.now() - 3600e3);
+  let b = sent.length; S.resetCache(); S.prayDigestJob(kyiv(today, '19:50'));
+  assert.strictEqual(sent.length, b, 'no digest before 20:00');
+  S.resetCache(); S.prayDigestJob(kyiv(today, '20:05'));
+  let dg = sent.slice(b).filter(s => /помолились|помолилися|prayed for you/.test(s.p.text || ''));
+  assert.strictEqual(dg.length, 1, 'one digest'); assert.strictEqual(dg[0].p.chat_id, '1001'); assert.ok(/: 2 человека/.test(dg[0].p.text), 'counts others only: ' + dg[0].p.text);
+  b = sent.length; S.resetCache(); S.prayDigestJob(kyiv(today, '21:00')); assert.strictEqual(sent.length, b, 'digest once a day');
+  b = sent.length; x = call(admin, 'needAnswered', { id: nid });
+  const ans = sent.slice(b).filter(s => /God answered|Бог відповів|Бог ответил/.test(s.p.text || ''));
+  assert.strictEqual(ans.length, 2, 'both who prayed told'); assert.ok(/God answered/.test(ans.find(s => s.p.chat_id === '2002').p.text), 'English for Anna');
+  b = sent.length; call(admin, 'needAnswered', { id: nid }); assert.strictEqual(sent.length, b, 'answered only once');
+  call(anna, 'personal', { personal: { lang: 'uk' } });
+  // weekly digest: only on Sunday after 20:00, once
+  let sun = new Date(); while (fmt(sun, '', 'u') !== '7') sun = new Date(sun.getTime() + 864e5);
+  const sIso = fmt(sun, '', 'yyyy-MM-dd'); delete props.weekDigest;
+  b = sent.length; S.resetCache(); S.weekDigestJob(kyiv(sIso, '19:00')); assert.strictEqual(sent.length, b, 'no weekly digest before 20:00');
+  S.resetCache(); S.weekDigestJob(kyiv(sIso, '20:10'));
+  const wk = sent.slice(b).filter(s => /Тиждень у застосунку/.test(s.p.text || ''));
+  assert.strictEqual(wk.length, 1, 'weekly digest to the admin'); assert.strictEqual(wk[0].p.chat_id, '1001'); assert.ok(/Молитов: \d+/.test(wk[0].p.text));
+  b = sent.length; S.resetCache(); S.weekDigestJob(kyiv(sIso, '21:10')); assert.strictEqual(sent.length, b, 'weekly digest once');
+  // calendar file
+  const ics = S.doGet({ parameter: { ics: wedKey, l: 'ru' } }).s; 
+  assert.ok(/BEGIN:VEVENT/.test(ics) && /SUMMARY:HeavenOS/.test(ics) && new RegExp('DTSTART:' + wedKey.slice(4).replace(/-/g, '') + 'T1[67]1500Z').test(ics), 'ics built');
+  assert.strictEqual(S.doGet({ parameter: { ics: 'wed@2026-11-10' } }).s, 'Not found', 'ics only for real dates');
+  assert.ok(/misto-svitla/.test(S.doGet({}).s), 'plain doGet still works');
+  // sermon video
+  x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', video: 'javascript:alert(1)' } }); assert.ok(/https/.test(x.error), 'bad video link rejected');
+  x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', video: 'https://youtu.be/abc' } });
+  assert.strictEqual(x.sermons.find(s => s.title.uk === 'Відео').video, 'https://youtu.be/abc', 'video saved');
+}
 
 console.log('ALL GOOD. messages sent:', sent.length, '| log rows:', (sheets.Log ? sheets.Log.data.length - 1 : 0));
 if (sheets.Log && sheets.Log.data.length > 1) console.log(sheets.Log.data.slice(1));

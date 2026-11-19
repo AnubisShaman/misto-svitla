@@ -13,6 +13,9 @@
  *   ADMIN_IDS   — Telegram ID адміністраторів через кому (свій ID підкаже @userinfobot)
  *   WEBAPP_URL  — адреса цього скрипта після Deploy (закінчується на /exec)
  * Потім один раз запустити setup(), а після Deploy — connectBot().
+ *
+ * Розклад (tick, кожні 15 хв): вірш дня, нагадування, о 20:00 — підсумок молитов авторам потреб,
+ * у неділю о 20:00 — тижневе зведення адміністраторам.
  */
 
 var TZ = 'Europe/Kiev';
@@ -29,7 +32,7 @@ var SHEETS = {
   Rooms: ['key', 'status', 'card', 'link', 'stage', 'pin', 'leaderId', 'opened', 'closed', 'reacts', 'summary', 'hands'],
   RoomFeed: ['id', 'key', 'userId', 'type', 'text', 'at', 'extra'],
   CardVerses: ['id', 'card', 'ref', 'text_uk', 'text_ru', 'userId', 'who', 'created'],
-  Sermons: ['id', 'date', 'time', 'title_uk', 'title_ru', 'speaker', 'verse', 'ask', 'text', 'status', 'created'],
+  Sermons: ['id', 'date', 'time', 'title_uk', 'title_ru', 'speaker', 'verse', 'ask', 'text', 'status', 'created', 'video'],
   Cheers: ['key', 'fromId', 'toId', 'kind', 'at'],
   Mission: ['key', 'week', 'userId', 'path', 'swaps', 'status', 'text', 'anon', 'created', 'done'],
   Settings: ['key', 'value'],
@@ -75,12 +78,32 @@ var EVENTS_DEFAULT = [
 var VERSES_SEED = { 18: [{"ref": "Римлян 8:28", "uk": "Знаємо, що тим, які люблять Бога, котрі покликані за Його постановою, все сприяє до добра.", "who": "Костя"}, {"ref": "Ісаї 43:18–19", "uk": "Не згадуйте про те, що було раніше, і не роздумуйте про давнє. Ось Я чиню нове; тепер воно з’являється, хіба ви не знаєте цього? Я прокладу дорогу в пустелі, ріки в степу.", "who": "Костя"}, {"ref": "Івана 12:24", "uk": "Істинно, істинно кажу вам: якщо зерно пшениці, впавши на землю, не вмре, воно залишиться одне. Якщо ж умре, – принесе великий урожай.", "who": "Костя"}, {"ref": "Псалом 34:19", "uk": "Господь близький до тих, чиї серця у скорботі, й спасає засмучених духом.", "who": "Костя"}, {"ref": "2 Коринтян 4:16–18", "uk": "Тому ми не втрачаємо відваги. Хоч наша зовнішня людина зітліває, проте наша внутрішня людина оновлюється день у день. Адже наше тимчасове легке терпіння готує нам понад міру вічну славу, оскільки ми не дивимося на видиме, а на те, що невидиме, бо видиме – тимчасове, а невидиме – вічне.", "who": "Костя"}, {"ref": "Якова 1:2–4", "uk": "Брати мої, майте велику радість, коли попадаєте в різні випробування, знаючи, що випробування вашої віри розвиває терпеливість. А терпеливість нехай має досконалу дію, щоб ви були досконалі та бездоганні й щоб нічого вам не бракувало.", "who": "Костя"}, {"ref": "Римлян 12:2", "uk": "І не пристосовуйтеся до цього віку, але змінюйтеся оновленням [вашого] розуму, щоб ви пізнавали, що є Божа воля: добре, приємне і досконале.", "who": "Костя"}] };
 
 /** Вірші дня (Новий Завіт, Огієнко / Синодальний). Той самий список і та сама формула дня, що й у застосунку. */
-var VERSES = [{"loc": [0, 5, 14], "ref": {"uk": "Матвія 5:14", "ru": "Матфея 5:14"}, "t": {"uk": "Ви світло для світу. Не може сховатися місто, що стоїть на верховині гори.", "ru": "Вы — свет мира. Не может укрыться город, стоящий на верху горы."}}, {"loc": [3, 3, 16], "ref": {"uk": "Івана 3:16", "ru": "Иоанна 3:16"}, "t": {"uk": "Так бо Бог полюбив світ, що дав Сина Свого Однородженого, щоб кожен, хто вірує в Нього, не згинув, але мав життя вічне.", "ru": "Ибо так возлюбил Бог мир, что отдал Сына Своего Единородного, дабы всякий верующий в Него, не погиб, но имел жизнь вечную."}}, {"loc": [8, 4, 16], "ref": {"uk": "1 Івана 4:16", "ru": "1 Иоанна 4:16"}, "t": {"uk": "Ми пізнали й увірували в ту любов, що Бог її має до нас. Бог є любов, і хто пробуває в любові, пробуває той в Бозі, і в нім Бог пробуває!", "ru": "И мы познали любовь, которую имеет к нам Бог, и уверовали в нее. Бог есть любовь, и пребывающий в любви пребывает в Боге, и Бог в нем."}}, {"loc": [1, 5, 36], "ref": {"uk": "Марка 5:36", "ru": "Марка 5:36"}, "t": {"uk": "А Ісус, як почув слово сказане, промовляє до старшини синагоги: „Не лякайсь, — тільки віруй!", "ru": "Но Иисус, услышав сии слова, тотчас говорит начальнику синагоги: не бойся, только веруй."}}, {"loc": [17, 4, 13], "ref": {"uk": "Филип’ян 4:13", "ru": "Филиппийцам 4:13"}, "t": {"uk": "Я все можу в Тім, Хто мене підкріпляє, — в Ісусі Христі.", "ru": "Все могу в укрепляющем меня Иисусе Христе."}}, {"loc": [3, 8, 12], "ref": {"uk": "Івана 8:12", "ru": "Иоанна 8:12"}, "t": {"uk": "І знову Ісус промовляв до них, кажучи: „Я Світло для світу. Хто йде вслід за Мною, не буде ходити у темряві той, але матиме світло життя“.", "ru": "Опять говорил Иисус к народу и сказал им: Я свет миру; кто последует за Мною, тот не будет ходить во тьме, но будет иметь свет жизни."}}, {"loc": [19, 5, 16], "ref": {"uk": "1 Солунян 5:16", "ru": "1 Фессалоникийцам 5:16"}, "t": {"uk": "Завжди радійте!", "ru": "Всегда радуйтесь."}}, {"loc": [0, 11, 28], "ref": {"uk": "Матвія 11:28", "ru": "Матфея 11:28"}, "t": {"uk": "Прийдіть до Мене, усі струджені та обтяжені, — і Я вас заспокою!", "ru": "Придите ко Мне все труждающиеся и обремененные, и Я успокою вас;"}}, {"loc": [12, 8, 28], "ref": {"uk": "Римлян 8:28", "ru": "Римлянам 8:28"}, "t": {"uk": "І знаємо, що тим, хто любить Бога, хто покликаний Його постановою, усе допомагає на добре.", "ru": "Притом знаем, что любящим Бога, призванным по Его изволению, все содействует ко благу."}}, {"loc": [17, 4, 6], "ref": {"uk": "Филип’ян 4:6", "ru": "Филиппийцам 4:6"}, "t": {"uk": "Ні про що не турбуйтесь, а в усьому нехай виявляються Богові ваші бажання молитвою й проханням з подякою.", "ru": "Не заботьтесь ни о чем, но всегда в молитве и прошении с благодарением открывайте свои желания пред Богом,"}}, {"loc": [0, 6, 33], "ref": {"uk": "Матвія 6:33", "ru": "Матфея 6:33"}, "t": {"uk": "Шукайте ж найперш Царства Божого й праведности Його, — а все це вам додасться.", "ru": "Ищите же прежде Царства Божия и правды Его, и это все приложится вам."}}, {"loc": [3, 14, 27], "ref": {"uk": "Івана 14:27", "ru": "Иоанна 14:27"}, "t": {"uk": "Зоставляю вам мир, мир Свій вам даю! Я даю вам не так, як дає світ. Серце ваше нехай не тривожиться, ані не лякається!", "ru": "Мир оставляю вам, мир Мой даю вам; не так, как мир дает, Я даю вам. Да не смущается сердце ваше и да не устрашается."}}, {"loc": [12, 12, 2], "ref": {"uk": "Римлян 12:2", "ru": "Римлянам 12:2"}, "t": {"uk": "і не стосуйтесь до віку цього, але перемініться відновою вашого розуму, щоб пізнати вам, що то є воля Божа, — добро, приємність та досконалість.", "ru": "и не сообразуйтесь с веком сим, но преобразуйтесь обновлением ума вашего, чтобы вам познавать, что есть воля Божия, благая, угодная и совершенная."}}, {"loc": [15, 5, 22], "ref": {"uk": "Галатів 5:22", "ru": "Галатам 5:22"}, "t": {"uk": "А плід Духа: любов, радість, мир, довготерпіння, лагідність, добрість, вірність,", "ru": "Плод же духа: любовь, радость, мир, долготерпение, благость, милосердие, вера,"}}, {"loc": [16, 2, 8], "ref": {"uk": "Ефесян 2:8", "ru": "Ефесянам 2:8"}, "t": {"uk": "Бо спасені ви благодаттю через віру, а це не від вас, то дар Божий,", "ru": "Ибо благодатью вы спасены через веру, и сие не от вас, Божий дар:"}}, {"loc": [14, 5, 17], "ref": {"uk": "2 Коринтян 5:17", "ru": "2 Коринфянам 5:17"}, "t": {"uk": "Тому то, коли хто в Христі, той створіння нове, - стародавнє минуло, ото сталось нове!", "ru": "Итак, кто во Христе, тот новая тварь; древнее прошло, теперь все новое."}}, {"loc": [25, 11, 1], "ref": {"uk": "Євреїв 11:1", "ru": "Евреям 11:1"}, "t": {"uk": "А віра — то підстава сподіваного, доказ небаченого.", "ru": "Вера же есть осуществление ожидаемого и уверенность в невидимом."}}, {"loc": [5, 1, 5], "ref": {"uk": "Якова 1:5", "ru": "Иакова 1:5"}, "t": {"uk": "А якщо кому з вас не стачає мудрости, нехай просить від Бога, що всім дає просто, та не докоряє, — і буде вона йому дана.", "ru": "Если же у кого из вас недостает мудрости, да просит у Бога, дающего всем просто и без упреков, — и дастся ему."}}, {"loc": [6, 5, 7], "ref": {"uk": "1 Петра 5:7", "ru": "1 Петра 5:7"}, "t": {"uk": "Покладіть на Нього всю вашу журбу, бо Він опікується вами!", "ru": "Все заботы ваши возложите на Него, ибо Он печется о вас."}}, {"loc": [0, 7, 7], "ref": {"uk": "Матвія 7:7", "ru": "Матфея 7:7"}, "t": {"uk": "Просіть — і буде вам дано, шукайте — і знайдете, стукайте — і відчинять вам;", "ru": "Просите, и дано будет вам; ищите, и найдете; стучите, и отворят вам;"}}, {"loc": [3, 15, 5], "ref": {"uk": "Івана 15:5", "ru": "Иоанна 15:5"}, "t": {"uk": "Я — Виноградина, ви — галуззя! Хто в Мені перебуває, а Я в ньому, той рясно зароджує, бо без Мене нічого чинити не можете ви.", "ru": "Я есмь лоза, а вы ветви; кто пребывает во Мне, и Я в нем, тот приносит много плода; ибо без Меня не можете делать ничего."}}, {"loc": [12, 15, 13], "ref": {"uk": "Римлян 15:13", "ru": "Римлянам 15:13"}, "t": {"uk": "Бог же надії нехай вас наповнить усякою радістю й миром у вірі, щоб ви збагатились надією, силою Духа Святого!", "ru": "Бог же надежды да исполнит вас всякой радости и мира в вере, дабы вы, силою Духа Святаго, обогатились надеждою."}}, {"loc": [22, 1, 7], "ref": {"uk": "2 Тимофія 1:7", "ru": "2 Тимофею 1:7"}, "t": {"uk": "Бо не дав нам Бог духа страху, але сили, і любови, і здорового розуму.", "ru": "ибо дал нам Бог духа не боязни, но силы и любви и целомудрия."}}, {"loc": [18, 3, 23], "ref": {"uk": "Колосян 3:23", "ru": "Колоссянам 3:23"}, "t": {"uk": "І все, що тільки чините, робіть від душі, немов Господеві, а не людям!", "ru": "И все, что делаете, делайте от души, как для Господа, а не для человеков,"}}, {"loc": [13, 13, 4], "ref": {"uk": "1 Коринтян 13:4", "ru": "1 Коринфянам 13:4"}, "t": {"uk": "Любов довготерпить, любов милосердствує, не заздрить, любов не величається, не надимається,", "ru": "Любовь долготерпит, милосердствует, любовь не завидует, любовь не превозносится, не гордится,"}}, {"loc": [25, 13, 8], "ref": {"uk": "Євреїв 13:8", "ru": "Евреям 13:8"}, "t": {"uk": "Ісус Христос учора, і сьогодні, і навіки Той Самий!", "ru": "Иисус Христос вчера и сегодня и во веки Тот же."}}, {"loc": [26, 3, 20], "ref": {"uk": "Об’явлення 3:20", "ru": "Откровение 3:20"}, "t": {"uk": "Ось Я стою під дверима та стукаю: коли хто почує Мій голос і двері відчинить, Я до нього ввійду, і буду вечеряти з ним, а він зо Мною.", "ru": "Се, стою у двери и стучу: если кто услышит голос Мой и отворит дверь, войду к нему, и буду вечерять с ним, и он со Мною."}}, {"loc": [2, 1, 37], "ref": {"uk": "Луки 1:37", "ru": "Луки 1:37"}, "t": {"uk": "Бо „для Бога нема неможливої жодної речі!“", "ru": "ибо у Бога не останется бессильным никакое слово."}}, {"loc": [8, 1, 9], "ref": {"uk": "1 Івана 1:9", "ru": "1 Иоанна 1:9"}, "t": {"uk": "Коли ми свої гріхи визнаємо, то Він вірний та праведний, щоб гріхи нам простити, та очистити нас від неправди всілякої.", "ru": "Если исповедуем грехи наши, то Он, будучи верен и праведен, простит нам грехи наши и очистит нас от всякой неправды."}}, {"loc": [0, 28, 20], "ref": {"uk": "Матвія 28:20", "ru": "Матфея 28:20"}, "t": {"uk": "навчаючи їх зберігати все те, що Я вам заповів. І ото, Я перебуватиму з вами повсякденно аж до кінця віку“! Амінь.", "ru": "уча их соблюдать все, что Я повелел вам; и се, Я с вами во все дни до скончания века. Аминь."}}, {"loc": [12, 5, 8], "ref": {"uk": "Римлян 5:8", "ru": "Римлянам 5:8"}, "t": {"uk": "А Бог доводить Свою любов до нас тим, що Христос умер за нас, коли ми були ще грішниками.", "ru": "Но Бог Свою любовь к нам доказывает тем, что Христос умер за нас, когда мы были еще грешниками."}}];
+var VERSES = [{"loc":[0,5,14],"ref":{"uk":"Матвія 5:14","ru":"Матфея 5:14","en":"Matthew 5:14"},"t":{"uk":"Ви світло для світу. Не може сховатися місто, що стоїть на верховині гори.","ru":"Вы — свет мира. Не может укрыться город, стоящий на верху горы.","en":"Ye are the light of the world. A city that is set on an hill cannot be hid."}},{"loc":[3,3,16],"ref":{"uk":"Івана 3:16","ru":"Иоанна 3:16","en":"John 3:16"},"t":{"uk":"Так бо Бог полюбив світ, що дав Сина Свого Однородженого, щоб кожен, хто вірує в Нього, не згинув, але мав життя вічне.","ru":"Ибо так возлюбил Бог мир, что отдал Сына Своего Единородного, дабы всякий верующий в Него, не погиб, но имел жизнь вечную.","en":"For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life."}},{"loc":[8,4,16],"ref":{"uk":"1 Івана 4:16","ru":"1 Иоанна 4:16","en":"1 John 4:16"},"t":{"uk":"Ми пізнали й увірували в ту любов, що Бог її має до нас. Бог є любов, і хто пробуває в любові, пробуває той в Бозі, і в нім Бог пробуває!","ru":"И мы познали любовь, которую имеет к нам Бог, и уверовали в нее. Бог есть любовь, и пребывающий в любви пребывает в Боге, и Бог в нем.","en":"And we have known and believed the love that God hath to us. God is love; and he that dwelleth in love dwelleth in God, and God in him."}},{"loc":[1,5,36],"ref":{"uk":"Марка 5:36","ru":"Марка 5:36","en":"Mark 5:36"},"t":{"uk":"А Ісус, як почув слово сказане, промовляє до старшини синагоги: „Не лякайсь, — тільки віруй!","ru":"Но Иисус, услышав сии слова, тотчас говорит начальнику синагоги: не бойся, только веруй.","en":"As soon as Jesus heard the word that was spoken, he saith unto the ruler of the synagogue, Be not afraid, only believe."}},{"loc":[17,4,13],"ref":{"uk":"Филип’ян 4:13","ru":"Филиппийцам 4:13","en":"Philippians 4:13"},"t":{"uk":"Я все можу в Тім, Хто мене підкріпляє, — в Ісусі Христі.","ru":"Все могу в укрепляющем меня Иисусе Христе.","en":"I can do all things through Christ which strengtheneth me."}},{"loc":[3,8,12],"ref":{"uk":"Івана 8:12","ru":"Иоанна 8:12","en":"John 8:12"},"t":{"uk":"І знову Ісус промовляв до них, кажучи: „Я Світло для світу. Хто йде вслід за Мною, не буде ходити у темряві той, але матиме світло життя“.","ru":"Опять говорил Иисус к народу и сказал им: Я свет миру; кто последует за Мною, тот не будет ходить во тьме, но будет иметь свет жизни.","en":"Then spake Jesus again unto them, saying, I am the light of the world: he that followeth me shall not walk in darkness, but shall have the light of life."}},{"loc":[19,5,16],"ref":{"uk":"1 Солунян 5:16","ru":"1 Фессалоникийцам 5:16","en":"1 Thessalonians 5:16"},"t":{"uk":"Завжди радійте!","ru":"Всегда радуйтесь.","en":"Rejoice evermore."}},{"loc":[0,11,28],"ref":{"uk":"Матвія 11:28","ru":"Матфея 11:28","en":"Matthew 11:28"},"t":{"uk":"Прийдіть до Мене, усі струджені та обтяжені, — і Я вас заспокою!","ru":"Придите ко Мне все труждающиеся и обремененные, и Я успокою вас;","en":"Come unto me, all ye that labour and are heavy laden, and I will give you rest."}},{"loc":[12,8,28],"ref":{"uk":"Римлян 8:28","ru":"Римлянам 8:28","en":"Romans 8:28"},"t":{"uk":"І знаємо, що тим, хто любить Бога, хто покликаний Його постановою, усе допомагає на добре.","ru":"Притом знаем, что любящим Бога, призванным по Его изволению, все содействует ко благу.","en":"And we know that all things work together for good to them that love God, to them who are the called according to his purpose."}},{"loc":[17,4,6],"ref":{"uk":"Филип’ян 4:6","ru":"Филиппийцам 4:6","en":"Philippians 4:6"},"t":{"uk":"Ні про що не турбуйтесь, а в усьому нехай виявляються Богові ваші бажання молитвою й проханням з подякою.","ru":"Не заботьтесь ни о чем, но всегда в молитве и прошении с благодарением открывайте свои желания пред Богом,","en":"Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God."}},{"loc":[0,6,33],"ref":{"uk":"Матвія 6:33","ru":"Матфея 6:33","en":"Matthew 6:33"},"t":{"uk":"Шукайте ж найперш Царства Божого й праведности Його, — а все це вам додасться.","ru":"Ищите же прежде Царства Божия и правды Его, и это все приложится вам.","en":"But seek ye first the kingdom of God, and his righteousness; and all these things shall be added unto you."}},{"loc":[3,14,27],"ref":{"uk":"Івана 14:27","ru":"Иоанна 14:27","en":"John 14:27"},"t":{"uk":"Зоставляю вам мир, мир Свій вам даю! Я даю вам не так, як дає світ. Серце ваше нехай не тривожиться, ані не лякається!","ru":"Мир оставляю вам, мир Мой даю вам; не так, как мир дает, Я даю вам. Да не смущается сердце ваше и да не устрашается.","en":"Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid."}},{"loc":[12,12,2],"ref":{"uk":"Римлян 12:2","ru":"Римлянам 12:2","en":"Romans 12:2"},"t":{"uk":"і не стосуйтесь до віку цього, але перемініться відновою вашого розуму, щоб пізнати вам, що то є воля Божа, — добро, приємність та досконалість.","ru":"и не сообразуйтесь с веком сим, но преобразуйтесь обновлением ума вашего, чтобы вам познавать, что есть воля Божия, благая, угодная и совершенная.","en":"And be not conformed to this world: but be ye transformed by the renewing of your mind, that ye may prove what is that good, and acceptable, and perfect, will of God."}},{"loc":[15,5,22],"ref":{"uk":"Галатів 5:22","ru":"Галатам 5:22","en":"Galatians 5:22"},"t":{"uk":"А плід Духа: любов, радість, мир, довготерпіння, лагідність, добрість, вірність,","ru":"Плод же духа: любовь, радость, мир, долготерпение, благость, милосердие, вера,","en":"But the fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness, faith,"}},{"loc":[16,2,8],"ref":{"uk":"Ефесян 2:8","ru":"Ефесянам 2:8","en":"Ephesians 2:8"},"t":{"uk":"Бо спасені ви благодаттю через віру, а це не від вас, то дар Божий,","ru":"Ибо благодатью вы спасены через веру, и сие не от вас, Божий дар:","en":"For by grace are ye saved through faith; and that not of yourselves: it is the gift of God:"}},{"loc":[14,5,17],"ref":{"uk":"2 Коринтян 5:17","ru":"2 Коринфянам 5:17","en":"2 Corinthians 5:17"},"t":{"uk":"Тому то, коли хто в Христі, той створіння нове, - стародавнє минуло, ото сталось нове!","ru":"Итак, кто во Христе, тот новая тварь; древнее прошло, теперь все новое.","en":"Therefore if any man be in Christ, he is a new creature: old things are passed away; behold, all things are become new."}},{"loc":[25,11,1],"ref":{"uk":"Євреїв 11:1","ru":"Евреям 11:1","en":"Hebrews 11:1"},"t":{"uk":"А віра — то підстава сподіваного, доказ небаченого.","ru":"Вера же есть осуществление ожидаемого и уверенность в невидимом.","en":"Now faith is the substance of things hoped for, the evidence of things not seen."}},{"loc":[5,1,5],"ref":{"uk":"Якова 1:5","ru":"Иакова 1:5","en":"James 1:5"},"t":{"uk":"А якщо кому з вас не стачає мудрости, нехай просить від Бога, що всім дає просто, та не докоряє, — і буде вона йому дана.","ru":"Если же у кого из вас недостает мудрости, да просит у Бога, дающего всем просто и без упреков, — и дастся ему.","en":"If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him."}},{"loc":[6,5,7],"ref":{"uk":"1 Петра 5:7","ru":"1 Петра 5:7","en":"1 Peter 5:7"},"t":{"uk":"Покладіть на Нього всю вашу журбу, бо Він опікується вами!","ru":"Все заботы ваши возложите на Него, ибо Он печется о вас.","en":"Casting all your care upon him; for he careth for you."}},{"loc":[0,7,7],"ref":{"uk":"Матвія 7:7","ru":"Матфея 7:7","en":"Matthew 7:7"},"t":{"uk":"Просіть — і буде вам дано, шукайте — і знайдете, стукайте — і відчинять вам;","ru":"Просите, и дано будет вам; ищите, и найдете; стучите, и отворят вам;","en":"Ask, and it shall be given you; seek, and ye shall find; knock, and it shall be opened unto you:"}},{"loc":[3,15,5],"ref":{"uk":"Івана 15:5","ru":"Иоанна 15:5","en":"John 15:5"},"t":{"uk":"Я — Виноградина, ви — галуззя! Хто в Мені перебуває, а Я в ньому, той рясно зароджує, бо без Мене нічого чинити не можете ви.","ru":"Я есмь лоза, а вы ветви; кто пребывает во Мне, и Я в нем, тот приносит много плода; ибо без Меня не можете делать ничего.","en":"I am the vine, ye are the branches: He that abideth in me, and I in him, the same bringeth forth much fruit: for without me ye can do nothing."}},{"loc":[12,15,13],"ref":{"uk":"Римлян 15:13","ru":"Римлянам 15:13","en":"Romans 15:13"},"t":{"uk":"Бог же надії нехай вас наповнить усякою радістю й миром у вірі, щоб ви збагатились надією, силою Духа Святого!","ru":"Бог же надежды да исполнит вас всякой радости и мира в вере, дабы вы, силою Духа Святаго, обогатились надеждою.","en":"Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost."}},{"loc":[22,1,7],"ref":{"uk":"2 Тимофія 1:7","ru":"2 Тимофею 1:7","en":"2 Timothy 1:7"},"t":{"uk":"Бо не дав нам Бог духа страху, але сили, і любови, і здорового розуму.","ru":"ибо дал нам Бог духа не боязни, но силы и любви и целомудрия.","en":"For God hath not given us the spirit of fear; but of power, and of love, and of a sound mind."}},{"loc":[18,3,23],"ref":{"uk":"Колосян 3:23","ru":"Колоссянам 3:23","en":"Colossians 3:23"},"t":{"uk":"І все, що тільки чините, робіть від душі, немов Господеві, а не людям!","ru":"И все, что делаете, делайте от души, как для Господа, а не для человеков,","en":"And whatsoever ye do, do it heartily, as to the Lord, and not unto men;"}},{"loc":[13,13,4],"ref":{"uk":"1 Коринтян 13:4","ru":"1 Коринфянам 13:4","en":"1 Corinthians 13:4"},"t":{"uk":"Любов довготерпить, любов милосердствує, не заздрить, любов не величається, не надимається,","ru":"Любовь долготерпит, милосердствует, любовь не завидует, любовь не превозносится, не гордится,","en":"Charity suffereth long, and is kind; charity envieth not; charity vaunteth not itself, is not puffed up,"}},{"loc":[25,13,8],"ref":{"uk":"Євреїв 13:8","ru":"Евреям 13:8","en":"Hebrews 13:8"},"t":{"uk":"Ісус Христос учора, і сьогодні, і навіки Той Самий!","ru":"Иисус Христос вчера и сегодня и во веки Тот же.","en":"Jesus Christ the same yesterday, and to day, and for ever."}},{"loc":[26,3,20],"ref":{"uk":"Об’явлення 3:20","ru":"Откровение 3:20","en":"Revelation 3:20"},"t":{"uk":"Ось Я стою під дверима та стукаю: коли хто почує Мій голос і двері відчинить, Я до нього ввійду, і буду вечеряти з ним, а він зо Мною.","ru":"Се, стою у двери и стучу: если кто услышит голос Мой и отворит дверь, войду к нему, и буду вечерять с ним, и он со Мною.","en":"Behold, I stand at the door, and knock: if any man hear my voice, and open the door, I will come in to him, and will sup with him, and he with me."}},{"loc":[2,1,37],"ref":{"uk":"Луки 1:37","ru":"Луки 1:37","en":"Luke 1:37"},"t":{"uk":"Бо „для Бога нема неможливої жодної речі!“","ru":"ибо у Бога не останется бессильным никакое слово.","en":"For with God nothing shall be impossible."}},{"loc":[8,1,9],"ref":{"uk":"1 Івана 1:9","ru":"1 Иоанна 1:9","en":"1 John 1:9"},"t":{"uk":"Коли ми свої гріхи визнаємо, то Він вірний та праведний, щоб гріхи нам простити, та очистити нас від неправди всілякої.","ru":"Если исповедуем грехи наши, то Он, будучи верен и праведен, простит нам грехи наши и очистит нас от всякой неправды.","en":"If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness."}},{"loc":[0,28,20],"ref":{"uk":"Матвія 28:20","ru":"Матфея 28:20","en":"Matthew 28:20"},"t":{"uk":"навчаючи їх зберігати все те, що Я вам заповів. І ото, Я перебуватиму з вами повсякденно аж до кінця віку“! Амінь.","ru":"уча их соблюдать все, что Я повелел вам; и се, Я с вами во все дни до скончания века. Аминь.","en":"Teaching them to observe all things whatsoever I have commanded you: and, lo, I am with you alway, even unto the end of the world. Amen."}},{"loc":[12,5,8],"ref":{"uk":"Римлян 5:8","ru":"Римлянам 5:8","en":"Romans 5:8"},"t":{"uk":"А Бог доводить Свою любов до нас тим, що Христос умер за нас, коли ми були ще грішниками.","ru":"Но Бог Свою любовь к нам доказывает тем, что Христос умер за нас, когда мы были еще грешниками.","en":"But God commendeth his love toward us, in that, while we were yet sinners, Christ died for us."}}];
 
 /* ================= вхідні точки ================= */
 
-function doGet() {
+function doGet(e) {
+  var key = e && e.parameter && e.parameter.ics;
+  if (key) return icsOut(String(key), String(e.parameter.l || 'uk'));
   return out({ ok: true, app: 'misto-svitla' });
+}
+
+/* Файл календаря (.ics) для однієї зустрічі: ?ics=<id>@<yyyy-mm-dd>&l=uk|ru|en. Розклад і так публічний. */
+function icsOut(key, l) {
+  var x = eventByKey(key);
+  if (!x || !occursOn(x.ev, x.date)) return ContentService.createTextOutput('Not found');
+  l = l === 'ru' || l === 'en' ? l : 'uk';
+  var st = settingsAll(), start = startOf(x.date, x.ev.time), end = new Date(start.getTime() + (x.ev.kind === 'sunday' ? 120 : 90) * 60000);
+  var f = function (d) { return d.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+  var esc = function (t) { return String(t || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/([,;])/g, '\\$1'); };
+  var pick = function (o) { return o && (o[l] || o.uk) || ''; };
+  var place = x.ev.link ? x.ev.link : (pick(x.ev.where) && !/церкв/i.test(pick(x.ev.where)) ? pick(x.ev.where) : st['address_' + (l === 'ru' ? 'ru' : 'uk')]);
+  var desc = [pick(x.ev.who), pick(x.ev.desc)].filter(Boolean).join('. ');
+  var ics = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Misto Svitla//UA', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH', 'BEGIN:VEVENT',
+    'UID:' + key.replace(/[^\w@.-]/g, '') + '@misto-svitla', 'DTSTAMP:' + f(new Date()), 'DTSTART:' + f(start), 'DTEND:' + f(end),
+    'SUMMARY:' + esc(pick(x.ev.title)), 'LOCATION:' + esc(place), 'DESCRIPTION:' + esc(desc),
+    'BEGIN:VALARM', 'TRIGGER:-PT1H', 'ACTION:DISPLAY', 'DESCRIPTION:' + esc(pick(x.ev.title)), 'END:VALARM', 'END:VEVENT', 'END:VCALENDAR'].join('\r\n');
+  return ContentService.createTextOutput(ics).setMimeType(ContentService.MimeType.ICAL);
 }
 
 function doPost(e) {
@@ -116,14 +139,18 @@ function ss() {
   if (!_ss) throw new Error('Не знайдено таблицю. Відкрийте скрипт через Розширення → Apps Script у таблиці або вкажіть SHEET_ID.');
   return _ss;
 }
+var _sheets = {};
 function sheet(name) {
+  if (_sheets[name]) return _sheets[name];
   var sh = ss().getSheetByName(name);
+  if (sh && sh.getLastColumn() < SHEETS[name].length) sh.getRange(1, 1, 1, SHEETS[name].length).setValues([SHEETS[name]]).setFontWeight('bold'); // нові колонки після оновлення
   if (!sh) {
     sh = ss().insertSheet(name);
     sh.getRange(1, 1, sh.getMaxRows(), Math.max(sh.getMaxColumns(), SHEETS[name].length)).setNumberFormat('@');
     sh.getRange(1, 1, 1, SHEETS[name].length).setValues([SHEETS[name]]).setFontWeight('bold');
     sh.setFrozenRows(1);
   }
+  _sheets[name] = sh;
   return sh;
 }
 function rows(name) {
@@ -180,6 +207,8 @@ function roleOf(u) {
   return ROLES.indexOf(u.role) >= 0 ? u.role : 'member';
 }
 function has(role, list) { return list.indexOf(role) >= 0; }
+/** Мова людини для повідомлень бота: uk, ru або en (en — лише якщо обрали англійську в застосунку). */
+function langOf(x) { return x && (x.lang === 'ru' || x.lang === 'en') ? x.lang : 'uk'; }
 
 function settingsAll() {
   var o = {}, k;
@@ -344,7 +373,7 @@ function versesMap() {
 function sermonsOut() {
   return rows('Sermons').map(function (r) {
     return { id: String(r.id), date: String(r.date), time: String(r.time || ''), title: { uk: String(r.title_uk), ru: String(r.title_ru || r.title_uk) }, speaker: String(r.speaker || ''),
-      verse: String(r.verse || ''), ask: String(r.ask || ''), text: String(r.text || ''), status: r.status === 'published' ? 'published' : 'announce' };
+      verse: String(r.verse || ''), ask: String(r.ask || ''), text: String(r.text || ''), video: String(r.video || ''), status: r.status === 'published' ? 'published' : 'announce' };
   }).sort(function (a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 40);
 }
 
@@ -493,7 +522,7 @@ var ACTIONS = {
     var p = b.personal && typeof b.personal === 'object' ? b.personal : {};
     var s = JSON.stringify(p);
     if (s.length > 45000) throw new Error('Забагато нотаток для збереження. Видаліть частину старих');
-    u.personal = s; u.lang = p.lang === 'ru' ? 'ru' : 'uk'; u.seen = String(Date.now());
+    u.personal = s; u.lang = p.lang === 'ru' || p.lang === 'en' ? p.lang : 'uk'; u.seen = String(Date.now());
     setRow('Users', u);
     return { light: { ok: true } };
   },
@@ -530,7 +559,9 @@ var ACTIONS = {
   needAnswered: function (u, b) {
     var n = findBy('Needs', b.id);
     if (!n || String(n.userId) !== String(u.id)) throw new Error('Потребу не знайдено');
+    var was = n.status === 'answered';
     n.status = 'answered'; setRow('Needs', n);
+    if (!was) answeredNotify(n);
   },
 
   needDel: function (u, b) {
@@ -545,7 +576,7 @@ var ACTIONS = {
     addRow('Tests', { id: newId(), userId: u.id, text: text, sign: b.sign === 'anon' ? 'anon' : 'name', status: 'pending', created: Date.now(), needId: txt(b.needId, 20) });
     if (b.needId) {
       var n = findBy('Needs', b.needId);
-      if (n && String(n.userId) === String(u.id)) { n.status = 'answered'; setRow('Needs', n); }
+      if (n && String(n.userId) === String(u.id) && n.status !== 'answered') { n.status = 'answered'; setRow('Needs', n); answeredNotify(n); }
     }
     notifyRoles(['admin'], '✨ Нове свідчення на модерацію від ' + u.name + '. Відкрийте застосунок → Ще → Адмінка → Модерація.');
   },
@@ -642,6 +673,7 @@ var ACTIONS = {
     o.id = id; o.date = date; o.time = time || '11:00';
     o.title_uk = needText(s.title_uk, 120, 'Тема'); o.title_ru = txt(s.title_ru, 120) || o.title_uk;
     o.speaker = txt(s.speaker, 80); o.verse = txt(s.verse, 80); o.ask = txt(s.ask, 600); o.text = txt(s.text, 8000);
+    o.video = txt(s.video, 300); if (o.video && !/^https:\/\/\S+$/.test(o.video)) throw new Error('Посилання на відео має починатися з https://');
     o.status = s.status === 'published' ? 'published' : 'announce';
     if (o.status === 'published' && !o.text) throw new Error('Додайте текст підсумку, щоб опублікувати');
     if (o._new) addRow('Sermons', o); else setRow('Sermons', o);
@@ -733,7 +765,7 @@ var ACTIONS = {
   broadcast: function (u, b) {
     var text = needText(b.text, 3500, 'Текст розсилки');
     var to = rows('Users').filter(function (x) { return x.status === 'ok'; });
-    var n = sendMany(to.map(function (x) { return { chat_id: String(x.id), text: text, reply_markup: appButton(x.lang === 'ru' ? 'Открыть приложение' : 'Відкрити застосунок') }; }));
+    var n = sendMany(to.map(function (x) { return { chat_id: String(x.id), text: text, reply_markup: appButton(T[langOf(x)].open) }; }));
     return { flash: { sent: n } };
   }
 };
@@ -858,9 +890,8 @@ function roomNotify(key, x, u) {
   rows('RoomFeed').forEach(function (f) { if (f.type === 'join' && String(f.key).split('@')[0] === x.ev.id && Number(f.at) > lim) ids[String(f.userId)] = 1; });
   delete ids[String(u.id)];
   var list = rows('Users').filter(function (p) { return p.status === 'ok' && ids[String(p.id)]; }).map(function (p) {
-    var ru = p.lang === 'ru';
-    return { chat_id: String(p.id), text: ru ? 'Домашняя группа HeavenOS уже началась. Присоединяйся онлайн: карточка недели, вопросы, молитва.' : 'Домашня група HeavenOS вже почалась. Приєднуйся онлайн: картка тижня, питання, молитва.',
-      reply_markup: appButton(ru ? 'Присоединиться' : 'Приєднатися', prop('APP_URL') + '#room=' + encodeURIComponent(key)) };
+    var t = T[langOf(p)];
+    return { chat_id: String(p.id), text: t.roomLive, reply_markup: appButton(t.join, prop('APP_URL') + '#room=' + encodeURIComponent(key)) };
   });
   if (list.length) sendMany(list);
 }
@@ -969,7 +1000,10 @@ var T = {
     badInvite: 'Це запрошення вже недійсне. Попроси адміністратора надіслати нове. Реєстрація працює як звичайно.',
     welcome: function (n) { return (n ? n + ', р' : 'Р') + 'аді тебе бачити! Розклад, Біблія, HeavenOS і молитва — у застосунку.'; },
     open: 'Відкрити застосунок', verse: 'Вірш дня', read: 'Читати розділ',
-    remind: function (t, time) { return '⏰ Нагадування: «' + t + '» сьогодні о ' + time + '. Чекаємо тебе!'; }
+    remind: function (t, time) { return '⏰ Нагадування: «' + t + '» сьогодні о ' + time + '. Чекаємо тебе!'; },
+    roomLive: 'Домашня група HeavenOS вже почалась. Приєднуйся онлайн: картка тижня, питання, молитва.', join: 'Приєднатися',
+    prayed: function (n, lines) { return '🙏 Сьогодні за тебе помолилися: ' + n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? 'людина' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'людини' : 'людей') + '.' + (lines ? '\n\n' + lines : '') + '\n\nТи не сам. Коли Бог відповість, познач це в застосунку.'; },
+    answered: function (t) { return '🙌 Бог відповів!\n\nТи молився за потребу «' + t + '». Людина позначила, що молитва отримала відповідь. Дякуємо, що ти молився!'; }
   },
   ru: {
     askName: 'Добро пожаловать в церковь «Місто Світла»! 🙌\n\nЧтобы войти в приложение, нужны всего две вещи. Как тебя зовут? Напиши имя и фамилию.',
@@ -983,7 +1017,27 @@ var T = {
     badInvite: 'Это приглашение уже недействительно. Попроси администратора прислать новое. Регистрация работает как обычно.',
     welcome: function (n) { return (n ? n + ', р' : 'Р') + 'ады тебя видеть! Расписание, Библия, HeavenOS и молитва — в приложении.'; },
     open: 'Открыть приложение', verse: 'Стих дня', read: 'Читать главу',
-    remind: function (t, time) { return '⏰ Напоминание: «' + t + '» сегодня в ' + time + '. Ждём тебя!'; }
+    remind: function (t, time) { return '⏰ Напоминание: «' + t + '» сегодня в ' + time + '. Ждём тебя!'; },
+    roomLive: 'Домашняя группа HeavenOS уже началась. Присоединяйся онлайн: карточка недели, вопросы, молитва.', join: 'Присоединиться',
+    prayed: function (n, lines) { return '🙏 Сегодня за тебя помолились: ' + n + ' ' + (n % 10 === 1 && n % 100 !== 11 ? 'человек' : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? 'человека' : 'человек') + '.' + (lines ? '\n\n' + lines : '') + '\n\nТы не один. Когда Бог ответит, отметь это в приложении.'; },
+    answered: function (t) { return '🙌 Бог ответил!\n\nТы молился за нужду «' + t + '». Человек отметил, что молитва получила ответ. Спасибо, что ты молился!'; }
+  },
+  en: {
+    askName: 'Welcome to Misto Svitla church! 🙌\n\nTo get into the app we need just two things. What is your name? Type your first and last name.',
+    askContact: function (n) { return 'Thank you, ' + n + '! Now tap «Share contact» below. Only church ministers can see your number.'; },
+    pressContact: 'Tap the «Share contact» button below 👇',
+    ownContact: 'Please share your own contact with the button below.',
+    share: '📱 Share contact',
+    done: 'Done, you are registered ✅',
+    roles: { prayer: 'Prayer team', leader: 'Group leader', minister: 'Minister' },
+    roleGiven: function (r) { return '🔑 You have been given the role «' + r + '». New features are already in the app.'; },
+    badInvite: 'This invitation is no longer valid. Ask an admin for a new one. Registration works as usual.',
+    welcome: function (n) { return (n ? n + ', g' : 'G') + 'ood to see you! Schedule, Bible, HeavenOS and prayer are in the app.'; },
+    open: 'Open the app', verse: 'Verse of the day', read: 'Read the chapter',
+    remind: function (t, time) { return '⏰ Reminder: «' + t + '» today at ' + time + '. See you there!'; },
+    roomLive: 'HeavenOS home group has started. Join online: card of the week, questions, prayer.', join: 'Join',
+    prayed: function (n, lines) { return '🙏 Today ' + n + (n === 1 ? ' person' : ' people') + ' prayed for you.' + (lines ? '\n\n' + lines : '') + '\n\nYou are not alone. When God answers, mark it in the app.'; },
+    answered: function (t) { return '🙌 God answered!\n\nYou prayed for «' + t + '». The person marked that the prayer was answered. Thank you for praying!'; }
   }
 };
 
@@ -1094,6 +1148,8 @@ function tick() {
   if (!lock.tryLock(20000)) return;
   try { verseJob(); } catch (e) { log('verse', e); }
   try { remindJob(); } catch (e) { log('remind', e); }
+  try { prayDigestJob(); } catch (e) { log('prayDigest', e); }
+  try { weekDigestJob(); } catch (e) { log('weekDigest', e); }
   finally { lock.releaseLock(); }
 }
 
@@ -1114,7 +1170,7 @@ function verseJob() {
     var at = /^\d{2}:\d{2}$/.test(String(pp.verseAt || '')) ? pp.verseAt : def, m = minutesOf(at);
     if (m <= from || m > nowMin) return;
     if (!v) { v = verseOfDay(today); link = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'v=' + v.loc.join(':'); }
-    var l = x.lang === 'ru' ? 'ru' : 'uk', t = T[l];
+    var l = langOf(x), t = T[l];
     list.push({ chat_id: String(x.id), text: '✨ ' + t.verse + '\n\n«' + v.t[l] + '»\n— ' + v.ref[l], reply_markup: appButton(t.read, link) });
   });
   if (list.length) sendMany(list);
@@ -1133,7 +1189,7 @@ function remindJob() {
     if (left <= 0 || left > mins) return;
     var p = users[String(g.userId)];
     if (p && p.status === 'ok') {
-      var l = p.lang === 'ru' ? 'ru' : 'uk';
+      var l = langOf(p);
       list.push({ chat_id: String(p.id), text: T[l].remind(x.ev.title[l] || x.ev.title.uk, x.ev.time), reply_markup: appButton(T[l].open) });
     }
     g.reminded = '1'; setRow('Going', g);
@@ -1143,6 +1199,77 @@ function remindJob() {
   var old = kyivDate(new Date(now - 60 * 864e5));
   var stale = rows('Going').filter(function (g) { var d = String(g.key).split('@')[1]; return d && d < old; });
   if (stale.length) delRows('Going', stale);
+}
+
+/* Потребу позначили «Бог відповів»: кажемо про це всім, хто за неї молився. */
+function answeredNotify(n) {
+  var ids = {};
+  parseJ(n.prayers, []).forEach(function (p) { ids[String(p[0])] = 1; });
+  delete ids[String(n.userId)];
+  var short = String(n.text || '').length > 160 ? String(n.text).slice(0, 157) + '…' : String(n.text || '');
+  var list = rows('Users').filter(function (p) { return p.status === 'ok' && ids[String(p.id)]; }).map(function (p) {
+    var t = T[langOf(p)];
+    return { chat_id: String(p.id), text: t.answered(short), reply_markup: appButton(t.open, prop('APP_URL') + '#prayer') };
+  });
+  if (list.length) sendMany(list);
+}
+
+/* О 20:00 автор потреби дізнається, скільки людей за нього помолилися за добу. Один раз на день. */
+function prayDigestJob(now) {
+  now = now || new Date(); var props = PropertiesService.getScriptProperties(), today = kyivDate(now);
+  if (minutesOf(Utilities.formatDate(now, TZ, 'HH:mm')) < 20 * 60 || props.getProperty('prayDigest') === today) return;
+  var since = Number(props.getProperty('prayDigestAt')) || now.getTime() - 864e5;
+  props.setProperty('prayDigest', today); props.setProperty('prayDigestAt', String(now.getTime()));
+  var per = {};
+  rows('Needs').forEach(function (n) {
+    if (n.status === 'answered') return;
+    var who = {};
+    parseJ(n.prayers, []).forEach(function (p) { if (Number(p[1]) > since && String(p[0]) !== String(n.userId)) who[String(p[0])] = 1; });
+    var c = Object.keys(who).length;
+    if (!c) return;
+    var a = per[String(n.userId)] || (per[String(n.userId)] = { people: {}, needs: [] });
+    Object.keys(who).forEach(function (k) { a.people[k] = 1; });
+    a.needs.push({ text: String(n.text || ''), n: c });
+  });
+  var list = rows('Users').filter(function (p) { return p.status === 'ok' && per[String(p.id)]; }).map(function (p) {
+    var a = per[String(p.id)], t = T[langOf(p)];
+    var lines = a.needs.length > 1 ? a.needs.slice(0, 5).map(function (q) { return '• «' + (q.text.length > 60 ? q.text.slice(0, 57) + '…' : q.text) + '» — ' + q.n; }).join('\n') : '';
+    return { chat_id: String(p.id), text: t.prayed(Object.keys(a.people).length, lines), reply_markup: appButton(t.open, prop('APP_URL') + '#prayer') };
+  });
+  if (list.length) sendMany(list);
+}
+
+/* Неділя, 20:00: коротке зведення тижня для адміністраторів. */
+function weekDigestJob(now) {
+  now = now || new Date(); var props = PropertiesService.getScriptProperties(), today = kyivDate(now);
+  if (Utilities.formatDate(now, TZ, 'u') !== '7' || minutesOf(Utilities.formatDate(now, TZ, 'HH:mm')) < 20 * 60 || props.getProperty('weekDigest') === today) return;
+  props.setProperty('weekDigest', today);
+  var weekAgo = now.getTime() - 7 * 864e5, users = rows('Users').filter(function (x) { return x.status === 'ok'; });
+  var fresh = users.filter(function (x) { return Number(x.created) > weekAgo; });
+  var prayers = 0, needs = 0, answered = 0;
+  rows('Needs').forEach(function (n) {
+    if (Number(n.created) > weekAgo) needs++;
+    parseJ(n.prayers, []).forEach(function (p) { if (Number(p[1]) > weekAgo) prayers++; });
+  });
+  rows('Tests').forEach(function (t2) { if (Number(t2.created) > weekAgo && t2.needId) answered++; });
+  var going = {}, from = kyivDate(new Date(now.getTime() - 6 * 864e5));
+  rows('Going').forEach(function (g) {
+    var x = eventByKey(g.key);
+    if (!x || x.date < from || x.date > today) return;
+    var k = x.ev.title.uk + ' (' + x.date.slice(8, 10) + '.' + x.date.slice(5, 7) + ')';
+    going[k] = (going[k] || 0) + 1;
+  });
+  var pend = rows('Tests').filter(function (t2) { return t2.status === 'pending'; }).length + rows('Ads').filter(function (a) { return a.status === 'pending'; }).length;
+  var reqs = rows('Requests').filter(function (r) { return r.status === 'new'; }).length;
+  var g = Object.keys(going).map(function (k) { return '• ' + k + ': ' + going[k]; }).join('\n');
+  var text = '📊 Тиждень у застосунку\n\n' +
+    '👋 Нових учасників: ' + fresh.length + (fresh.length ? ' (' + fresh.slice(0, 8).map(function (x) { return first(x.name); }).join(', ') + (fresh.length > 8 ? '…' : '') + ')' : '') + '\n' +
+    '👥 Усього учасників: ' + users.length + '\n' +
+    '🙏 Молитов: ' + prayers + ', нових потреб: ' + needs + (answered ? ', свідчень про відповідь: ' + answered : '') + '\n' +
+    (g ? '\n✋ Відмітили «Я буду»:\n' + g + '\n' : '') +
+    (pend || reqs ? '\n⏳ Чекають на вас: ' + [pend ? 'модерація ' + pend : '', reqs ? 'заявки ' + reqs : ''].filter(Boolean).join(', ') : '\n✅ Модерація й заявки розібрані');
+  var to = users.filter(function (x) { return roleOf(x) === 'admin'; });
+  if (to.length) sendMany(to.map(function (x) { return { chat_id: String(x.id), text: text, reply_markup: appButton('Адмінка', prop('APP_URL') + '#admin') }; }));
 }
 
 /* ================= встановлення ================= */
