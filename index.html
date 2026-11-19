@@ -1123,7 +1123,16 @@ i.add{font-style:italic;color:var(--muted)}
 .block .night-pad{gap:14px}
 .mark-l{font:800 18px/1 var(--font-display);color:var(--night-ink);margin-bottom:auto}
 .guest{padding-top:14px}.g-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.g-hero{min-height:440px;justify-content:flex-start}.g-hero .big{font-size:clamp(38px,12vw,52px);line-height:.95}
+.g-hero{min-height:min(700px,calc(100svh - 96px));justify-content:flex-start}.g-hero .big{font-size:clamp(42px,13vw,56px);line-height:.93}
+.g-hero .night-pad{position:relative;z-index:1;padding:26px 22px 22px;gap:16px}
+.g-hero canvas.scene{position:relative;flex:none;width:100%;height:290px;margin:-64px 0 0;margin-top:auto;pointer-events:none;-webkit-mask-image:linear-gradient(transparent,#000 30%);mask-image:linear-gradient(transparent,#000 30%)}
+.g-hero .night-pad{margin-bottom:-64px}
+.g-hero .g-btns{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:6px}
+.g-hero .g-btns .btn{justify-content:center}
+.g-tg{display:inline-flex;align-items:center;gap:10px}.g-tg svg{width:22px;height:22px;flex:none}
+.g-cta{position:sticky;bottom:10px;z-index:3;margin-top:-10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
+.g-cta.on{opacity:1;transform:none;pointer-events:auto}.g-cta .btn{width:100%;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+@media (prefers-reduced-motion:reduce){.g-cta{transition:none}}
 .qr-card{gap:14px}.qr-img{width:100%;max-width:300px;align-self:center;border-radius:16px;box-shadow:0 0 0 1px var(--line)}
 .g-demo{text-align:center}.g-demo a{color:var(--muted)}
 .mark-l b{color:#A3ACFF}
@@ -1651,6 +1660,7 @@ var GUEST=false;
 function guestSrc(){var m=String(location.search).match(/[?&]src=([a-z0-9]{1,20})(?:&|$)/);return m?m[1]:'site';}
 function guestTg(){return 'https://t.me/'+CONFIG.BOT_USERNAME+'?startapp=src_'+guestSrc();}
 function guestStart(){GUEST=true;
+  document.addEventListener('scroll',function(e){var m=e.target,c=document.getElementById('gcta');if(!c||!m||m.id!=='main')return;var h=document.querySelector('.g-hero');c.classList.toggle('on',!!h&&m.scrollTop>h.offsetTop+h.offsetHeight-60&&m.scrollTop+m.clientHeight<m.scrollHeight-260);},true);
   try{if(!localStorage.getItem('misto-svitla-v3')){var nl=String(navigator.language||'');if(/^ru/i.test(nl))state.lang='ru';else if(/^en/i.test(nl))state.lang='en';}}catch(e){}
   D={guest:true,me:{},events:clone(DEFAULT_EVENTS),settings:clone(DEFAULT_SETTINGS)};applyD();BLOCK='guest';
   var go=function(){render();try{fetch(CONFIG.API_URL+'?pub=1').then(function(r){return r.json();}).then(function(p){if(!p||!p.events)return;D.events=p.events;D.settings=Object.assign({},DEFAULT_SETTINGS,p.settings||{});applyD();render();}).catch(function(){});}catch(e){}};
@@ -1659,7 +1669,7 @@ function guestView(){var now=new Date(),up=[],sun=null;
   for(var i=0;i<21&&up.length<6;i++){var d=addDays(day0(now),i);dayItems(d).forEach(function(it){if(up.length<6&&occDate(iso(d),it.time)>now&&it.kind!=='leaders'&&it.kind!=='daily')up.push({it:it,d:d});});}
   RULES.forEach(function(r){if(r.kind==='sunday'&&!sun)sun=r;});
   var addr=(D.settings['address_'+(state.lang==='ru'?'ru':'uk')])||'';
-  var tgBtn='<a class="btn light" href="'+esc(guestTg())+'">'+x('Відкрити в Telegram','Открыть в Telegram','Open in Telegram')+'</a>';
+  var tgBtn='<a class="btn light g-tg" href="'+esc(guestTg())+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#2AABEE" d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24z"/><path fill="#fff" d="M5.4 11.9l11.6-4.5c.5-.2 1 .1.8.9l-2 9.3c-.1.7-.5.8-1.1.5l-3-2.2-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.1 5.6-5c.2-.2 0-.3-.4-.1l-6.9 4.3-3-.9c-.6-.2-.7-.6.3-.9z"/></svg>'+x('Відкрити в Telegram','Открыть в Telegram','Open in Telegram')+'</a>';
   var rows=up.map(function(o){var it=o.it,d=o.d;return '<li class="ev"><span class="date-big">'+d.getDate()+'.'+pad2(d.getMonth()+1)+'<small>'+it.time+'</small></span><div><h3>'+esc(L(it.title))+'</h3>'+
     '<p class="sub">'+WD[state.lang][d.getDay()]+(it.link?', '+x('онлайн','онлайн','online'):it.who?', '+esc(L(it.who)):'')+'</p>'+(it.desc?'<p class="sub">'+esc(L(it.desc))+'</p>':'')+'</div></li>';}).join('');
   var first=[[x('Приходь таким, як є','Приходи таким, как есть','Come as you are'),x('Костюм не обов’язковий, усмішка бажана.','Костюм не обязателен, улыбка желательна.','No dress code, smiles welcome.')],
@@ -1668,14 +1678,15 @@ function guestView(){var now=new Date(),up=[],sun=null;
   return '<main id="main" class="guest">'+
    '<div class="g-top"><span class="mark">Місто <b>Світла</b></span>'+langSwitch()+'</div>'+
    '<section class="night g-hero"><div class="night-pad"><p class="when">'+x('Церква в Києві','Церковь в Киеве','A church in Kyiv')+'</p><h1 class="big">'+x('Тут тебе чекають','Здесь тебя ждут','You are welcome here')+'</h1>'+
-     (sun?'<p class="when">'+x('Недільне служіння щонеділі о ','Воскресное служение каждое воскресенье в ','Sunday service every Sunday at ')+sun.time+(addr?'<br>'+esc(addr):'')+'</p>':'')+
-     '<div class="row">'+tgBtn+'<a class="btn ghost-l" href="'+esc(MAP)+'" target="_blank" rel="noopener">'+x('Як дістатися','Как добраться','Directions')+'</a></div></div><canvas class="scene" aria-hidden="true"></canvas></section>'+
+     (sun?'<p class="when">'+x('Служіння щонеділі ','Служение каждое воскресенье ','Service every Sunday ')+at(sun.time)+(addr?'<br>'+esc(addr):'')+'</p>':'')+
+     '<div class="g-btns">'+tgBtn+'<a class="btn ghost-l" href="'+esc(MAP)+'" target="_blank" rel="noopener">'+x('Як дістатися','Как добраться','Directions')+'</a></div></div><canvas class="scene" aria-hidden="true"></canvas></section>'+
    (rows?'<section class="stack"><h2>'+x('Найближчі зустрічі','Ближайшие встречи','Coming up')+'</h2><ul class="list">'+rows+'</ul></section>':'')+
    '<section class="stack"><h2>'+x('Вперше в нас?','Впервые у нас?','First time?')+'</h2><ul class="list">'+first.map(function(q){return '<li><h3>'+q[0]+'</h3><p class="sub">'+q[1]+'</p></li>';}).join('')+'</ul></section>'+
    '<section class="word"><p class="scripture">'+x('Ви світло для світу. Не може сховатися місто, що стоїть на верховині гори.','Вы — свет мира. Не может укрыться город, стоящий на верху горы.','You are the light of the world. A city set on a hill cannot be hidden.')+'</p><p class="ref">'+x('Матвія 5:14','Матфея 5:14','Matthew 5:14')+'</p>'+
      '<p class="sub">'+x('Церкву заснував у 1992 році пастор Дмитро Масон. Вона входить до всесвітньої родини церков Foursquare. Звідси й назва.','Церковь основал в 1992 году пастор Дмитрий Масон. Она входит во всемирную семью церквей Foursquare. Отсюда и название.','Pastor Dmytro Mason founded the church in 1992. It is part of the worldwide Foursquare family of churches. That verse gave it its name.')+'</p></section>'+
    '<section class="card g-app"><h2 class="t3">'+x('Церква в телефоні','Церковь в телефоне','Church in your pocket')+'</h2><p class="sub">'+x('Розклад і нагадування, Біблія, молитва разом, домашні групи HeavenOS. Безкоштовно, всередині Telegram.','Расписание и напоминания, Библия, молитва вместе, домашние группы HeavenOS. Бесплатно, внутри Telegram.','Schedule and reminders, the Bible, praying together, HeavenOS home groups. Free, inside Telegram.')+'</p><div class="row">'+tgBtn.replace('btn light','btn accent')+'</div></section>'+
    '<section class="stack"><h2>'+x('Ми в мережі','Мы в сети','Find us')+'</h2><div class="row">'+[['Telegram',TG],['Instagram',IG],['YouTube',YT],['Facebook',FB]].filter(function(l){return l[1];}).map(function(l){return '<a class="btn tint small" href="'+esc(l[1])+'" target="_blank" rel="noopener">'+l[0]+'</a>';}).join('')+'</div></section>'+
+   '<div class="g-cta" id="gcta">'+tgBtn.replace('btn light','btn accent')+'</div>'+
    '<p class="note g-demo"><a href="?demo=1">'+x('Подивитися, як виглядає застосунок','Посмотреть, как выглядит приложение','See what the app looks like')+'</a></p></main>';}
 function boot(){
   if(LIVE){try{tg.ready();tg.expand();if(tg.BackButton)tg.BackButton.onClick(goBack);if(tg.disableVerticalSwipes)tg.disableVerticalSwipes();tgTheme();checkHome();if(tg.onEvent)tg.onEvent('homeScreenAdded',function(){homeAdded=true;render();});if(tg.onEvent)tg.onEvent('themeChanged',function(){tgTheme();render();});}catch(e){}
