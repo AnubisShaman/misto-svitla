@@ -88,14 +88,14 @@ html.kb .g-form{padding-bottom:12px}
 @media (max-width:350px){.tabs button{font-size:9.5px;letter-spacing:-.01em}.mark{font-size:15px}.top{gap:6px;padding-left:14px;padding-right:14px}.top-r{gap:5px!important}.lang button{min-width:34px;padding:8px 6px}}
 .mark b{color:var(--accent);font-weight:800}
 .top-r{display:flex;align-items:center;gap:6px}
-.icon-btn{width:36px;height:36px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 8%,transparent);display:grid;place-items:center}
-.icon-btn.theme-btn{width:auto;display:inline-flex;gap:6px;padding:0 14px 0 11px;border-radius:999px;font:600 13px/1 var(--font-body);color:var(--ink)}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:0;background:color-mix(in srgb,var(--ink) 8%,transparent);display:grid;place-items:center}
+.icon-btn.theme-btn{width:auto;height:40px;display:inline-flex;gap:6px;padding:0 14px 0 11px;border-radius:999px;font:600 13px/1 var(--font-body);color:var(--ink)}
 .icon-btn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .icon-btn[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
 .lang{display:flex;background:color-mix(in srgb,var(--ink) 8%,transparent);border-radius:999px;padding:2px}
 .lang button{border:0;background:none;padding:8px 9px;min-width:40px;min-height:36px;font:600 12px/1 var(--font-body);color:var(--muted);border-radius:999px}
 .lang button[aria-pressed="true"]{color:var(--ink);background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.14)}
-.me{width:36px;height:36px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);font:800 15px/1 var(--font-display)}
+.me{width:40px;height:40px;border-radius:50%;border:0;background:var(--ink);color:var(--paper);font:800 15px/1 var(--font-display)}
 main{flex:1;overflow-y:auto;padding:8px 18px 34px;display:flex;flex-direction:column;gap:26px;overscroll-behavior:contain}
 main>*{flex-shrink:0}
 
@@ -108,7 +108,7 @@ h2.t3{font:600 16px/1.25 var(--font-body);letter-spacing:0}
 .stack{display:flex;flex-direction:column;gap:12px}
 .between{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-.back{align-self:flex-start;background:none;border:0;padding:6px 0;color:var(--accent);font-weight:500;margin-bottom:-14px;display:flex;align-items:center;gap:2px}
+.back{align-self:flex-start;background:none;border:0;padding:10px 12px 10px 0;min-height:44px;color:var(--accent);font-weight:500;margin-bottom:-14px;display:flex;align-items:center;gap:2px}
 .back svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;margin-left:-6px}
 
 /* press feedback: quick down, springy release */
@@ -223,7 +223,7 @@ canvas.scene{display:block;width:100%;height:168px;margin-top:-18px}
 /* iOS segmented control with a sliding thumb */
 .seg{--i:0;--n:2;position:relative;display:grid;grid-auto-flow:column;grid-auto-columns:1fr;background:color-mix(in srgb,var(--ink) 9%,transparent);border-radius:11px;padding:2px}
 .seg::before{content:"";position:absolute;top:2px;bottom:2px;left:2px;width:calc((100% - 4px)/var(--n));transform:translateX(calc(var(--i)*100%));background:var(--surface);border-radius:9px;box-shadow:0 1px 3px rgba(0,0,0,.16),0 0 0 .5px rgba(0,0,0,.04);transition:transform .34s var(--spring)}
-.seg button{position:relative;border:0;background:none;height:34px;font:500 13.5px/1 var(--font-body);color:var(--ink);border-radius:9px;white-space:nowrap;padding:0 4px}
+.seg button{position:relative;border:0;background:none;height:38px;font:500 13.5px/1 var(--font-body);color:var(--ink);border-radius:9px;white-space:nowrap;padding:0 4px}
 .seg button[aria-pressed="true"]{font-weight:600}
 
 .chips{display:flex;flex-wrap:wrap;gap:8px}
@@ -1133,6 +1133,18 @@ i.add{font-style:italic;color:var(--muted)}
 .g-cta{position:sticky;bottom:10px;z-index:3;margin-top:-10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
 .g-cta.on{opacity:1;transform:none;pointer-events:auto}.g-cta .btn{width:100%;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 @media (prefers-reduced-motion:reduce){.g-cta{transition:none}}
+.nc-card{display:grid;grid-template-columns:78px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#4B3BC9,#7B5CFF);color:#fff;border-radius:24px;padding:16px 18px 16px 12px;box-shadow:0 10px 28px rgba(75,59,201,.28)}
+.nc-art .cx-lamb{width:78px;height:78px}.nc-tx h2{font:800 20px/1.1 var(--font-display);letter-spacing:-.02em;margin:0 0 4px}.nc-tx p{margin:0 0 10px;font-size:14.5px;line-height:1.4;color:rgba(255,255,255,.88)}
+.nc-tx .row{align-items:center;gap:14px}.nc-tx .btn.accent{background:#fff;color:#3A2DB0;box-shadow:none}.nc-tx .link{color:rgba(255,255,255,.85)}
+:root[data-theme="dark"] .nc-card,:root:not([data-theme="light"]) .nc-card{box-shadow:none}
+.h-hint{position:absolute;right:62px;top:-10px;background:#fff;color:#17120A;font:700 12.5px/1 var(--font-body);padding:8px 11px;border-radius:14px 14px 4px 14px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.28);pointer-events:none}
+@media (prefers-reduced-motion:no-preference){.h-hint{animation:hintPulse 2.6s ease-in-out infinite}@keyframes hintPulse{0%,100%{transform:translateX(0)}50%{transform:translateX(-4px)}}}
+.nc-brief{background:var(--surface);border-radius:22px;padding:18px;display:flex;flex-direction:column;gap:10px}.nc-brief h2{margin:0}.nc-brief p{margin:0;font-size:16px;line-height:1.5}
+.faq{display:flex;flex-direction:column}.faq details{border-bottom:1px solid var(--line)}.faq summary{list-style:none;cursor:pointer;padding:14px 28px 14px 0;font-weight:600;position:relative;min-height:44px;display:flex;align-items:center}
+.faq summary::-webkit-details-marker{display:none}.faq summary::after{content:"+";position:absolute;right:4px;font-size:22px;font-weight:400;color:var(--accent);transition:transform .2s}.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{margin:0 0 14px;color:var(--muted);line-height:1.5}
+.chips.left{justify-content:flex-start}
+.reg-what{list-style:none;margin:0 0 2px;padding:0;display:flex;flex-wrap:wrap;gap:8px}.reg-what li{font:600 12.5px/1 var(--font-body);color:#FFE2A0;background:rgba(255,207,110,.12);padding:8px 10px;border-radius:999px}
 .yt{position:relative;flex:none;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000;width:100%}.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 .sm-intent{font-size:16px;line-height:1.5;margin:0 0 8px}
 .qr-card{gap:14px}.qr-img{width:100%;max-width:300px;align-self:center;border-radius:16px;box-shadow:0 0 0 1px var(--line)}
@@ -1388,7 +1400,7 @@ var BASE_LIT=48, TRANSIENT=['bookOpen','sheet','sheetData','sel','pickBook','jum
 
 function defaults(){return {bookPos:{},bookOpen:null,log:{},path:{},aseg:'events',confirm:null,bcText:'',img:null,q:'',lang:'uk',skin:'',sfx:true,tab:'today',sub:null,seg:{bible:'read',prayer:'needs',community:'serve',heaven:'os'},devs:{p:{},all:false},dvCard:null,day:null,name:'',
   going:{},verseOn:false,verseAt:'',prayed:{},needs:[],testimonies:[],pastoral:null,step:{text:'',done:false},read:{},openBook:null,
-  bible:{b:0,c:5},hl:{},notes:{},marks:{},fs:1,cardDay:null,done:{},serve:{},skills:{},ads:[],hello:false,sermon:false,
+  bible:{b:0,c:5},hl:{},notes:{},marks:{},fs:1,cardDay:null,done:{},serve:{},skills:{},ads:[],hello:false,ncSeen:false,ncHide:false,sermon:false,
   thanks:{},wxLoc:null,shareWay:null,sermSaved:{},
   sheet:null,sheetData:null,sel:null,pickBook:null,jump:null,cardAnim:false};}
 var state=defaults();
@@ -1437,7 +1449,7 @@ var KIND_NAMES={sunday:['Синій','Синий'],heaven:['Помаранчев
 var ROLES=['member','prayer','leader','minister','admin'];
 var ROLE_NAMES={member:['Учасник','Участник'],prayer:['Молитовна команда','Молитвенная команда'],leader:['Лідер групи','Лидер группы'],minister:['Служитель','Служитель'],admin:['Адміністратор','Администратор']};
 var REQ_NAMES={pastoral:['Розмова з пастором','Разговор с пастором'],serve:['Хоче служити','Хочет служить'],hello:['Хоче познайомитися','Хочет познакомиться']};
-var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','verseAt','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved'];
+var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','verseAt','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved','ncSeen','ncHide'];
 var DEFAULT_SETTINGS={playlist:'',ytChannel:'UCmK9YFNcVwyrPgj060EM3-g',address_uk:'Київ, пр. Степана Бандери, 23, метро «Почайна»',address_ru:'Киев, пр. Степана Бандеры, 23, метро «Почайна»',map:'проспект Степана Бандери 23 Київ',
   mono:'4441 1110 4143 8320',monoJar:'',iban:'UA783052990000026005030102192',recipient:'РО РГ ХМЦ МІСТО СВІТЛА',edrpou:'19261358',purpose:'добровільні пожертвування',paypal:'centreofdm@gmail.com',
   verseTime:'07:30',remind:'60',cardStart:'2026-11-09',youth_uk:'Тут будуть свої події, стрічка та посилання на чат молоді.',youth_ru:'Здесь будут свои события, лента и ссылка на чат молодёжи.',
@@ -1684,6 +1696,7 @@ function guestView(){var now=new Date(),up=[],sun=null;
      '<div class="g-btns">'+tgBtn+'<a class="btn ghost-l" href="'+esc(MAP)+'" target="_blank" rel="noopener">'+x('Як дістатися','Как добраться','Directions')+'</a></div></div><canvas class="scene" aria-hidden="true"></canvas></section>'+
    (rows?'<section class="stack"><h2>'+x('Найближчі зустрічі','Ближайшие встречи','Coming up')+'</h2><ul class="list">'+rows+'</ul></section>':'')+
    '<section class="stack"><h2>'+x('Вперше в нас?','Впервые у нас?','First time?')+'</h2><ul class="list">'+first.map(function(q){return '<li><h3>'+q[0]+'</h3><p class="sub">'+q[1]+'</p></li>';}).join('')+'</ul></section>'+
+   '<section class="stack"><h2>'+x('Чесні питання','Честные вопросы','Honest questions')+'</h2>'+faqHtml()+'</section>'+
    '<section class="word"><p class="scripture">'+x('Ви світло для світу. Не може сховатися місто, що стоїть на верховині гори.','Вы — свет мира. Не может укрыться город, стоящий на верху горы.','You are the light of the world. A city set on a hill cannot be hidden.')+'</p><p class="ref">'+x('Матвія 5:14','Матфея 5:14','Matthew 5:14')+'</p>'+
      '<p class="sub">'+x('Церкву заснував у 1992 році пастор Дмитро Масон. Вона входить до всесвітньої родини церков Foursquare. Звідси й назва.','Церковь основал в 1992 году пастор Дмитрий Масон. Она входит во всемирную семью церквей Foursquare. Отсюда и название.','Pastor Dmytro Mason founded the church in 1992. It is part of the worldwide Foursquare family of churches. That verse gave it its name.')+'</p></section>'+
    '<section class="card g-app"><h2 class="t3">'+x('Церква в телефоні','Церковь в телефоне','Church in your pocket')+'</h2><p class="sub">'+x('Розклад і нагадування, Біблія, молитва разом, домашні групи HeavenOS. Безкоштовно, всередині Telegram.','Расписание и напоминания, Библия, молитва вместе, домашние группы HeavenOS. Бесплатно, внутри Telegram.','Schedule and reminders, the Bible, praying together, HeavenOS home groups. Free, inside Telegram.')+'</p><div class="row">'+tgBtn.replace('btn light','btn accent')+'</div></section>'+
@@ -2143,7 +2156,7 @@ function vToday(){var now=new Date(),t0=day0(now),sel=state.day?fromIso(state.da
       (it.who||it.where?'<p class="when">'+(it.who?L(it.who):L(it.where))+'</p>':'')+'<div class="row">'+goingBtn(key)+'<button class="btn tint small" data-act="meet" data-v="'+key+'">'+x('Хто буде','Кто будет')+'</button></div>';}
   var items=dayItems(sel),v=verseOfDay(now),cn=weekCard(),open=cardOpen();
   var soon=SPECIALS.filter(function(s){return occDate(s.dates[s.dates.length-1],s.time)>now;});
-  return hero2(now,nx)+homeDay()+
+  return hero2(now,nx)+ncCard()+homeDay()+
    '<section class="stack"><div class="between"><h2>'+x('Цей тиждень','Эта неделя')+'</h2><button class="link" data-act="go" data-v="events">'+x('Увесь місяць','Весь месяц')+'</button></div>'+
      '<div class="week">'+week+'</div><ul class="mts">'+items.map(function(q){return mtRow(q,sel);}).join('')+'</ul></section>'+
    (soon.length?'<section class="stack"><h2>'+x('Не пропусти','Не пропусти')+'</h2><ul class="list">'+soon.map(specialRow).join('')+'</ul></section>':'')+
@@ -3041,17 +3054,18 @@ var hubLast=0,HUB_C={books:'#C9792E',admin:'#E0348F',leader:'#F2A237',cabinet:'#
 function vMore(){var rows=[],A=D&&D.admin,badge=A?(A.tests||[]).length+(A.ads||[]).length+((A.stats||{}).newRequests||0):0;
   if(isAdmin())rows.push(['admin','leaders',x('Адмінка','Админка'),x('Події, модерація, люди, налаштування, розсилка','События, модерация, люди, настройки, рассылка'),badge]);
   if(isLeaderRole())rows.push(['leader','heaven',x('Кабінет лідера','Кабинет лидера'),x('Хто прийде на зустріч','Кто придёт на встречу')]);
+  if(!state.ncSeen&&!isLeaderRole())rows.push(['newcomer','teens',x('Я тут новий','Я здесь новый'),x('Вперше тут? Почни звідси','Впервые здесь? Начни отсюда','First time here? Start here')]);
   rows=rows.concat([
   ['cabinet','prayer',x('Мій кабінет','Мой кабинет'),x('Мої зустрічі, читання, кроки','Мои встречи, чтение, шаги')],
   ['prayer','prayer',x('Молитва','Молитва'),x('Потреби, свідчення, розмова з пастором','Нужды, свидетельства, разговор с пастором')],
   ['events','sunday',x('Події','События'),x('Календар місяця та особливі зустрічі','Календарь месяца и особые встречи')],
   ['community','heaven',x('Спільнота','Сообщество'),x('Служіння, молодь, взаємодопомога','Служение, молодёжь, взаимопомощь')],
   ['media','daily',x('Проповіді','Проповеди'),x('Трансляція та архів','Трансляция и архив')],
-  ['newcomer','teens',x('Я тут новий','Я здесь новый'),x('Комікс-путівник по застосунку','Комикс-путеводитель по приложению','A comic tour of the app')],
+  state.ncSeen||isLeaderRole()?['newcomer','teens',x('Я тут новий','Я здесь новый'),x('Комікс-путівник по застосунку','Комикс-путеводитель по приложению','A comic tour of the app')]:null,
   ['give','evenings',x('Пожертви','Пожертвования'),x('Реквізити церкви','Реквизиты церкви')],
   ['books','evenings',x('Книги пастора','Книги пастора','Pastor’s books'),x('Дмитро Масон: «Лідер не за покликанням», «Таємниця перлини»','Дмитрий Масон: «Лидер не по призванию», «Тайна жемчужины»','Dmytro Mason: «A Leader Not by Calling», «The Secret of the Pearl»')],
   ['about','leaders',x('Про церкву','О церкви'),x('Історія, цінності, соцмережі','История, ценности, соцсети')]]);
-  var now=Date.now(),enter=now-hubLast>1500&&motionOk();hubLast=now;
+  rows=rows.filter(Boolean);var now=Date.now(),enter=now-hubLast>1500&&motionOk();hubLast=now;
   return '<h1 class="hub-h">'+x('Розділи','Разделы','Sections')+'</h1><nav class="hub'+(enter?' in':'')+'">'+rows.map(function(r,i){return '<button class="hub-row" data-act="go" data-v="'+r[0]+'" style="--c:'+(HUB_C[r[0]]||'#8A93A6')+';--d:'+(i*45)+'ms"><span class="hub-ic"><svg viewBox="0 0 24 24" aria-hidden="true">'+(HUB_IC[r[0]]||'').replace(/<(path|circle|rect)/g,'<$1 pathLength="1"')+'</svg></span><span class="hub-t"><strong>'+r[2]+'</strong><small>'+r[3]+'</small></span>'+(r[4]?'<span class="badge">'+r[4]+'</span>':'')+CHEV+'</button>';}).join('')+'</nav>';}
 function back(to){to=to||PARENT[state.sub]||'more';return '<button class="back" data-act="go" data-v="'+to+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>'+tabName(to)+'</button>';}
 function tabName(t){return {today:x('Сьогодні','Сегодня'),bible:x('Біблія','Библия'),guide:x('Провідник','Проводник'),play:x('Зростання','Рост','Grow'),more:x('Розділи','Разделы','Sections')}[t]||'';}
@@ -3077,8 +3091,11 @@ var LAMB_COS={
     face:'<circle cx="51.5" cy="49.5" r="4.2" fill="#E4312B"/><circle cx="50.2" cy="48.2" r="1.3" fill="#fff" opacity=".7"/>',post:'<path d="M32 58q20 9 40 0l-2 6q-18 7-36 0z" fill="#C8302C"/><path d="M62 62l5 12h-7z" fill="#C8302C"/>'},
   cosmos:{post:'<circle cx="51.5" cy="43" r="25" fill="rgba(190,225,255,.22)" stroke="#E8EEF8" stroke-width="3"/><path d="M36 30a20 20 0 0 1 14-9" stroke="#fff" stroke-width="3" stroke-linecap="round" fill="none" opacity=".85"/><rect x="33" y="64" width="37" height="7" rx="3.5" fill="#DDE5F2" stroke="#9AA7BD" stroke-width="1.5"/><path d="M68 22l6-8" stroke="#DDE5F2" stroke-width="2.5" stroke-linecap="round"/><circle cx="75" cy="13" r="3" fill="#FF6F5B"/>'},
   joy:{post:'<g transform="translate(62 25)"><g fill="#FFC2DD"><circle cx="0" cy="-5" r="3.6"/><circle cx="4.8" cy="-1.5" r="3.6"/><circle cx="3" cy="4" r="3.6"/><circle cx="-3" cy="4" r="3.6"/><circle cx="-4.8" cy="-1.5" r="3.6"/></g><circle r="2.6" fill="#FFC94D"/></g>'}};
+function ncCard(){if(state.ncSeen||state.ncHide)return '';
+  return '<section class="nc-card"><div class="nc-art" aria-hidden="true">'+cxLamb('happy','',LAMB_COS[state.skin||''])+'</div><div class="nc-tx"><h2>'+x('Вперше тут?','Впервые здесь?','First time here?')+'</h2><p>'+x('Беня за дві хвилини покаже, що де лежить і навіщо воно потрібне. Без обов’язків.','Беня за две минуты покажет, что где лежит и зачем это нужно. Без обязательств.','Benya will show you in two minutes what is where and what it is for. No strings.')+'</p>'+
+    '<div class="row"><button class="btn accent small" data-act="go" data-v="newcomer">'+x('Показати','Показать','Show me')+'</button><button class="link" data-act="ncHide">'+x('Не зараз','Не сейчас','Not now')+'</button></div></div></section>';}
 function heroLamb(){var sk=state.skin||'';
-  return '<button class="h-lamb" data-act="lambTap" aria-label="'+x('Беня: комікс-путівник по застосунку','Беня: комикс-путеводитель по приложению','Benya: a comic tour of the app')+'"><span class="h-waves" aria-hidden="true"><i></i><i></i><i></i></span><span class="h-say" aria-hidden="true">'+x('бе-е-е','бе-е-е','baa-a')+'</span>'+cxLamb('happy','',LAMB_COS[sk])+'</button>';}
+  return '<button class="h-lamb" data-act="lambTap" aria-label="'+x('Беня: комікс-путівник по застосунку','Беня: комикс-путеводитель по приложению','Benya: a comic tour of the app')+'"><span class="h-waves" aria-hidden="true"><i></i><i></i><i></i></span><span class="h-say" aria-hidden="true">'+x('бе-е-е','бе-е-е','baa-a')+'</span>'+(state.ncSeen?'':'<span class="h-hint" aria-hidden="true">'+x('Вперше тут? Торкнись','Впервые здесь? Коснись','New here? Tap me')+'</span>')+cxLamb('happy','',LAMB_COS[sk])+'</button>';}
 function bleat(){try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();var t=AC.currentTime,o=AC.createOscillator(),f=AC.createBiquadFilter(),g=AC.createGain(),l=AC.createOscillator(),lg=AC.createGain();
   o.type='sawtooth';o.frequency.setValueAtTime(560,t);o.frequency.linearRampToValueAtTime(500,t+.35);o.frequency.linearRampToValueAtTime(430,t+.75);
   f.type='bandpass';f.frequency.value=1250;f.Q.value=2.2;l.frequency.value=23;lg.gain.value=.11;l.connect(lg);lg.connect(g.gain);
@@ -3092,6 +3109,15 @@ function cxObserve(){var els=document.querySelectorAll('.cx-p:not(.in)');if(!els
   if(!('IntersectionObserver' in window)||!motionOk()){els.forEach(function(el){el.classList.add('in');cxSeen[el.dataset.cx]=1;});return;}
   var io=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('in');cxSeen[en.target.dataset.cx]=1;io.unobserve(en.target);}});},{root:document.querySelector('main'),threshold:.25});
   els.forEach(function(el){io.observe(el);});}
+function faqItems(){var st=(D&&D.settings)||{},addr=st['address_'+(state.lang==='ru'?'ru':'uk')]||'';
+  return [
+   [x('Це безкоштовно?','Это бесплатно?','Is it free?'),x('Застосунок безкоштовний. Пожертви церкви добровільні, реквізити лежать окремо в розділі «Пожертви».','Приложение бесплатное. Пожертвования церкви добровольные, реквизиты лежат отдельно в разделе «Пожертвования».','The app is free. Donations to the church are voluntary; the details are in their own section.')],
+   [x('Навіщо вам мій номер?','Зачем вам мой номер?','Why do you need my number?'),x('Щоб служитель міг привітатися й зв’язатися, якщо ти сам попросиш або запишешся на зустріч. Номер бачать лише служителі церкви.','Чтобы служитель мог поприветствовать и связаться, если ты сам попросишь или запишешься на встречу. Номер видят только служители церкви.','So a minister can say hello and reach you if you ask or sign up for a meeting. Only church ministers can see it.')],
+   [x('Мені будуть писати?','Мне будут писать?','Will you message me?'),x('Бот пише лише про те, що ти сам обрав: нагадування про зустрічі, на які ти відмітився, вірш дня (якщо ввімкнеш) і відповіді на молитви, за які ти молився або які записав. Інколи адміністратор може надіслати оголошення всій церкві.','Бот пишет только о том, что ты сам выбрал: напоминания о встречах, куда ты отметился, стих дня (если включишь) и ответы на молитвы, за которые ты молился или которые записал. Иногда администратор может отправить объявление всей церкви.','The bot writes only about what you chose: reminders for meetings you marked, the verse of the day (if you turn it on) and answers to prayers you prayed for or wrote. Sometimes an admin sends one announcement to the whole church.')],
+   [x('Що буде в неділю?','Что будет в воскресенье?','What happens on Sunday?'),x('Служіння об 11:00'+(addr?', '+addr:'')+'. Приходь таким, як є, костюм не обов’язковий. Можна дивитися наживо з телефону.','Служение в 11:00'+(addr?', '+addr:'')+'. Приходи таким, как есть, костюм не обязателен. Можно смотреть онлайн с телефона.','Service at 11:00'+(addr?', '+addr:'')+'. Come as you are, no dress code. You can also watch live on your phone.')],
+   [x('Хто за цим стоїть?','Кто за этим стоит?','Who is behind this?'),x('Церкву заснував у 1992 році пастор Дмитро Масон. Вона входить до всесвітньої родини церков Foursquare.','Церковь основал в 1992 году пастор Дмитрий Масон. Она входит во всемирную семью церквей Foursquare.','Pastor Dmytro Mason founded the church in 1992. It belongs to the worldwide Foursquare family of churches.')],
+   [x('Можна просто подивитися?','Можно просто посмотреть?','Can I just look around?'),x('Так. Біблія, розклад і проповіді відкриті з першого дня. «Я буду» і молитовні потреби лише якщо сам захочеш.','Да. Библия, расписание и проповеди открыты с первого дня. «Я буду» и молитвенные нужды только если сам захочешь.','Yes. The Bible, the schedule and the sermons are open from day one. «I’m coming» and prayer requests only if you want them.')]];}
+function faqHtml(){return '<div class="faq">'+faqItems().map(function(q){return '<details><summary>'+q[0]+'</summary><p>'+q[1]+'</p></details>';}).join('')+'</div>';}
 function vNewcomer(){var sun=RULES.filter(function(r){return r.kind==='sunday';})[0],st=D.settings,sk=state.skin||'';setTimeout(cxObserve,40);
   var themes=[['','p-def',x('Звичайна','Обычная','Classic')],['xmas','p-xmas',x('Різдво','Рождество','Christmas')],['cosmos','p-cosmos',x('Космос','Космос','Cosmos')],['joy','p-joy',x('Радість','Радость','Joy')]];
   var tjoke={'':x('Класика. Як чорний костюм: пасує до всього.','Классика. Как чёрный костюм: подходит ко всему.','Classic. Like a black suit, it goes with everything.'),
@@ -3137,7 +3163,15 @@ function vNewcomer(){var sun=RULES.filter(function(r){return r.kind==='sunday';}
      x('Ось так Він і робить: залишає дев’яносто дев’ять, щоб знайти одного. І на небі через це більше радості, ніж через усіх, хто й не губився.','Вот так Он и делает: оставляет девяносто девять, чтобы найти одного. И на небе от этого больше радости, чем от всех, кто и не терялся.','That is what He does: He leaves the ninety-nine to find the one. And heaven rejoices more over that one than over all who never wandered.'),
      x('Якщо колись відчуєш, що загубився ти, знай: тебе теж шукають. А я пастимусь на головній, заходь.','Если когда-нибудь почувствуешь, что потерялся ты, знай: тебя тоже ищут. А я буду пастись на главной, заходи.','If you ever feel lost yourself, know that you are being looked for too. I will be grazing on the home screen, drop by.')],
     '<div class="row"><button class="btn accent" data-act="go" data-v="today">'+x('Почати','Начать','Let’s go')+'</button><button class="btn tint" data-act="bible" data-v="2:15:4">'+x('Луки 15:4–7','Луки 15:4–7','Luke 15:4–7')+'</button></div>',x('Знайшовся!','Нашёлся!','Found!'),-.4));
-  return back()+'<h1 class="cx-h">'+x('Я тут новий','Я здесь новый','I am new here')+'</h1><p class="sub">'+x('Комікс про вівцю, яка загубилася, і про те, як тут усе влаштовано. Гортай вниз.','Комикс про овцу, которая потерялась, и о том, как здесь всё устроено. Листай вниз.','A comic about a sheep who got lost, and about how everything works here. Scroll down.')+'</p><div class="cx">'+P.join('')+'</div>';}
+  if(!state.ncSeen){state.ncSeen=true;setTimeout(save,0);}
+  var toc=[x('Вівця','Овца','The sheep'),x('Вигляд','Вид','Look'),x('Головна','Главная','Home'),x('Біблія','Библия','Bible'),x('Провідник','Проводник','Guide'),x('Зростання','Рост','Grow'),x('Не з Києва','Не из Киева','Not in Kyiv'),x('У Києві','В Киеве','In Kyiv'),x('Початок','Начало','Start')];
+  return back()+'<h1 class="cx-h">'+x('Я тут новий','Я здесь новый','I am new here')+'</h1>'+
+    '<section class="nc-brief"><h2>'+x('У двох словах','В двух словах','In a nutshell')+'</h2><p>'+x('Це застосунок церкви «Місто Світла» в Telegram. Тут розклад зустрічей і нагадування, Біблія, молитва разом і домашні групи. Безкоштовно, і ніхто не вимагає нічого робити: можна просто дивитися.','Это приложение церкви «Місто Світла» в Telegram. Здесь расписание встреч и напоминания, Библия, молитва вместе и домашние группы. Бесплатно, и никто не требует ничего делать: можно просто смотреть.','This is the app of Misto Svitla church in Telegram: the schedule and reminders, the Bible, praying together and home groups. Free, and nobody expects you to do anything: you can just look around.')+'</p>'+
+      '<div class="row"><button class="btn accent small" data-act="go" data-v="today">'+x('На головну','На главную','Go to the home screen')+'</button><button class="btn tint small" data-act="go" data-v="about">'+x('Про церкву','О церкви','About the church')+'</button></div></section>'+
+    '<section class="stack"><h2>'+x('Чесні питання','Честные вопросы','Honest questions')+'</h2>'+faqHtml()+'</section>'+
+    '<section class="stack"><h2>'+x('Або комікс на 2 хвилини','Или комикс на 2 минуты','Or a 2-minute comic')+'</h2><p class="sub">'+x('Беня, вівця з притчі, покаже, що де лежить. Обери розділ або гортай вниз.','Беня, овца из притчи, покажет, что где лежит. Выбери главу или листай вниз.','Benya, the sheep from the parable, shows where things are. Pick a chapter or scroll down.')+'</p>'+
+      '<div class="chips left">'+toc.map(function(t,i){return '<button class="chip" data-act="cxJump" data-v="'+i+'">'+(i+1)+'. '+t+'</button>';}).join('')+'</div></section>'+
+    '<div class="cx">'+P.join('')+'</div>';}
 function vAbout(){return back()+'<h1>'+x('Про церкву','О церкви')+'</h1>'+
   '<section class="word"><p class="scripture">'+x('Разом з Богом змінюючи життя на краще','Вместе с Богом меняя жизнь к лучшему')+'</p>'+
    '<p class="sub">'+x('Церкву заснував у 1992 році пастор Дмитро Масон. Вона входить до всесвітньої родини церков Foursquare. Назва взята з Євангелія від Матвія 5:14–16.','Церковь основал в 1992 году пастор Дмитрий Масон. Она входит во всемирную семью церквей Foursquare. Название взято из Евангелия от Матфея 5:14–16.')+'</p>'+
@@ -3248,7 +3282,7 @@ function regView(){var w=REG.step==='wait',d=REG.step==='denied',nm=REG.name||((
     '<div class="reg-hero"><div class="reg-orb">'+cxLamb('happy','',LAMB_COS[state.skin||''])+'</div>'+
       '<p class="reg-eye">'+x('Ласкаво просимо','Добро пожаловать','Welcome')+'</p><h1 class="reg-h">Місто <b>Світла</b></h1>'+
       '<p class="reg-sub">'+x('Церква, яка поруч щодня. Познайомимося? Це пів хвилини.','Церковь, которая рядом каждый день. Познакомимся? Это полминуты.','A church that is close every day. Shall we meet? It takes half a minute.')+'</p></div>'+
-    '<div class="reg-card">'+(w?
+    '<div class="reg-card">'+(w?'':'<ul class="reg-what"><li>'+x('Розклад і нагадування','Расписание и напоминания','Schedule and reminders')+'</li><li>'+x('Біблія та молитва','Библия и молитва','Bible and prayer')+'</li><li>'+x('Безкоштовно','Бесплатно','Free')+'</li></ul>')+(w?
       '<p class="reg-wait"><i></i>'+x('Підтверди в Telegram «Поділитися номером»','Подтверди в Telegram «Поделиться номером»','Confirm «Share phone number» in Telegram')+'</p><p class="reg-note">'+x('Щойно номер дійде, застосунок відкриється сам.','Как только номер придёт, приложение откроется само.','As soon as the number arrives, the app opens by itself.')+'</p>'+
       '<button class="btn tint wide" data-act="reload">'+x('Я вже поділився','Я уже поделился','I have shared it')+'</button>':
       '<label class="reg-l" for="reg-name">'+x('Як тебе звати','Как тебя зовут','Your name')+'</label><input id="reg-name" maxlength="60" autocomplete="given-name" enterkeyhint="done" placeholder="'+x('Твоє ім’я','Твоё имя','Your name')+'" value="'+esc(nm)+'">'+
@@ -3953,7 +3987,9 @@ var actions={
   wayAll:function(){state.wayAll=true;render();},
   cheer:function(v){var p=v.split('|'),kind=p[0],key=p.slice(1).join('|'),W=wayData(),f=null;W.feed.forEach(function(q){if(q.key===key)f=q;});if(!f)return;
     optimistic(function(){f.mine=f.mine||{};var on=!f.mine[kind];f.mine[kind]=on;f.cheers=Math.max(0,(f.cheers||0)+(on?1:-1));},'cheer',{key:key,kind:kind},kind==='pray'?x('Дякуємо за молитву','Спасибо за молитву'):x('Підтримку надіслано','Поддержка отправлена'));},
-  lambTap:function(){var b=document.querySelector('.h-lamb');bleat();if(b){b.classList.remove('talk');void b.offsetWidth;b.classList.add('talk');}setTimeout(function(){go('newcomer');render();},motionOk()?650:0);},
+  cxJump:function(v){var el=document.querySelector('.cx-p[data-cx="'+v+'"]'),m=document.querySelector('main');if(el&&m)m.scrollTo({top:Math.max(0,el.offsetTop-12),behavior:motionOk()?'smooth':'auto'});},
+  ncHide:function(){state.ncHide=true;save();render();},
+  lambTap:function(){state.ncSeen=true;var b=document.querySelector('.h-lamb');bleat();if(b){b.classList.remove('talk');void b.offsetWidth;b.classList.add('talk');}setTimeout(function(){go('newcomer');render();},motionOk()?650:0);},
   hello:function(){state.hello=!state.hello;save();run(state.hello?'request':'requestCancel',{kind:'hello',topic:''},state.hello?x('Тебе зустрінуть у неділю. Служитель напише тобі','Тебя встретят в воскресенье. Служитель напишет тебе'):'');},
   skin:function(v){state.skin=v;MODELS={};intro.done=false;intro.t0=performance.now();if(musicOn)startMusic();commit();sfxPlay('pick');},
   sfxToggle:function(){state.sfx=state.sfx===false;save();render();if(state.sfx)sfxPlay('toggle');},
