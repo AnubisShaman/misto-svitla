@@ -42,7 +42,7 @@ function parseDate(str, tz, pat) {
 let cache = {};
 const G = {
   SpreadsheetApp: { getActiveSpreadsheet: () => ({ getSheetByName: n => sheets[n] || null, insertSheet: n => (sheets[n] = mkSheet(n)) }), openById() {} },
-  PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] || null, setProperty: (k, v) => { props[k] = v; } }) },
+  PropertiesService: { getScriptProperties: () => ({ getProperty: k => props[k] || null, setProperty: (k, v) => { props[k] = v; }, deleteProperty: k => { delete props[k]; } }) },
   CacheService: { getScriptCache: () => ({ get: k => cache[k] || null, put: (k, v) => { cache[k] = v; } }) },
   LockService: { getScriptLock: () => ({ waitLock() {}, tryLock: () => true, releaseLock() {} }) },
   ContentService: { MimeType: { JSON: 'json', ICAL: 'ical' }, createTextOutput: s => ({ s, setMimeType() { return this; } }) },
@@ -381,6 +381,15 @@ assert.strictEqual(call(petro, 'load').me.name, 'Петро Іваненко', '
   assert.ok(pub.events.length > 3 && pub.settings.address_uk && !pub.users && !pub.settings.mono, 'public data has schedule only');
   call(admin, 'eventSave', { event: { id: 'pubx', type: 'dates', dates: ['2026-12-31'], time: '20:00', kind: 'evenings', title: { uk: 'Новорічна молитва' }, active: true } });
   assert.ok(JSON.parse(S.doGet({ parameter: { pub: '1' } }).s).events.some(e => e.id === 'pubx'), 'public cache refreshed after edit');
+}
+
+// --- quiet prayers for general topics count as lights, capped per person per day
+{ const before = call(anna, 'load').lit;
+  let r = call(anna, 'prayQuiet', { count: 3 }); assert.strictEqual(r.added, 3);
+  assert.strictEqual(call(anna, 'load').lit, before + 3, 'quiet prayers light up');
+  r = call(anna, 'prayQuiet', { count: 500 }); assert.strictEqual(r.added, 10, 'max 10 per call');
+  for (let i = 0; i < 3; i++) call(anna, 'prayQuiet', { count: 10 });
+  assert.strictEqual(call(anna, 'load').lit, before + 30, 'max 30 per person per day');
 }
 
 console.log('ALL GOOD. messages sent:', sent.length, '| log rows:', (sheets.Log ? sheets.Log.data.length - 1 : 0));

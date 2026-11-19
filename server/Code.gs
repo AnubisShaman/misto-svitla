@@ -492,6 +492,7 @@ function buildD(u) {
     });
   });
   needs.sort(function (a, b) { return b.created - a.created; });
+  lit += quietLit(now);
 
   var tests = [], myTests = [];
   rows('Tests').forEach(function (t) {
@@ -585,6 +586,18 @@ var ACTIONS = {
     var text = needText(b.text, 500, 'Про що молитися');
     addRow('Needs', { id: newId(), userId: u.id, text: text, vis: vis, status: 'active', created: Date.now(), prayers: '[]' });
     notifyRoles(['prayer', 'minister'], '🙏 Нова молитовна потреба' + (vis === 'anon' ? ' (анонімно)' : ' від ' + u.name) + ':\n\n' + text);
+  },
+
+  prayQuiet: function (u, b) {
+    var k = Math.max(0, Math.min(10, Math.floor(Number(b.count) || 0))), day = kyivDate(), c = CacheService.getScriptCache(), ck = 'ql:' + u.id + ':' + day;
+    var used = Number(c.get(ck)) || 0; k = Math.min(k, 30 - used); // не більше 30 на людину за день
+    if (k > 0) {
+      c.put(ck, String(used + k), 86400);
+      var props = PropertiesService.getScriptProperties(), pk = 'qlit:' + day;
+      props.setProperty(pk, String((Number(props.getProperty(pk)) || 0) + k));
+      var old = 'qlit:' + kyivDate(new Date(Date.now() - 14 * 864e5)); if (props.getProperty(old)) props.deleteProperty(old);
+    }
+    return { light: { ok: true, added: Math.max(0, k) } };
   },
 
   needAnswered: function (u, b) {
@@ -1236,6 +1249,13 @@ function remindJob() {
   if (stale.length) delRows('Going', stale);
 }
 
+/* Молитви в «Хвилині тиші» за загальні теми (без конкретної потреби): лічильник по днях у властивостях скрипта. */
+function quietLit(now) {
+  var props = PropertiesService.getScriptProperties(), sum = 0;
+  for (var i = 0; i < 7; i++) sum += Number(props.getProperty('qlit:' + kyivDate(new Date(now - i * 864e5)))) || 0;
+  return sum;
+}
+
 /* Потребу позначили «Бог відповів»: кажемо про це всім, хто за неї молився. */
 function answeredNotify(n) {
   var ids = {};
@@ -1307,7 +1327,7 @@ function weekDigestJob(now) {
     '👋 Нових учасників: ' + fresh.length + (fresh.length ? ' (' + fresh.slice(0, 8).map(function (x) { return first(x.name); }).join(', ') + (fresh.length > 8 ? '…' : '') + ')' : '') + '\n' +
     (fresh.length ? '🧭 Звідки: ' + srcCount(fresh) + '\n' : '') +
     '👥 Усього учасників: ' + users.length + '\n' +
-    '🙏 Молитов: ' + prayers + ', нових потреб: ' + needs + (answered ? ', свідчень про відповідь: ' + answered : '') + '\n' +
+    '🙏 Молитов: ' + (prayers + quietLit(now.getTime())) + ', нових потреб: ' + needs + (answered ? ', свідчень про відповідь: ' + answered : '') + '\n' +
     (g ? '\n✋ Відмітили «Я буду»:\n' + g + '\n' : '') +
     (pend || reqs ? '\n⏳ Чекають на вас: ' + [pend ? 'модерація ' + pend : '', reqs ? 'заявки ' + reqs : ''].filter(Boolean).join(', ') : '\n✅ Модерація й заявки розібрані');
   var to = users.filter(function (x) { return roleOf(x) === 'admin'; });
