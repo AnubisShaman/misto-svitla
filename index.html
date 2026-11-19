@@ -1129,7 +1129,7 @@ i.add{font-style:italic;color:var(--muted)}
 .g-hero .night-pad{margin-bottom:-64px}
 .g-hero .g-btns{display:flex;flex-direction:column;align-items:stretch;gap:10px;margin-top:6px}
 .g-hero .g-btns .btn{justify-content:center}
-.g-tg{display:inline-flex;align-items:center;gap:10px}.g-tg svg{width:22px;height:22px;flex:none}
+.g-tg{display:inline-flex;align-items:center;gap:9px}.g-tg svg{width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linejoin:round;stroke-linecap:round}
 .g-cta{position:sticky;bottom:10px;z-index:3;margin-top:-10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
 .g-cta.on{opacity:1;transform:none;pointer-events:auto}.g-cta .btn{width:100%;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 @media (prefers-reduced-motion:reduce){.g-cta{transition:none}}
@@ -1669,7 +1669,7 @@ function guestView(){var now=new Date(),up=[],sun=null;
   for(var i=0;i<21&&up.length<6;i++){var d=addDays(day0(now),i);dayItems(d).forEach(function(it){if(up.length<6&&occDate(iso(d),it.time)>now&&it.kind!=='leaders'&&it.kind!=='daily')up.push({it:it,d:d});});}
   RULES.forEach(function(r){if(r.kind==='sunday'&&!sun)sun=r;});
   var addr=(D.settings['address_'+(state.lang==='ru'?'ru':'uk')])||'';
-  var tgBtn='<a class="btn light g-tg" href="'+esc(guestTg())+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#2AABEE" d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24z"/><path fill="#fff" d="M5.4 11.9l11.6-4.5c.5-.2 1 .1.8.9l-2 9.3c-.1.7-.5.8-1.1.5l-3-2.2-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.1 5.6-5c.2-.2 0-.3-.4-.1l-6.9 4.3-3-.9c-.6-.2-.7-.6.3-.9z"/></svg>'+x('Відкрити в Telegram','Открыть в Telegram','Open in Telegram')+'</a>';
+  var tgBtn='<a class="btn light g-tg" href="'+esc(guestTg())+'"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 4.5 3.5 11.3l5.6 2L11 19l3.2-3.6 4.6 3.4z"/><path d="m9.1 13.3 7.4-5.1-5.4 6.1"/></svg>'+x('Відкрити в Telegram','Открыть в Telegram','Open in Telegram')+'</a>';
   var rows=up.map(function(o){var it=o.it,d=o.d;return '<li class="ev"><span class="date-big">'+d.getDate()+'.'+pad2(d.getMonth()+1)+'<small>'+it.time+'</small></span><div><h3>'+esc(L(it.title))+'</h3>'+
     '<p class="sub">'+WD[state.lang][d.getDay()]+(it.link?', '+x('онлайн','онлайн','online'):it.who?', '+esc(L(it.who)):'')+'</p>'+(it.desc?'<p class="sub">'+esc(L(it.desc))+'</p>':'')+'</div></li>';}).join('');
   var first=[[x('Приходь таким, як є','Приходи таким, как есть','Come as you are'),x('Костюм не обов’язковий, усмішка бажана.','Костюм не обязателен, улыбка желательна.','No dress code, smiles welcome.')],
