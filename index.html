@@ -1133,6 +1133,39 @@ i.add{font-style:italic;color:var(--muted)}
 .g-cta{position:sticky;bottom:10px;z-index:3;margin-top:-10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
 .g-cta.on{opacity:1;transform:none;pointer-events:auto}.g-cta .btn{width:100%;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 @media (prefers-reduced-motion:reduce){.g-cta{transition:none}}
+.pr-card{display:grid;grid-template-columns:86px 1fr;gap:16px;align-items:center;background:radial-gradient(120% 120% at 0% 50%,#2A1F14 0,#120F1A 60%,#0B0A12 100%);color:#F6EFE4;border-radius:28px;padding:20px 18px 20px 14px;overflow:hidden}
+.pr-card-tx h2{font:800 24px/1.05 var(--font-display);letter-spacing:-.02em;margin:0 0 6px;color:#FFF6E6}.pr-card-tx p{margin:0;font-size:14.5px;line-height:1.45;color:rgba(246,239,228,.78)}
+.pr-go{margin:14px 0 10px;border:0;border-radius:999px;padding:0 20px;min-height:46px;background:linear-gradient(180deg,#FFE1A0,#F2B24F);color:#2A1A05;font:700 15.5px/1 var(--font-body);box-shadow:0 6px 20px rgba(242,178,79,.35)}
+.pr-lit{font-size:13px!important;color:rgba(246,239,228,.6)!important}.pr-lit b{color:#FFD27A;font-weight:700}
+.pr-flame{position:relative;width:86px;height:120px;display:grid;place-items:center}
+.pr-flame i{position:absolute;width:86px;height:86px;border-radius:50%;background:radial-gradient(circle,rgba(255,210,122,.55) 0,rgba(255,160,60,.18) 45%,transparent 70%)}
+.pr-flame b{position:relative;width:22px;height:38px;border-radius:50% 50% 50% 50%/62% 62% 38% 38%;background:radial-gradient(circle at 50% 72%,#FFF8E6 0,#FFE08A 34%,#F5A341 70%,rgba(245,120,40,0) 100%);filter:drop-shadow(0 0 10px rgba(255,190,90,.8))}
+@media (prefers-reduced-motion:no-preference){.pr-flame i{animation:prBr 10s ease-in-out infinite}.pr-flame b{animation:prFl 2.8s ease-in-out infinite;transform-origin:50% 90%}
+  @keyframes prBr{0%,100%{transform:scale(.85);opacity:.7}40%{transform:scale(1.15);opacity:1}}@keyframes prFl{0%,100%{transform:scaleY(1) skewX(0)}30%{transform:scaleY(1.08) skewX(-3deg)}65%{transform:scaleY(.94) skewX(2deg)}}}
+.pr-ov{position:fixed;inset:0;z-index:1000;background:radial-gradient(90% 60% at 50% 38%,#1E160E 0,#0A0810 62%,#050408 100%);color:#F6EFE4;display:flex;flex-direction:column;align-items:center;opacity:0;transition:opacity .9s ease;outline:none;padding:env(safe-area-inset-top) 0 env(safe-area-inset-bottom)}
+.pr-ov.on{opacity:1}.pr-ov canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.pr-top{position:relative;z-index:2;width:100%;max-width:440px;display:flex;align-items:center;gap:8px;padding:14px 16px}
+.pr-dots{flex:1;display:flex;gap:6px}.pr-dots i{width:22px;height:4px;border-radius:2px;background:rgba(246,239,228,.18)}.pr-dots i.done{background:rgba(255,210,122,.55)}.pr-dots i.on{background:#FFD27A}
+.pr-ic{width:42px;height:42px;border-radius:50%;border:0;background:rgba(246,239,228,.08);color:#F6EFE4;font:300 26px/1 var(--font-body);display:grid;place-items:center}
+.pr-ic svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}.pr-snd[aria-pressed="false"]{opacity:.55}
+.pr-mid{position:relative;z-index:1;flex:0 0 auto;margin-top:4vh;display:flex;flex-direction:column;align-items:center;gap:14px}
+.pr-orb{position:relative;width:min(46vw,190px);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#FFF6DC 0,#FFDB8C 14%,rgba(255,176,82,.62) 32%,rgba(255,140,50,.16) 56%,transparent 70%);transform:scale(.92);transition:transform 6s cubic-bezier(.45,0,.55,1),opacity 6s;opacity:.82}
+.pr-orb i{position:absolute;inset:-35%;border-radius:50%;background:radial-gradient(circle,rgba(255,200,110,.16) 0,transparent 62%);transition:transform 6s cubic-bezier(.45,0,.55,1)}
+.pr-ov.inh .pr-orb{transform:scale(1.42);opacity:1;transition-duration:4s}.pr-ov.inh .pr-orb i{transform:scale(1.25);transition-duration:4s}
+.pr-cue{margin:0;font:500 14px/1 var(--font-body);color:rgba(246,239,228,.5);letter-spacing:.08em;min-height:14px;transition:opacity .6s}
+.pr-stage{position:relative;z-index:2;width:100%;max-width:420px;padding:3vh 26px 24px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;margin-top:auto;margin-bottom:auto}
+.pr-stage.in{animation:prIn 1.1s ease both}@keyframes prIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.pr-say{margin:0;font:500 21px/1.42 var(--font-word);color:#FFF6E6;text-wrap:balance}.pr-say b{color:#FFD27A}
+.pr-word{margin:0;font:italic 500 20px/1.45 var(--font-word);color:#FFF1D6;text-wrap:balance}.pr-ref{margin:-6px 0 0;font-size:13.5px;color:rgba(246,239,228,.6)}
+.pr-eye{margin:0;font:600 13px/1 var(--font-body);color:#FFD27A}
+.pr-need{margin:0;font:500 23px/1.38 var(--font-word);color:#FFF6E6;text-wrap:balance;max-height:40vh;overflow:auto}
+.pr-note{margin:0;font-size:14px;line-height:1.45;color:rgba(246,239,228,.62)}
+.pr-row{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.pr-btn{border:0;border-radius:999px;min-height:50px;padding:0 30px;background:linear-gradient(180deg,#FFE1A0,#F2B24F);color:#2A1A05;font:700 16.5px/1 var(--font-body);box-shadow:0 8px 26px rgba(242,178,79,.3)}
+.pr-skip{border:0;background:none;color:rgba(246,239,228,.72);font:600 15px/1 var(--font-body);min-height:46px;padding:0 14px}
+.pr-spark{position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px;border-radius:50%;background:#FFF3D1;box-shadow:0 0 14px 6px rgba(255,210,122,.75);animation:prUp 2.4s cubic-bezier(.3,.6,.4,1) forwards}
+@keyframes prUp{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(0,-46vh) scale(.3);opacity:0}}
+@media (prefers-reduced-motion:reduce){.pr-orb,.pr-orb i{transition:none!important;transform:none!important}.pr-stage.in{animation:none}.pr-spark{animation-duration:.01s}}
 .nc-card{display:grid;grid-template-columns:78px 1fr;gap:14px;align-items:center;background:linear-gradient(135deg,#4B3BC9,#7B5CFF);color:#fff;border-radius:24px;padding:16px 18px 16px 12px;box-shadow:0 10px 28px rgba(75,59,201,.28)}
 .nc-art .cx-lamb{width:78px;height:78px}.nc-tx h2{font:800 20px/1.1 var(--font-display);letter-spacing:-.02em;margin:0 0 4px}.nc-tx p{margin:0 0 10px;font-size:14.5px;line-height:1.4;color:rgba(255,255,255,.88)}
 .nc-tx .row{align-items:center;gap:14px}.nc-tx .btn.accent{background:#fff;color:#3A2DB0;box-shadow:none}.nc-tx .link{color:rgba(255,255,255,.85)}
@@ -1403,7 +1436,7 @@ var BASE_LIT=48, TRANSIENT=['bookOpen','sheet','sheetData','sel','pickBook','jum
 
 function defaults(){return {bookPos:{},bookOpen:null,log:{},path:{},aseg:'events',confirm:null,bcText:'',img:null,q:'',lang:'uk',skin:'',sfx:true,tab:'today',sub:null,seg:{bible:'read',prayer:'needs',community:'serve',heaven:'os'},devs:{p:{},all:false},dvCard:null,day:null,name:'',
   going:{},verseOn:false,verseAt:'',prayed:{},needs:[],testimonies:[],pastoral:null,step:{text:'',done:false},read:{},openBook:null,
-  bible:{b:0,c:5},hl:{},notes:{},marks:{},fs:1,cardDay:null,done:{},serve:{},skills:{},ads:[],hello:false,ncSeen:false,ncHide:false,sermon:false,
+  bible:{b:0,c:5},hl:{},notes:{},marks:{},fs:1,cardDay:null,done:{},serve:{},skills:{},ads:[],hello:false,prSnd:true,ncSeen:false,ncHide:false,sermon:false,
   thanks:{},wxLoc:null,shareWay:null,sermSaved:{},
   sheet:null,sheetData:null,sel:null,pickBook:null,jump:null,cardAnim:false};}
 var state=defaults();
@@ -1452,7 +1485,7 @@ var KIND_NAMES={sunday:['Синій','Синий'],heaven:['Помаранчев
 var ROLES=['member','prayer','leader','minister','admin'];
 var ROLE_NAMES={member:['Учасник','Участник'],prayer:['Молитовна команда','Молитвенная команда'],leader:['Лідер групи','Лидер группы'],minister:['Служитель','Служитель'],admin:['Адміністратор','Администратор']};
 var REQ_NAMES={pastoral:['Розмова з пастором','Разговор с пастором'],serve:['Хоче служити','Хочет служить'],hello:['Хоче познайомитися','Хочет познакомиться']};
-var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','verseAt','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved','ncSeen','ncHide'];
+var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','verseAt','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved','ncSeen','ncHide','prSnd'];
 var DEFAULT_SETTINGS={playlist:'',ytChannel:'UCmK9YFNcVwyrPgj060EM3-g',address_uk:'Київ, пр. Степана Бандери, 23, метро «Почайна»',address_ru:'Киев, пр. Степана Бандеры, 23, метро «Почайна»',map:'проспект Степана Бандери 23 Київ',
   mono:'4441 1110 4143 8320',monoJar:'',iban:'UA783052990000026005030102192',recipient:'РО РГ ХМЦ МІСТО СВІТЛА',edrpou:'19261358',purpose:'добровільні пожертвування',paypal:'centreofdm@gmail.com',
   verseTime:'07:30',remind:'60',cardStart:'2026-11-09',youth_uk:'Тут будуть свої події, стрічка та посилання на чат молоді.',youth_ru:'Здесь будут свои события, лента и ссылка на чат молодёжи.',
@@ -1665,7 +1698,7 @@ function parseDates(str){var out=[],bad=false,now=new Date();String(str).split(/
     else if((m=t.match(/^(\d{4})-(\d{2})-(\d{2})$/))){y=+m[1];mo=+m[2];d=+m[3];}else{bad=true;return;}
     var dt=new Date(y,mo-1,d);if(dt.getMonth()!==mo-1||dt.getDate()!==d){bad=true;return;}var k=iso(dt);if(out.indexOf(k)<0)out.push(k);});
   return bad?null:out.sort();}
-function goBack(){if(state.sheet){state.sheet=null;render();return;}if(state.sub==='room'){leaveRoom();return;}if(state.sub){var to=state.sub==='admin'||state.sub==='leader'||state.sub==='cabinet'?'more':'more';go(to);commit();}}
+function goBack(){if(PR){prClose();return;}if(state.sheet){state.sheet=null;render();return;}if(state.sub==='room'){leaveRoom();return;}if(state.sub){var to=state.sub==='admin'||state.sub==='leader'||state.sub==='cabinet'?'more':'more';go(to);commit();}}
 function openDeepLink(){var spm=String((tg&&tg.initDataUnsafe&&tg.initDataUnsafe.start_param)||'').match(/^ev_([A-Za-z0-9]+)_(\d{4})(\d{2})(\d{2})$/);
   if(spm&&!deepDone){deepDone=true;var ek=spm[1]+'@'+spm[2]+'-'+spm[3]+'-'+spm[4];if(byId(spm[1])&&occDate(ek.split('@')[1],byId(spm[1]).time).getTime()>Date.now()-4*36e5){state.tab='today';state.sub=null;state.sheet='meet';state.sheetData=ek;render();return;}}
   var hr=(location.hash||'').replace('#','');if(hr.indexOf('room=')===0){openRoom(decodeURIComponent(hr.slice(5)));return;}var m=String(location.search).match(/[?&]v=(\d+):(\d+):(\d+)/);if(m){openBible([+m[1],+m[2],+m[3]]);render();}}
@@ -2931,6 +2964,58 @@ function stepCard(){var s=state.step;
     '<button class="link" data-act="stepEdit">'+x('Новий крок','Новый шаг')+'</button></div></section>';}
 
 function visLabel(v){return v==='team'?x('Лише молитовна команда','Только молитвенная команда'):v==='anon'?x('Вся церква, анонімно','Вся церковь, анонимно'):x('Вся церква, з ім’ям','Вся церковь, с именем');}
+/* ---------- «A minute of stillness»: full-screen prayer. Breathe with the light (4 s in, 6 s out), then pray for each request. ---------- */
+var PR=null;
+function prVerse(ref){for(var i=0;i<VERSES.length;i++)if(VERSES[i].ref.uk===ref)return '<p class="pr-word">«'+esc(L(VERSES[i].t))+'»</p><p class="pr-ref">'+esc(L(VERSES[i].ref))+'</p>';return '';}
+function prNeeds(){var l=((D&&D.needs)||[]).filter(function(n){return !n.mine&&!n.answered;}).sort(function(a,b){return (a.n||0)-(b.n||0);}).slice(0,7);
+  if(l.length)return l.map(function(n){return {id:n.id,text:n.text,n:n.n||0};});
+  return [x('За тих, кого ти любиш','За тех, кого ты любишь','For the people you love'),x('За Україну і тих, хто нас захищає','За Украину и тех, кто нас защищает','For Ukraine and those who defend it'),x('За людину, з якою тобі зараз важко','За человека, с которым тебе сейчас трудно','For someone you find hard right now'),x('За церкву і пастора','За церковь и пастора','For the church and the pastor')].map(function(t){return {id:null,text:t,n:0};});}
+function prOpen(){if(PR)return;var ov=document.createElement('div');ov.className='pr-ov';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label',x('Хвилина тиші','Минута тишины','A minute of stillness'));ov.tabIndex=-1;
+  ov.innerHTML='<canvas aria-hidden="true"></canvas><div class="pr-top"><span class="pr-dots"></span><button class="pr-ic pr-snd" aria-label="'+x('Музика','Музыка','Music')+'"></button><button class="pr-ic pr-x" aria-label="'+x('Вийти','Выйти','Leave')+'">×</button></div>'+
+    '<div class="pr-mid"><div class="pr-orb" aria-hidden="true"><i></i></div><p class="pr-cue" aria-hidden="true"></p></div><div class="pr-stage" aria-live="polite"></div>';
+  document.body.appendChild(ov);
+  PR={ov:ov,step:0,c0:0,list:prNeeds(),i:0,lit:0,cyc:0,t:0,raf:0,music:false,snd:state.prSnd!==false,fx:motionOk(),parts:[]};
+  ov.querySelector('.pr-x').onclick=prClose;ov.querySelector('.pr-snd').onclick=function(){PR.snd=!PR.snd;state.prSnd=PR.snd;save();prSound();};
+  ov.addEventListener('keydown',function(e){if(e.key==='Escape')prClose();});
+  ov.addEventListener('click',function(e){var b=e.target.closest('[data-pr]');if(b)prAct(b.dataset.pr);});
+  try{if(LIVE&&tg.requestFullscreen&&tg.isVersionAtLeast&&tg.isVersionAtLeast('8.0'))tg.requestFullscreen();}catch(e){}
+  requestAnimationFrame(function(){ov.classList.add('on');ov.focus();});
+  prSound();prBreath();prDraw(0);prStage();}
+function prSound(){if(!PR)return;var b=PR.ov.querySelector('.pr-snd');b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>'+(PR.snd?'':'<path d="M3 3l18 18"/>')+'</svg>';b.setAttribute('aria-pressed',String(PR.snd));
+  if(PR.snd&&!musicOn){if(startMusic('pray')!==false)PR.music=true;}else if(!PR.snd&&PR.music){stopMusic();PR.music=false;}}
+function prBreath(){if(!PR)return;var ov=PR.ov,cue=ov.querySelector('.pr-cue');PR.cyc++;
+  ov.classList.add('inh');cue.textContent=x('вдих','вдох','breathe in');try{var h=tg&&tg.HapticFeedback;if(h)h.impactOccurred('soft');}catch(e){}
+  PR.t=setTimeout(function(){if(!PR)return;ov.classList.remove('inh');cue.textContent=x('видих','выдох','breathe out');
+    PR.t=setTimeout(function(){if(!PR)return;if(PR.step===0){PR.c0++;if(PR.c0>=4)PR.step=1;prStage();}prBreath();},6000);},4000);}
+function prStage(){if(!PR)return;var st=PR.ov.querySelector('.pr-stage'),dots=PR.ov.querySelector('.pr-dots'),h='';
+  dots.innerHTML=[0,1,2,3].map(function(k){return '<i'+(k===PR.step?' class="on"':k<PR.step?' class="done"':'')+'></i>';}).join('');
+  if(PR.step===0){var L0=[x('Зупинись. Відклади все на кілька хвилин.','Остановись. Отложи всё на несколько минут.','Stop. Put everything down for a few minutes.'),x('Дихай разом зі світлом. Повільно.','Дыши вместе со светом. Медленно.','Breathe with the light. Slowly.'),''];var k=PR.c0;
+    h=(k<2?'<p class="pr-say">'+L0[k]+'</p>':prVerse('Филип’ян 4:6'))+'<button class="pr-skip" data-pr="next">'+x('Я готовий','Я готов','I am ready')+'</button>';}
+  else if(PR.step===1){var q=PR.list[PR.i];
+    h='<p class="pr-eye">'+x('Молимося за','Молимся за','We pray for')+' · '+(PR.i+1)+' / '+PR.list.length+'</p><p class="pr-need">'+esc(q.text)+'</p>'+(q.n?'<p class="pr-note">'+x('уже молилися: ','уже молились: ','prayed so far: ')+q.n+'</p>':'')+
+      '<p class="pr-note">'+x('Помолись своїми словами. Коли будеш готовий, скажи «Амінь».','Помолись своими словами. Когда будешь готов, скажи «Аминь».','Pray in your own words. When you are ready, say «Amen».')+'</p>'+
+      '<div class="pr-row"><button class="pr-btn" data-pr="amen">'+x('Амінь','Аминь','Amen')+'</button><button class="pr-skip" data-pr="skip">'+x('Далі','Дальше','Next')+'</button></div>';}
+  else if(PR.step===2){h='<p class="pr-say">'+x('А тепер скажи Богу своє. Своїми словами, у тиші.','А теперь скажи Богу своё. Своими словами, в тишине.','Now tell God what is on your heart. In your own words, in silence.')+'</p>'+prVerse('Матвія 11:28')+'<button class="pr-btn" data-pr="next">'+x('Амінь','Аминь','Amen')+'</button>';}
+  else{h='<p class="pr-eye">'+x('Амінь','Аминь','Amen')+'</p><p class="pr-say">'+(PR.lit?x('Ти запалив вогників: ','Ты зажёг огоньков: ','Lights you lit: ')+'<b>'+PR.lit+'</b>':x('Дякуємо, що побув у тиші.','Спасибо, что побыл в тишине.','Thank you for being still.'))+'</p>'+prVerse('1 Петра 5:7')+
+    '<div class="pr-row"><button class="pr-btn" data-pr="close">'+x('Завершити','Завершить','Finish')+'</button><button class="pr-skip" data-pr="need">'+x('Написати свою потребу','Написать свою нужду','Write my own request')+'</button></div>';}
+  st.classList.remove('in');void st.offsetWidth;st.innerHTML=h;st.classList.add('in');}
+function prAct(a){if(!PR)return;
+  if(a==='next'){PR.step++;prStage();return;}
+  if(a==='amen'||a==='skip'){if(a==='amen'){var q=PR.list[PR.i],n=q.id?findNeed(q.id):null;if(n&&!n.prayed)actions.pray(q.id);else if(!q.id)logDay('p');PR.lit++;prSpark();}
+    PR.i++;if(PR.i>=PR.list.length)PR.step=2;prStage();return;}
+  if(a==='close'){prClose();return;}
+  if(a==='need'){prClose();setTimeout(function(){state.sheet='need';render();},400);}}
+function prSpark(){var o=PR.ov.querySelector('.pr-orb'),sp=document.createElement('i');sp.className='pr-spark';o.appendChild(sp);setTimeout(function(){sp.remove();},2600);}
+function prDraw(t){if(!PR)return;var c=PR.ov.querySelector('canvas'),w=c.clientWidth,h=c.clientHeight,d=Math.min(2,window.devicePixelRatio||1);
+  if(c._w!==w||c._h!==h){c.width=w*d;c.height=h*d;c._w=w;c._h=h;}var g=c.getContext('2d');g.setTransform(d,0,0,d,0,0);g.clearRect(0,0,w,h);
+  if(PR.parts.length<70){for(var k=PR.parts.length;k<70;k++)PR.parts.push({x:Math.random()*w,y:Math.random()*h,r:.6+Math.random()*1.9,v:.08+Math.random()*.28,p:Math.random()*6.28});}
+  var inh=PR.ov.classList.contains('inh');
+  for(var i=0;i<PR.parts.length;i++){var q=PR.parts[i];if(PR.fx){q.y-=q.v*(inh?1.25:.8);q.x+=Math.sin(t/2400+q.p)*.12;if(q.y<-4){q.y=h+4;q.x=Math.random()*w;}}
+    g.globalAlpha=(.25+.35*Math.sin(t/900+q.p*3)+.4)*.55;g.fillStyle=i%3?'#FFD27A':'#FFF0CF';g.beginPath();g.arc(q.x,q.y,q.r,0,6.283);g.fill();}
+  g.globalAlpha=1;if(PR.fx)PR.raf=requestAnimationFrame(prDraw);}
+function prClose(){if(!PR)return;var p=PR;PR=null;clearTimeout(p.t);cancelAnimationFrame(p.raf);if(p.music)stopMusic();
+  try{if(LIVE&&tg.exitFullscreen&&tg.isFullscreen)tg.exitFullscreen();}catch(e){}
+  p.ov.classList.remove('on');setTimeout(function(){p.ov.remove();},700);render();}
 function vPrayer(){var s=state.seg.prayer,body='',needs=(D&&D.needs)||[];
   if(s==='needs'){
     var mine=needs.filter(function(n){return n.mine;}).map(function(n){return '<li><div class="head"><p>'+esc(n.text)+'</p>'+(n.answered?'<span class="tag t-give">'+x('Бог відповів','Бог ответил')+'</span>':'')+'</div><p class="note">'+visLabel(n.vis)+', '+x('молилися ','молились ')+n.n+'</p>'+
@@ -2959,7 +3044,10 @@ function vPrayer(){var s=state.seg.prayer,body='',needs=(D&&D.needs)||[];
       '<button class="btn" type="submit">'+x('Залишити заявку','Оставить заявку')+'</button></form></section>';
     body+='<p class="note">'+x('Якщо є загроза життю або здоров’ю, дзвони 103 або 102 просто зараз.','Если есть угроза жизни или здоровью, звони 103 или 102 прямо сейчас.')+'</p>';}
   return back()+'<h1>'+x('Молитва','Молитва')+'</h1>'+
-    '<section class="night"><div class="night-in"><p class="big">'+x('Місто на горі не сховається','Город на горе не скроется')+'</p><p class="when">'+x('Кожна молитва запалює в ньому вогник.','Каждая молитва зажигает в нём огонёк.')+'</p></div>'+sceneBlock(x('молитов цього тижня','молитв на этой неделе'))+'</section>'+
+    '<section class="pr-card"><div class="pr-flame" aria-hidden="true"><i></i><b></b></div><div class="pr-card-tx"><h2>'+x('Хвилина тиші','Минута тишины','A minute of stillness')+'</h2>'+
+      '<p>'+x('Зупинись на кілька хвилин. Подихай разом зі світлом і помолися за тих, хто попросив.','Остановись на несколько минут. Подыши вместе со светом и помолись за тех, кто попросил.','Stop for a few minutes. Breathe with the light and pray for those who asked.')+'</p>'+
+      '<button class="pr-go" data-act="prOpen">'+x('Увійти в молитву','Войти в молитву','Begin')+'</button>'+
+      '<p class="pr-lit"><b>'+num('lit',litCount())+'</b> '+x('молитов цього тижня','молитв на этой неделе','prayers this week')+(DEMO?' · '+x('приклад','пример','sample'):'')+'</p></div></section>'+
     seg('prayer',[['needs',x('Потреби','Нужды')],['wall',x('Свідчення','Свидетельства')],['pastor',x('Пастор','Пастор')]])+body;}
 function vCommunity(){var s=state.seg.community,body='',st=D.settings;
   if(s==='serve'){
@@ -3797,7 +3885,7 @@ var toastT;function toast(msg,err){var el=document.getElementById('toast');if(!e
 function commit(msg){save();render();if(msg)toast(msg);}
 function setHash(v){try{if(location.hash!=='#'+v)location.hash=v;}catch(e){}}
 function go(v){nav(v);state.sheet=null;state.sel=null;setHash(v);}
-function route(){state.sheet=null;state.sel=null;var h=(location.hash||'').replace('#','');
+function route(){if(PR)prClose();state.sheet=null;state.sel=null;var h=(location.hash||'').replace('#','');
   if(h.indexOf('room=')===0){var rk=decodeURIComponent(h.slice(5));if(state.sub!=='room'||state.roomKey!==rk)openRoom(rk);return;}
   if(SUBS.indexOf(h)>-1){if(state.sub===h)return;nav(h);}
   else if(TABS.indexOf(h)>-1){if(state.tab===h&&!state.sub)return;nav(h);}else return;
@@ -3813,6 +3901,7 @@ var actions={
   whPreset:function(v){var p=v.split(':'),h=+p[0],m=Math.round(+p[1]/15)%4;WH.h=h;WH.m=m;var ch=wheelCol('h'),cm=wheelCol('m');if(ch)wheelPaint(ch,h);if(cm)wheelPaint(cm,m);wheelTo('h',h);wheelTo('m',m);},
   whSave:function(){WH.fresh=false;var t=(WH.h<10?'0':'')+WH.h+':'+['00','15','30','45'][WH.m];state.verseAt=t;state.verseOn=true;state.sheet=null;commit(LIVE?x('Вірш приходитиме щодня о ','Стих будет приходить каждый день в ','The verse will arrive every day at ')+t:x('Збережено. У демо повідомлення не надсилаються','Сохранено. В демо сообщения не отправляются','Saved. No messages are sent in the demo'));sfxPlay('pick');},
   verse:function(){state.verseOn=!state.verseOn;if(state.verseOn&&!hhmm(state.verseAt)){save();state.sheet='verseAt';render();return;}commit(state.verseOn?(LIVE?x('Вірш приходитиме щодня о ','Стих будет приходить каждый день в ')+myVerseTime():x('Увімкнено. У демо повідомлення не надсилаються','Включено. В демо сообщения не отправляются')):'');},
+  prOpen:function(){prOpen();},
   pray:function(v){var n=findNeed(v);if(!n)return;var on=!n.prayed;if(on){logDay('p');save();}optimistic(function(){n.prayed=on;n.n+=on?1:-1;D.lit+=on?1:-1;if(on)riseT0=performance.now();},'pray',{id:v,on:on});},
   needAns:function(v){run('needAnswered',{id:v},x('Позначено. Слава Богу!','Отмечено. Слава Богу!')).then(function(ok){if(ok){state.sheet=null;state.sheetData=null;render();}});},
   delNeed:function(v){run('needDel',{id:v},x('Потребу видалено','Нужда удалена'));},
