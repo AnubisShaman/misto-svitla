@@ -22,7 +22,7 @@ var TZ = 'Europe/Kiev';
 var ROLES = ['member', 'prayer', 'leader', 'minister', 'admin'];
 var KINDS = ['sunday', 'heaven', 'prayer', 'daily', 'leaders', 'teens', 'evenings'];
 var SHEETS = {
-  Users: ['id', 'name', 'phone', 'username', 'role', 'status', 'lang', 'created', 'seen', 'personal'],
+  Users: ['id', 'name', 'phone', 'username', 'role', 'status', 'lang', 'created', 'seen', 'personal', 'src'],
   Events: ['id', 'type', 'dow', 'dates', 'time', 'kind', 'title_uk', 'title_ru', 'who_uk', 'who_ru', 'where_uk', 'where_ru', 'desc_uk', 'desc_ru', 'link', 'active', 'order'],
   Going: ['key', 'userId', 'at', 'present', 'reminded'],
   Needs: ['id', 'userId', 'text', 'vis', 'status', 'created', 'prayers'],
@@ -85,7 +85,19 @@ var VERSES = [{"loc":[0,5,14],"ref":{"uk":"Матвія 5:14","ru":"Матфея
 function doGet(e) {
   var key = e && e.parameter && e.parameter.ics;
   if (key) return icsOut(String(key), String(e.parameter.l || 'uk'));
+  if (e && e.parameter && e.parameter.pub) return out(publicOut());
   return out({ ok: true, app: 'misto-svitla' });
+}
+
+/* Публічні дані для сторінки гостей: розклад і контакти. Без людей і без особистого. */
+function publicOut() {
+  var c = CacheService.getScriptCache(), hit = c.get('pub');
+  if (hit) return JSON.parse(hit);
+  var st = settingsAll(), keys = ['address_uk', 'address_ru', 'map', 'tg', 'ig', 'yt', 'fb'], set = {};
+  keys.forEach(function (k) { set[k] = st[k]; });
+  var res = { events: rows('Events').map(eventOut).filter(function (e) { return e.active; }), settings: set };
+  c.put('pub', JSON.stringify(res), 600);
+  return res;
 }
 
 /* Файл календаря (.ics) для однієї зустрічі: ?ics=<id>@<yyyy-mm-dd>&l=uk|ru|en. Розклад і так публічний. */
@@ -207,6 +219,15 @@ function roleOf(u) {
   return ROLES.indexOf(u.role) >= 0 ? u.role : 'member';
 }
 function has(role, list) { return list.indexOf(role) >= 0; }
+/** Звідки людина прийшла: src_instagram у посиланні → instagram; запрошення на подію → friend. */
+function srcOf(param) {
+  var p = String(param || '').replace(/^\/start\s+/, '');
+  var m = p.match(/^src_([a-z0-9]{1,20})$/);
+  if (m) return m[1];
+  return /^ev_/.test(p) ? 'friend' : '';
+}
+var SRC_NAMES = { instagram: 'Instagram', youtube: 'YouTube', facebook: 'Facebook', tiktok: 'TikTok', flyer: 'листівка', screen: 'екран у залі', maps: 'Google Maps', site: 'сторінка для гостей', friend: 'від друзів' };
+function srcName(k) { return SRC_NAMES[k] || k || 'невідомо'; }
 /** Мова людини для повідомлень бота: uk, ru або en (en — лише якщо обрали англійську в застосунку). */
 function langOf(x) { return x && (x.lang === 'ru' || x.lang === 'en') ? x.lang : 'uk'; }
 
@@ -248,6 +269,7 @@ function checkInit(initData) {
   var f = verifySigned(initData), user = f.user ? JSON.parse(f.user) : null;
   if (Date.now() / 1000 - Number(f.auth_date || 0) > 7 * 86400) throw new Error('Сесія застаріла. Закрийте й відкрийте застосунок знову');
   if (!user || !user.id) throw new Error('Немає даних користувача');
+  user._src = srcOf(f.start_param);
   return user;
 }
 
@@ -265,7 +287,7 @@ function contactFromApp(tgUser, u, body) {
   if (String(c.user_id) !== id || !c.phone_number) throw new Error('Це не ваш номер');
   var lang = String(tgUser.language_code || '').indexOf('ru') === 0 ? 'ru' : 'uk', t = T[lang];
   var name = txt(body.name, 60).replace(/\s+/g, ' ').trim() || [tgUser.first_name, tgUser.last_name].filter(Boolean).join(' ');
-  if (!u) { addRow('Users', { id: id, name: name, phone: '', username: tgUser.username || '', role: 'member', status: 'contact', lang: lang, created: Date.now() }); _cache = {}; u = findUser(id); }
+  if (!u) { addRow('Users', { id: id, name: name, phone: '', username: tgUser.username || '', role: 'member', status: 'contact', lang: lang, created: Date.now(), src: tgUser._src || '' }); _cache = {}; u = findUser(id); }
   var wasOk = u.status === 'ok';
   if (!u.name || name) u.name = name || u.name;
   u.phone = (String(c.phone_number).charAt(0) === '+' ? '' : '+') + c.phone_number;
@@ -273,7 +295,7 @@ function contactFromApp(tgUser, u, body) {
   setRow('Users', u);
   if (!wasOk && claimJoin(id)) {
     try { applyInvite(u, t); welcome(id, u, t); } catch (e) {} // якщо людина не дала боту писати — не страшно
-    notifyRoles(['admin'], '👋 Новий учасник: ' + u.name + ', ' + u.phone + (u.username ? ', @' + u.username : '') + ' (через застосунок)');
+    notifyRoles(['admin'], '👋 Новий учасник: ' + u.name + ', ' + u.phone + (u.username ? ', @' + u.username : '') + ' (через застосунок' + (u.src ? ', джерело: ' + srcName(u.src) : '') + ')');
   }
   return { ok: true };
 }
@@ -283,7 +305,7 @@ function registerFromApp(tgUser, u, body) {
   var id = String(tgUser.id), name = txt(body.name, 60).replace(/\s+/g, ' ').trim();
   if (name.length < 2) throw new Error('Вкажіть ім’я');
   var lang = String(tgUser.language_code || '').indexOf('ru') === 0 ? 'ru' : 'uk';
-  if (!u) { addRow('Users', { id: id, name: name, phone: '', username: tgUser.username || '', role: 'member', status: 'contact', lang: lang, created: Date.now() }); return { ok: true, status: 'contact' }; }
+  if (!u) { addRow('Users', { id: id, name: name, phone: '', username: tgUser.username || '', role: 'member', status: 'contact', lang: lang, created: Date.now(), src: tgUser._src || '' }); return { ok: true, status: 'contact' }; }
   u.name = name; u.username = tgUser.username || u.username || '';
   if (u.status !== 'ok') u.status = 'contact';
   setRow('Users', u);
@@ -310,6 +332,7 @@ function handleApi(body) {
     if (fn.admin && u.role !== 'admin') throw new Error('Лише для адміністраторів');
     if (fn.leader && !has(u.role, ['leader', 'minister', 'admin'])) throw new Error('Лише для лідерів');
     var res = fn(u, body) || {};
+    if (/^(event|settings)/.test(action)) CacheService.getScriptCache().put('pub', '', 1); // сторінка гостей одразу бачить зміни
     if (res.light) return res.light;
     _cache = {};
     var me = findUser(id); me.role = roleOf(me);
@@ -504,7 +527,7 @@ function buildD(u) {
     }).sort(function (a, b) { return (a.status === 'new' ? 0 : 1) - (b.status === 'new' ? 0 : 1) || b.created - a.created; }).slice(0, 150);
     var people = users.filter(function (x) { return x.status === 'ok'; }).map(function (x) {
       var pp = parseJ(x.personal, {});
-      return { id: String(x.id), name: x.name, phone: String(x.phone), username: String(x.username), role: roleOf(x), created: Number(x.created) || 0,
+      return { id: String(x.id), name: x.name, phone: String(x.phone), username: String(x.username), role: roleOf(x), created: Number(x.created) || 0, src: String(x.src || ''),
         skills: Object.keys(pp.skills || {}), serve: Object.keys(pp.serve || {}), verseOn: !!pp.verseOn };
     }).sort(function (a, b) { return b.created - a.created; });
     D.admin = {
@@ -1069,11 +1092,12 @@ function onUpdate(up) {
   var m = up.message;
   if (!m || !m.chat || m.chat.type !== 'private' || !m.from || m.from.is_bot) return;
   var id = String(m.from.id), lang = String(m.from.language_code || '').indexOf('ru') === 0 ? 'ru' : 'uk', t = T[lang];
-  var text = String(m.text || '').trim(), u = findUser(id), inv = takeInvite(id, text);
+  var text = String(m.text || '').trim(), u = findUser(id), inv = takeInvite(id, text), src = /^\/start\s/.test(text) ? srcOf(text) : '';
+  if (u && src && !u.src && u.status !== 'ok') { u.src = src; setRow('Users', u); }
   if (inv === 'bad') { send(id, t.badInvite); inv = null; }
 
   if (m.contact) {
-    if (!u) { addRow('Users', { id: id, name: '', phone: '', username: m.from.username || '', role: 'member', status: 'name', lang: lang, created: Date.now() }); send(id, t.askName, { remove_keyboard: true }); return; }
+    if (!u) { addRow('Users', { id: id, name: '', phone: '', username: m.from.username || '', role: 'member', status: 'name', lang: lang, created: Date.now(), src: src }); send(id, t.askName, { remove_keyboard: true }); return; }
     if (String(m.contact.user_id) !== id) { send(id, t.ownContact, contactKb(t)); return; }
     var wasOk = u.status === 'ok';
     if (!u.name) u.name = [m.from.first_name, m.from.last_name].filter(Boolean).join(' ');
@@ -1085,11 +1109,11 @@ function onUpdate(up) {
     send(id, t.done, { remove_keyboard: true });
     applyInvite(u, t);
     welcome(id, u, t);
-    if (first) notifyRoles(['admin'], '👋 Новий учасник: ' + u.name + ', ' + u.phone + (u.username ? ', @' + u.username : ''));
+    if (first) notifyRoles(['admin'], '👋 Новий учасник: ' + u.name + ', ' + u.phone + (u.username ? ', @' + u.username : '') + (u.src ? ' (джерело: ' + srcName(u.src) + ')' : ''));
     return;
   }
   if (!u) {
-    addRow('Users', { id: id, name: '', phone: '', username: m.from.username || '', role: 'member', status: 'name', lang: lang, created: Date.now() });
+    addRow('Users', { id: id, name: '', phone: '', username: m.from.username || '', role: 'member', status: 'name', lang: lang, created: Date.now(), src: src });
     send(id, t.askName, { remove_keyboard: true });
     return;
   }
@@ -1239,6 +1263,12 @@ function prayDigestJob(now) {
   if (list.length) sendMany(list);
 }
 
+function srcCount(list) {
+  var c = {};
+  list.forEach(function (x) { var k = String(x.src || ''); c[k] = (c[k] || 0) + 1; });
+  return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (k) { return srcName(k) + ' ' + c[k]; }).join(', ');
+}
+
 /* Неділя, 20:00: коротке зведення тижня для адміністраторів. */
 function weekDigestJob(now) {
   now = now || new Date(); var props = PropertiesService.getScriptProperties(), today = kyivDate(now);
@@ -1264,6 +1294,7 @@ function weekDigestJob(now) {
   var g = Object.keys(going).map(function (k) { return '• ' + k + ': ' + going[k]; }).join('\n');
   var text = '📊 Тиждень у застосунку\n\n' +
     '👋 Нових учасників: ' + fresh.length + (fresh.length ? ' (' + fresh.slice(0, 8).map(function (x) { return first(x.name); }).join(', ') + (fresh.length > 8 ? '…' : '') + ')' : '') + '\n' +
+    (fresh.length ? '🧭 Звідки: ' + srcCount(fresh) + '\n' : '') +
     '👥 Усього учасників: ' + users.length + '\n' +
     '🙏 Молитов: ' + prayers + ', нових потреб: ' + needs + (answered ? ', свідчень про відповідь: ' + answered : '') + '\n' +
     (g ? '\n✋ Відмітили «Я буду»:\n' + g + '\n' : '') +

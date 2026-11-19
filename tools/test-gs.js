@@ -65,8 +65,9 @@ const G = {
 const fn = new Function(...Object.keys(G), src + '\nreturn {doPost, doGet, setup, tick, verseOfDay, prayDigestJob, weekDigestJob, rows:function(n){_cache={};return rows(n);}, resetCache:function(){_cache={};}};');
 const S = fn(...Object.values(G));
 
-function initData(user) {
+function initData(user, sp) {
   const f = { auth_date: String(Math.floor(Date.now() / 1000)), query_id: 'AAE', user: JSON.stringify(user), signature: 'sigxyz' };
+  if (sp) f.start_param = sp;
   const dcs = Object.keys(f).sort().map(k => k + '=' + f[k]).join('\n');
   const secret = crypto.createHmac('sha256', 'WebAppData').update(TOKEN).digest();
   const hash = crypto.createHmac('sha256', secret).update(dcs).digest('hex');
@@ -351,6 +352,29 @@ assert.strictEqual(call(petro, 'load').me.name, 'Петро Іваненко', '
   x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', video: 'javascript:alert(1)' } }); assert.ok(/https/.test(x.error), 'bad video link rejected');
   x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', video: 'https://youtu.be/abc' } });
   assert.strictEqual(x.sermons.find(s => s.title.uk === 'Відео').video, 'https://youtu.be/abc', 'video saved');
+}
+
+// --- where people come from: bot /start src_…, app start_param, admin list, weekly digest, public page data
+{ const insta = { id: 6060, first_name: 'Іра', language_code: 'uk' };
+  bot(insta, { text: '/start src_instagram' });
+  assert.strictEqual(S.rows('Users').find(u => u.id === '6060').src, 'instagram', 'bot start keeps the source');
+  const fly = { id: 6161, first_name: 'Ліна', language_code: 'uk' };
+  S.resetCache(); JSON.parse(S.doPost({ postData: { contents: JSON.stringify({ action: 'register', name: 'Ліна Коваль', initData: initData(fly, 'src_flyer') }) } }).s);
+  assert.strictEqual(S.rows('Users').find(u => u.id === '6161').src, 'flyer', 'app start_param keeps the source');
+  const evf = { id: 6262, first_name: 'Ян', language_code: 'uk' };
+  S.resetCache(); S.doPost({ postData: { contents: JSON.stringify({ action: 'register', name: 'Ян Бій', initData: initData(evf, 'ev_sun_20261122') }) } });
+  assert.strictEqual(S.rows('Users').find(u => u.id === '6262').src, 'friend', 'event invite counts as friend');
+  bot(insta, { text: 'Іра Мельник' }); bot(insta, { contact: { user_id: 6060, phone_number: '380670000606' } });
+  assert.ok(sent.some(s => String(s.p.chat_id) === '1001' && /Іра Мельник.*джерело: Instagram/.test(s.p.text || '')), 'admin sees the source');
+  assert.strictEqual(call(admin, 'load').admin.users.find(u => u.id === '6060').src, 'instagram');
+  let sun = new Date(); while (fmt(sun, '', 'u') !== '7') sun = new Date(sun.getTime() + 864e5);
+  delete props.weekDigest; const b = sent.length; S.resetCache();
+  S.weekDigestJob(new Date(parseDate(fmt(sun, '', 'yyyy-MM-dd') + ' 20:30').getTime()));
+  assert.ok(sent.slice(b).some(s => /Звідки: .*Instagram 1/.test(s.p.text || '')), 'weekly digest counts sources');
+  const pub = JSON.parse(S.doGet({ parameter: { pub: '1' } }).s);
+  assert.ok(pub.events.length > 3 && pub.settings.address_uk && !pub.users && !pub.settings.mono, 'public data has schedule only');
+  call(admin, 'eventSave', { event: { id: 'pubx', type: 'dates', dates: ['2026-12-31'], time: '20:00', kind: 'evenings', title: { uk: 'Новорічна молитва' }, active: true } });
+  assert.ok(JSON.parse(S.doGet({ parameter: { pub: '1' } }).s).events.some(e => e.id === 'pubx'), 'public cache refreshed after edit');
 }
 
 console.log('ALL GOOD. messages sent:', sent.length, '| log rows:', (sheets.Log ? sheets.Log.data.length - 1 : 0));

@@ -3,7 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Застосунок Місто Світла</title>
+<title>Місто Світла — церква в Києві</title>
+<meta name="description" content="Церква «Місто Світла» в Києві. Недільне служіння щонеділі об 11:00, пр. Степана Бандери, 23, метро «Почайна». Розклад, Біблія і молитва в Telegram.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Місто Світла">
+<meta property="og:title" content="Місто Світла — церква в Києві, де тебе чекають">
+<meta property="og:description" content="Недільне служіння щонеділі об 11:00, метро «Почайна». Приходь таким, як є.">
+<meta property="og:image" content="https://anubisshaman.github.io/misto-svitla/og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,500&family=Onest:wght@600;800;900&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
@@ -1114,6 +1122,10 @@ i.add{font-style:italic;color:var(--muted)}
 .block .night{min-height:60vh;justify-content:space-between}
 .block .night-pad{gap:14px}
 .mark-l{font:800 18px/1 var(--font-display);color:var(--night-ink);margin-bottom:auto}
+.guest{padding-top:14px}.g-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.g-hero{min-height:440px;justify-content:flex-start}.g-hero .big{font-size:clamp(38px,12vw,52px);line-height:.95}
+.qr-card{gap:14px}.qr-img{width:100%;max-width:300px;align-self:center;border-radius:16px;box-shadow:0 0 0 1px var(--line)}
+.g-demo{text-align:center}.g-demo a{color:var(--muted)}
 .mark-l b{color:#A3ACFF}
 #app.is-busy::after{content:"";position:absolute;top:0;left:0;height:3px;width:38%;background:var(--accent);z-index:30;border-radius:0 3px 3px 0}
 @media (prefers-reduced-motion:no-preference){#app.is-busy::after{animation:busy 1s ease-in-out infinite}@keyframes busy{from{transform:translateX(-100%)}to{transform:translateX(270%)}}}
@@ -1508,7 +1520,7 @@ function demoInit(){try{DS=JSON.parse(localStorage.getItem('misto-svitla-demo')|
       .concat([{id:'sa9',type:'seek',text:{uk:'Шукаю репетитора з математики для сина, 7 клас.',ru:'Ищу репетитора по математике для сына, 7 класс.'},area:'Куренівка',who:{uk:'Юля Кравець',ru:'Юля Кравец'},status:'pending',mine:false,sample:true,created:t0-36e5}]),
     requests:[{id:'sr1',kind:'pastoral',topic:'Сімейне питання',contact:'Дзвінок',status:'new',created:t0-18e6,who:'Тарас Лисенко',phone:demoPhone(2),username:''},
       {id:'sr2',kind:'serve',topic:'Звук',contact:'',status:'done',created:t0-1728e5,who:'Марко Бойко',phone:demoPhone(1),username:'marko_b'}],
-    users:DEMO_PEOPLE.map(function(p,i){return {id:'u'+i,name:p[0],name_ru:p[1],phone:demoPhone(i),username:i%3?'':'',role:p[2],skills:p[3],serve:[],created:t0-(i+2)*2592e5};})};
+    users:DEMO_PEOPLE.map(function(p,i){return {id:'u'+i,name:p[0],name_ru:p[1],phone:demoPhone(i),username:i%3?'':'',role:p[2],skills:p[3],serve:[],src:['instagram','friend','','flyer','friend','youtube'][i%6],created:t0-(i+2)*2592e5};})};
   demoSave();}
 function occurs(e,d){return e.type==='dates'?e.dates.indexOf(iso(d))>-1:e.dow.indexOf(d.getDay())>-1;}
 function demoD(){if(!DS)demoInit();var lang=state.lang,tx=function(t){return t&&typeof t==='object'?(t[lang]||t.uk):(t||'');},meName=DS.me.name||x('Ти','Ты');
@@ -1534,7 +1546,7 @@ function demoD(){if(!DS)demoInit();var lang=state.lang,tx=function(t){return t&&
       needs:needs.slice(0,40).map(function(n){return {id:n.id,text:n.text,vis:n.vis,who:n.mine?meName:(n.who||x('Анонімно','Анонимно')),created:n.created};}),
       requests:DS.requests.slice().sort(function(a,b){return (a.status==='new'?0:1)-(b.status==='new'?0:1)||b.created-a.created;}),
       users:[{id:'me',name:meName+' ('+x('демо','демо')+')',phone:DS.me.phone,username:'',role:DS.me.role,created:Date.now(),skills:Object.keys(state.skills||{}),serve:Object.keys(state.serve||{})}]
-        .concat(DS.users.map(function(u){return {id:u.id,name:lang==='ru'?u.name_ru:u.name,phone:u.phone,username:u.username,role:u.role,created:u.created,skills:u.skills,serve:u.serve};})),
+        .concat(DS.users.map(function(u){return {id:u.id,name:lang==='ru'?u.name_ru:u.name,phone:u.phone,username:u.username,role:u.role,created:u.created,skills:u.skills,serve:u.serve,src:u.src||''};})),
       stats:{users:DS.users.length+1,week:lit,newRequests:DS.requests.filter(function(r){return r.status==='new';}).length}}};}
 function demoErr(m){throw new Error(m);}
 function demoSermons(){var sun=nextSundayIso(),prev=iso(addDays(fromIso(sun),-7));
@@ -1634,6 +1646,37 @@ function openDeepLink(){var spm=String((tg&&tg.initDataUnsafe&&tg.initDataUnsafe
 var lastLoad=0,deepDone=false;
 /* Refresh shared data when the person comes back to the app (Telegram keeps it alive in the background). */
 document.addEventListener('visibilitychange',function(){if(!LIVE||document.hidden||BLOCK||busy||Date.now()-lastLoad<30000)return;lastLoad=Date.now();post('load').then(function(nd){D=nd;applyD();cacheD();render();}).catch(function(){});});
+/* ---------- guest page: what people see outside Telegram (Instagram bio, Google, a QR on a flyer) ---------- */
+var GUEST=false;
+function guestSrc(){var m=String(location.search).match(/[?&]src=([a-z0-9]{1,20})(?:&|$)/);return m?m[1]:'site';}
+function guestTg(){return 'https://t.me/'+CONFIG.BOT_USERNAME+'?startapp=src_'+guestSrc();}
+function guestStart(){GUEST=true;
+  try{if(!localStorage.getItem('misto-svitla-v3')){var nl=String(navigator.language||'');if(/^ru/i.test(nl))state.lang='ru';else if(/^en/i.test(nl))state.lang='en';}}catch(e){}
+  D={guest:true,me:{},events:clone(DEFAULT_EVENTS),settings:clone(DEFAULT_SETTINGS)};applyD();BLOCK='guest';
+  var go=function(){render();try{fetch(CONFIG.API_URL+'?pub=1').then(function(r){return r.json();}).then(function(p){if(!p||!p.events)return;D.events=p.events;D.settings=Object.assign({},DEFAULT_SETTINGS,p.settings||{});applyD();render();}).catch(function(){});}catch(e){}};
+  if(state.lang==='en'&&!window.EN)loadEn(function(){langData();go();});else go();}
+function guestView(){var now=new Date(),up=[],sun=null;
+  for(var i=0;i<21&&up.length<6;i++){var d=addDays(day0(now),i);dayItems(d).forEach(function(it){if(up.length<6&&occDate(iso(d),it.time)>now&&it.kind!=='leaders'&&it.kind!=='daily')up.push({it:it,d:d});});}
+  RULES.forEach(function(r){if(r.kind==='sunday'&&!sun)sun=r;});
+  var addr=(D.settings['address_'+(state.lang==='ru'?'ru':'uk')])||'';
+  var tgBtn='<a class="btn light" href="'+esc(guestTg())+'">'+x('Відкрити в Telegram','Открыть в Telegram','Open in Telegram')+'</a>';
+  var rows=up.map(function(o){var it=o.it,d=o.d;return '<li class="ev"><span class="date-big">'+d.getDate()+'.'+pad2(d.getMonth()+1)+'<small>'+it.time+'</small></span><div><h3>'+esc(L(it.title))+'</h3>'+
+    '<p class="sub">'+WD[state.lang][d.getDay()]+(it.link?', '+x('онлайн','онлайн','online'):it.who?', '+esc(L(it.who)):'')+'</p>'+(it.desc?'<p class="sub">'+esc(L(it.desc))+'</p>':'')+'</div></li>';}).join('');
+  var first=[[x('Приходь таким, як є','Приходи таким, как есть','Come as you are'),x('Костюм не обов’язковий, усмішка бажана.','Костюм не обязателен, улыбка желательна.','No dress code, smiles welcome.')],
+    [x('Тебе зустрінуть','Тебя встретят','Someone will meet you'),x('У застосунку в розділі «Я тут новий» натисни «Хочу, щоб мене зустріли». Служитель напише тобі й зустріне в неділю.','В приложении в разделе «Я здесь новый» нажми «Хочу, чтобы меня встретили». Служитель напишет тебе и встретит в воскресенье.','In the app, open «I am new here» and tap «I want to be met». A minister will message you and meet you on Sunday.')],
+    [x('Не з Києва?','Не из Киева?','Not in Kyiv?'),x('Служіння можна дивитися наживо на YouTube, а молитися разом — з будь-якого міста.','Служение можно смотреть вживую на YouTube, а молиться вместе — из любого города.','Watch the service live on YouTube and pray with us from any city.')]];
+  return '<main id="main" class="guest">'+
+   '<div class="g-top"><span class="mark">Місто <b>Світла</b></span>'+langSwitch()+'</div>'+
+   '<section class="night g-hero"><div class="night-pad"><p class="when">'+x('Церква в Києві','Церковь в Киеве','A church in Kyiv')+'</p><h1 class="big">'+x('Тут тебе чекають','Здесь тебя ждут','You are welcome here')+'</h1>'+
+     (sun?'<p class="when">'+x('Недільне служіння щонеділі о ','Воскресное служение каждое воскресенье в ','Sunday service every Sunday at ')+sun.time+(addr?'<br>'+esc(addr):'')+'</p>':'')+
+     '<div class="row">'+tgBtn+'<a class="btn ghost-l" href="'+esc(MAP)+'" target="_blank" rel="noopener">'+x('Як дістатися','Как добраться','Directions')+'</a></div></div><canvas class="scene" aria-hidden="true"></canvas></section>'+
+   (rows?'<section class="stack"><h2>'+x('Найближчі зустрічі','Ближайшие встречи','Coming up')+'</h2><ul class="list">'+rows+'</ul></section>':'')+
+   '<section class="stack"><h2>'+x('Вперше в нас?','Впервые у нас?','First time?')+'</h2><ul class="list">'+first.map(function(q){return '<li><h3>'+q[0]+'</h3><p class="sub">'+q[1]+'</p></li>';}).join('')+'</ul></section>'+
+   '<section class="word"><p class="scripture">'+x('Ви світло для світу. Не може сховатися місто, що стоїть на верховині гори.','Вы — свет мира. Не может укрыться город, стоящий на верху горы.','You are the light of the world. A city set on a hill cannot be hidden.')+'</p><p class="ref">'+x('Матвія 5:14','Матфея 5:14','Matthew 5:14')+'</p>'+
+     '<p class="sub">'+x('Церкву заснував у 1992 році пастор Дмитро Масон. Вона входить до всесвітньої родини церков Foursquare. Звідси й назва.','Церковь основал в 1992 году пастор Дмитрий Масон. Она входит во всемирную семью церквей Foursquare. Отсюда и название.','Pastor Dmytro Mason founded the church in 1992. It is part of the worldwide Foursquare family of churches. That verse gave it its name.')+'</p></section>'+
+   '<section class="card g-app"><h2 class="t3">'+x('Церква в телефоні','Церковь в телефоне','Church in your pocket')+'</h2><p class="sub">'+x('Розклад і нагадування, Біблія, молитва разом, домашні групи HeavenOS. Безкоштовно, всередині Telegram.','Расписание и напоминания, Библия, молитва вместе, домашние группы HeavenOS. Бесплатно, внутри Telegram.','Schedule and reminders, the Bible, praying together, HeavenOS home groups. Free, inside Telegram.')+'</p><div class="row">'+tgBtn.replace('btn light','btn accent')+'</div></section>'+
+   '<section class="stack"><h2>'+x('Ми в мережі','Мы в сети','Find us')+'</h2><div class="row">'+[['Telegram',TG],['Instagram',IG],['YouTube',YT],['Facebook',FB]].filter(function(l){return l[1];}).map(function(l){return '<a class="btn tint small" href="'+esc(l[1])+'" target="_blank" rel="noopener">'+l[0]+'</a>';}).join('')+'</div></section>'+
+   '<p class="note g-demo"><a href="?demo=1">'+x('Подивитися, як виглядає застосунок','Посмотреть, как выглядит приложение','See what the app looks like')+'</a></p></main>';}
 function boot(){
   if(LIVE){try{tg.ready();tg.expand();if(tg.BackButton)tg.BackButton.onClick(goBack);if(tg.disableVerticalSwipes)tg.disableVerticalSwipes();tgTheme();checkHome();if(tg.onEvent)tg.onEvent('homeScreenAdded',function(){homeAdded=true;render();});if(tg.onEvent)tg.onEvent('themeChanged',function(){tgTheme();render();});}catch(e){}
     if(!D){try{var c=JSON.parse(localStorage.getItem('ms-cache')||'null');if(c&&c.me){D=c;applyD();}}catch(e){}}
@@ -1643,7 +1686,7 @@ function boot(){
         lastSync=JSON.stringify(personalObj());save();BLOCK=null;render();openDeepLink();})
       .catch(function(e){BLOCK_MSG=e&&e.message||'';if(BLOCK_MSG==='NOT_REGISTERED')BLOCK='register';else if(!D)BLOCK='error';else{BLOCK=null;toast(x('Немає зв’язку, показую збережене','Нет связи, показываю сохранённое'));}render();});
     return;}
-  if(CONFIG.API_URL&&!/[?&]demo=1/.test(location.search)){BLOCK='telegram';render();return;}
+  if(CONFIG.API_URL&&!/[?&]demo=1/.test(location.search)){guestStart();return;}
   D=demoApi('load',{});applyD();BLOCK=/[?&]reg=1/.test(location.search)?'register':null;render();openDeepLink();}
 
 
@@ -3107,9 +3150,34 @@ function vLeader(){if(!isLeaderRole())return back()+'<h1>'+x('Кабінет л�
        '<p class="note">'+x('Поки ніхто не відмітився.','Пока никто не отметился.')+'</p>')+'</section>';}).join(''):'<p class="sub">'+x('Найближчих зустрічей немає.','Ближайших встреч нет.')+'</p>')+
    (DEMO?'<p class="note">'+x('У демо імена й номери вигадані.','В демо имена и номера вымышлены.')+'</p>':'');}
 
+/* ---------- admin: a link and a QR code per place, so the Sunday summary shows what brings people ---------- */
+var SRC_LIST=[['instagram','Instagram'],['youtube','YouTube'],['facebook','Facebook'],['tiktok','TikTok'],['flyer',['Листівка','Листовка','Flyer']],['screen',['Екран у залі','Экран в зале','Screen in the hall']],['maps','Google Maps'],['friend',['Від друзів','От друзей','From friends']],['site',['Сторінка для гостей','Страница для гостей','Guest page']]];
+function srcLabel(k){for(var i=0;i<SRC_LIST.length;i++)if(SRC_LIST[i][0]===k){var n=SRC_LIST[i][1];return typeof n==='string'?n:nm(n);}return k;}
+var qrLib=null,qrImg={};
+function qrLoad(cb){if(window.qrcode)return cb();if(qrLib==='loading')return;qrLib='loading';var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js';
+  sc.onload=function(){qrLib='ok';cb();};sc.onerror=function(){qrLib='error';render();};document.head.appendChild(sc);}
+function pageUrl(){return String(location.href).split(/[?#]/)[0];}
+function qrPng(url){if(qrImg[url])return qrImg[url];var q=qrcode(0,'M');q.addData(url);q.make();var n=q.getModuleCount(),W=1000,cell=Math.floor(780/n),sz=cell*n,off=Math.floor((W-sz)/2);
+  var c=document.createElement('canvas');c.width=W;c.height=1120;var g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,W,1120);g.fillStyle='#0D0E11';
+  for(var r=0;r<n;r++)for(var k=0;k<n;k++)if(q.isDark(r,k))g.fillRect(off+k*cell,90+r*cell,cell,cell);
+  g.textAlign='center';g.font='800 64px Onest, Arial, sans-serif';g.fillText('Місто Світла',W/2,90+sz+110);
+  g.font='500 34px "Golos Text", Arial, sans-serif';g.fillStyle='#5B616D';g.fillText(x('Скануй: розклад, Біблія, молитва','Сканируй: расписание, Библия, молитва','Scan: schedule, Bible, prayer'),W/2,90+sz+170);
+  return (qrImg[url]=c.toDataURL('image/png'));}
+function adminQr(){var cur=state.qrSrc||'instagram',U=(D.admin&&D.admin.users)||[],cnt={},guest=pageUrl()+'?src='+cur,direct='https://t.me/'+CONFIG.BOT_USERNAME+'?startapp=src_'+cur;
+  U.forEach(function(p){var k=p.src||'';cnt[k]=(cnt[k]||0)+1;});
+  var stat=Object.keys(cnt).sort(function(a,b){return cnt[b]-cnt[a];}).map(function(k){return '<div><span>'+(k?esc(srcLabel(k)):x('Невідомо (до запуску посилань)','Неизвестно (до запуска ссылок)','Unknown (before links)'))+'</span><b>'+cnt[k]+'</b></div>';}).join('');
+  var img='';if(window.qrcode){img='<img class="qr-img" src="'+qrPng(guest)+'" alt="'+x('QR-код','QR-код','QR code')+'">';}else{qrLoad(render);img='<p class="sub">'+(qrLib==='error'?x('Не вдалося завантажити генератор QR. Перевір інтернет.','Не удалось загрузить генератор QR. Проверь интернет.','Could not load the QR generator. Check the connection.'):x('Готую QR…','Готовлю QR…','Making the QR…'))+'</p>';}
+  return '<section class="stack"><p class="sub">'+x('Для кожного місця своє посилання. Хто прийде за ним і зареєструється, у недільному зведенні буде видно, звідки.','Для каждого места своя ссылка. Кто придёт по ней и зарегистрируется, в воскресной сводке будет видно, откуда.','One link per place. Whoever registers through it shows up in the Sunday summary with that source.')+'</p>'+
+    '<div class="chips">'+SRC_LIST.map(function(o){return '<button class="chip" data-act="qrSrc" data-v="'+o[0]+'" aria-pressed="'+(cur===o[0])+'">'+esc(srcLabel(o[0]))+'</button>';}).join('')+'</div>'+
+    '<form data-form="qrSrc" class="inline"><label class="sr" for="qr-own">'+x('Своє джерело','Свой источник','Own source')+'</label><input id="qr-own" name="src" class="field" maxlength="20" placeholder="'+x('своє: латиницею, напр. fest2026','своё: латиницей, напр. fest2026','own: latin letters, e.g. fest2026')+'" autocomplete="off"><button class="btn tint small" type="submit">OK</button></form></section>'+
+    '<section class="card qr-card">'+img+
+     '<div class="kv"><div><div><small>'+x('Сторінка для гостей — для Instagram, Google Maps, листівок','Страница для гостей — для Instagram, Google Maps, листовок','Guest page — for Instagram, Google Maps, flyers')+'</small><code>'+esc(guest)+'</code></div><button class="btn tint small" data-act="copy" data-v="'+esc(guest)+'">'+x('Копіювати','Копировать','Copy')+'</button></div>'+
+      '<div><div><small>'+x('Одразу в застосунок — для постів у Telegram','Сразу в приложение — для постов в Telegram','Straight into the app — for Telegram posts')+'</small><code>'+esc(direct)+'</code></div><button class="btn tint small" data-act="copy" data-v="'+esc(direct)+'">'+x('Копіювати','Копировать','Copy')+'</button></div></div>'+
+     (window.qrcode?'<div class="row">'+(LIVE?'<button class="btn accent small" data-act="qrSend">'+x('Надіслати QR собі в Telegram','Отправить QR себе в Telegram','Send the QR to my Telegram')+'</button>':'<a class="btn accent small" href="'+qrPng(guest)+'" download="qr-'+cur+'.png">'+x('Завантажити QR','Скачать QR','Download QR')+'</a>')+'</div>':'')+'</section>'+
+    (stat?'<section class="stack"><h2>'+x('Звідки прийшли учасники','Откуда пришли участники','Where members came from')+'</h2><div class="kv">'+stat+'</div></section>':'');}
 function vAdmin(){if(!isAdmin())return back()+'<h1>'+x('Адмінка','Админка')+'</h1><p class="sub">'+x('Лише для адміністраторів.','Только для администраторов.')+'</p>';
   var A=D.admin||{},s=state.aseg||'events',S=A.stats||{},pend=(A.tests||[]).length+(A.ads||[]).length;
-  var tabs=[['sermons',x('Проповіді','Проповеди')],['events',x('Події','События')],['mod',x('Модерація','Модерация'),pend],['req',x('Заявки','Заявки'),S.newRequests||0],['people',x('Люди','Люди')],['settings',x('Налаштування','Настройки')],['send',x('Розсилка','Рассылка')]];
+  var tabs=[['sermons',x('Проповіді','Проповеди')],['events',x('Події','События')],['mod',x('Модерація','Модерация'),pend],['req',x('Заявки','Заявки'),S.newRequests||0],['people',x('Люди','Люди')],['settings',x('Налаштування','Настройки')],['send',x('Розсилка','Рассылка')],['qr',x('Посилання і QR','Ссылки и QR','Links & QR')]];
   var body='';
   if(s==='sermons')body=adminSermons();
   else if(s==='events'){var evs=D.events||[];
@@ -3134,9 +3202,9 @@ function vAdmin(){if(!isAdmin())return back()+'<h1>'+x('Адмінка','Адм�
         (INV[r]?'<code>'+esc(INV[r])+'</code><div class="row"><button class="btn tint small" data-act="invCopy" data-v="'+r+'">'+x('Скопіювати','Скопировать')+'</button><button class="btn tint small" data-act="invShare" data-v="'+r+'">'+x('Надіслати в Telegram','Отправить в Telegram')+'</button></div>':'<div class="row"><button class="btn tint small" data-act="invite" data-v="'+r+'">'+x('Отримати посилання','Получить ссылку')+'</button></div>')+'</div>';}).join('')+'</section>'+
       '<label class="sr" for="pq">'+x('Пошук людей','Поиск людей')+'</label><input type="search" id="pq" class="field" placeholder="'+x('Пошук за ім’ям, телефоном, навичкою','Поиск по имени, телефону, навыку')+'" autocomplete="off">'+
      '<p class="sub" id="pcount">'+x('Зареєстровано: ','Зарегистрировано: ')+U.length+'</p><ul class="list" id="plist">'+U.map(function(p){var sk=(p.skills||[]).map(skillName);
-       return '<li class="person" data-s="'+esc((p.name+' '+p.phone+' '+p.username+' '+sk.join(' ')+' '+(p.serve||[]).join(' ')).toLowerCase())+'"><div><strong>'+esc(p.name)+'</strong><p class="note">'+contactBits(p)+(sk.length?'<br>'+x('Може допомогти: ','Может помочь: ')+esc(sk.join(', ')):'')+((p.serve||[]).length?'<br>'+x('Хоче служити: ','Хочет служить: ')+esc(p.serve.join(', ')):'')+'</p></div>'+
+       return '<li class="person" data-s="'+esc((p.name+' '+p.phone+' '+p.username+' '+sk.join(' ')+' '+(p.serve||[]).join(' ')).toLowerCase())+'"><div><strong>'+esc(p.name)+'</strong><p class="note">'+contactBits(p)+(sk.length?'<br>'+x('Може допомогти: ','Может помочь: ')+esc(sk.join(', ')):'')+((p.serve||[]).length?'<br>'+x('Хоче служити: ','Хочет служить: ')+esc(p.serve.join(', ')):'')+(p.src?'<br>'+x('Прийшов: ','Пришёл: ','Came from: ')+esc(srcLabel(p.src)):'')+'</p></div>'+
        '<select data-change="role" data-v="'+esc(p.id)+'" aria-label="'+x('Роль: ','Роль: ')+esc(p.name)+'">'+ROLES.map(function(r){return '<option value="'+r+'"'+(p.role===r?' selected':'')+'>'+nm(ROLE_NAMES[r])+'</option>';}).join('')+'</select></li>';}).join('')+'</ul>'+
-     '<p class="note">'+x('Молитовна команда бачить закриті потреби. Лідер групи бачить, хто прийде, і відмічає присутність. Служитель отримує заявки на розмову з пастором. Адміністратор керує всім. Адміністратори з налаштувань скрипта (ADMIN_IDS) лишаються адміністраторами завжди.','Молитвенная команда видит закрытые нужды. Лидер группы видит, кто придёт, и отмечает присутствие. Служитель получает заявки на разговор с пастором. Администратор управляет всем. Администраторы из настроек скрипта (ADMIN_IDS) остаются администраторами всегда.')+'</p>';}
+     '<p class="note">'+x('Молитовна команда бачить закриті потреби. Лідер групи бачить, хто прийде. Служитель отримує заявки на розмову з пастором. Адміністратор керує всім. Адміністратори з налаштувань скрипта (ADMIN_IDS) лишаються адміністраторами завжди.','Молитвенная команда видит закрытые нужды. Лидер группы видит, кто придёт. Служитель получает заявки на разговор с пастором. Администратор управляет всем. Администраторы из настроек скрипта (ADMIN_IDS) остаются администраторами всегда.')+'</p>';}
   else if(s==='settings'){var st=D.settings,f=function(k,label,type,ph){return '<label class="f" for="s-'+k+'">'+label+(type==='area'?'<textarea id="s-'+k+'" name="'+k+'" rows="4">'+esc(st[k]||'')+'</textarea>':'<input type="'+(type||'text')+'" id="s-'+k+'" name="'+k+'" value="'+esc(st[k]||'')+'"'+(ph?' placeholder="'+ph+'"':'')+(type==='number'?' min="0" max="1440" step="5"':'')+'>')+'</label>';};
     body='<form data-form="settings" class="form">'+
      '<h2>'+x('Повідомлення бота','Сообщения бота')+'</h2><div class="grid2">'+f('verseTime',x('Вірш дня о','Стих дня в'),'time')+f('remind',x('Нагадувати за, хв','Напоминать за, мин'),'number')+'</div>'+
@@ -3148,6 +3216,7 @@ function vAdmin(){if(!isAdmin())return back()+'<h1>'+x('Адмінка','Адм�
      '<h2>'+x('Команди служіння','Команды служения')+'</h2>'+f('teams',x('Кожна команда з нового рядка: Назва | Название','Каждая команда с новой строки: Назва | Название'),'area')+
      '<h2>'+x('Соцмережі','Соцсети')+'</h2>'+f('tg','Telegram','url')+f('ig','Instagram','url')+f('yt','YouTube','url')+f('playlist',x('Плейлист церкви (Spotify, YouTube Music, Apple Music)','Плейлист церкви (Spotify, YouTube Music, Apple Music)'),'url')+f('fb','Facebook','url')+
      '<button class="btn accent" type="submit">'+x('Зберегти налаштування','Сохранить настройки')+'</button></form>';}
+  else if(s==='qr')body=adminQr();
   else{var n=S.users||0,cf=state.confirm==='send';
     body='<section class="stack"><p class="sub">'+x('Повідомлення прийде від бота всім зареєстрованим','Сообщение придёт от бота всем зарегистрированным')+' ('+n+') '+x('з кнопкою «Відкрити застосунок».','с кнопкой «Открыть приложение».')+'</p>'+
      '<label class="f" for="bc-text">'+x('Текст','Текст')+'<textarea id="bc-text" rows="7" maxlength="3500" placeholder="'+x('Наприклад: завтра о 18:00 починаються «Вечори в Божій присутності»','Например: завтра в 18:00 начинаются «Вечера в Божьем присутствии»')+'">'+esc(state.bcText||'')+'</textarea></label>'+
@@ -3175,7 +3244,7 @@ function regView(){var w=REG.step==='wait',d=REG.step==='denied',nm=REG.name||((
     '</div></div>';}
 function regPoll(n){if(n<=0){REG.step='name';REG.err=x('Номер ще не дійшов. Натисни ще раз або «Я вже поділився».','Номер ещё не пришёл. Нажми ещё раз или «Я уже поделился».','The number has not arrived yet. Tap again or «I have shared it».');render();return;}
   setTimeout(function(){post('load').then(function(nd){D=nd;applyD();cacheD();BLOCK=null;REG.step='name';render();toast(x('Вітаємо вдома, ','Добро пожаловать домой, ','Welcome home, ')+(D.me&&D.me.name||'').split(' ')[0]+'!');openDeepLink();},function(){regPoll(n-1);});},1500);}
-function blockView(){var b=BLOCK,inner='';if(b==='register')return regView();
+function blockView(){var b=BLOCK,inner='';if(b==='register')return regView();if(b==='guest')return guestView();
   if(b==='telegram')inner='<p class="big">'+x('Відкрий у Telegram','Открой в Telegram')+'</p><p class="when">'+x('Застосунок церкви працює всередині Telegram.','Приложение церкви работает внутри Telegram.')+'</p>'+
     '<div class="row">'+(CONFIG.BOT_USERNAME?'<a class="btn light" href="https://t.me/'+esc(CONFIG.BOT_USERNAME)+'">'+x('Відкрити бота','Открыть бота')+'</a>':'')+'<a class="btn ghost-l" href="?demo=1">'+x('Подивитися демо','Посмотреть демо')+'</a></div>';
   else if(b==='loading')inner='<p class="big">'+x('Завантажую…','Загружаю…')+'</p>';
@@ -3688,7 +3757,7 @@ var actions={
   verseImg:function(){imgTitle='';toast(x('Готую картинку…','Готовлю картинку…'));verseImage().then(function(u){state.img=u;state.sheet='img';render();},function(){toast(x('Не вдалося створити картинку','Не удалось создать картинку'));});},
   sendImg:function(){var v=verseOfDay();post('sendImage',{img:state.img,caption:'«'+L(v.t)+'»\n'+L(v.ref)}).then(function(){toast(x('Надіслано в чат з ботом. Звідти її легко переслати','Отправлено в чат с ботом. Оттуда её легко переслать'));},function(e){toast(errText(e),1);});},
   homeIcon:function(){try{tg.addToHomeScreen();}catch(e){toast(x('Твій Telegram поки цього не вміє. Онови застосунок','Твой Telegram пока этого не умеет. Обнови приложение'),true);}},
-  invite:function(){var app=CONFIG.BOT_USERNAME?'https://t.me/'+CONFIG.BOT_USERNAME+'?startapp':'',txt=x('Наша церква «Місто Світла» тепер у Telegram: розклад, Біблія, молитва. Приєднуйся!','Наша церковь «Місто Світла» теперь в Telegram: расписание, Библия, молитва. Присоединяйся!');
+  invite:function(){var app=CONFIG.BOT_USERNAME?'https://t.me/'+CONFIG.BOT_USERNAME+'?startapp=src_friend':'',txt=x('Наша церква «Місто Світла» тепер у Telegram: розклад, Біблія, молитва. Приєднуйся!','Наша церковь «Місто Світла» теперь в Telegram: расписание, Библия, молитва. Присоединяйся!');
     if(!app){toast(x('У живій версії відкриється вибір чату','В живой версии откроется выбор чата'));return;}
     var u='https://t.me/share/url?url='+encodeURIComponent(app)+'&text='+encodeURIComponent(txt);if(LIVE&&tg.openTelegramLink)tg.openTelegramLink(u);else window.open(u,'_blank');},
   bkOpen:function(v){var p=(state.bookPos||{})[v];bkOpenFx(v,p?p.ch:0);},
@@ -3709,6 +3778,8 @@ var actions={
   reload:function(){BLOCK='loading';render();boot();},
   presence:function(v){var p=v.split('|'),list=(D.leader&&D.leader[p[0]])||[],person=null;list.forEach(function(q){if(q.id===p[1])person=q;});if(!person)return;var on=!person.present;
     optimistic(function(){person.present=on;},'presence',{key:p[0],userId:p[1],on:on});},
+  qrSrc:function(v){state.qrSrc=v;commit();},
+  qrSend:function(){var cur=state.qrSrc||'instagram',url=pageUrl()+'?src='+cur;post('sendImage',{img:qrPng(url),caption:'QR: '+srcLabel(cur)+'\n'+url}).then(function(){toast(x('QR надіслано в чат з ботом','QR отправлен в чат с ботом','QR sent to your chat with the bot'));},function(e){toast(errText(e),1);});},
   aseg:function(v){state.aseg=v;state.confirm=null;commit();var m=document.querySelector('main');if(m)m.scrollTop=0;},
   evNew:function(){state.sheet='event';state.sheetData='new';state.confirm=null;render();},
   evEdit:function(v){state.sheet='event';state.sheetData=v;state.confirm=null;render();},
@@ -3728,7 +3799,7 @@ var actions={
   bq:function(v){state.q=v;commit();},
   retryBible:function(){delete bibleState[state.lang];delete bibleState['ot-'+state.lang];render();},
   go:function(v){go(v);commit();},
-  lang:function(v){state.lang=v;langData();if(v==='en'&&!window.EN){loadEn(function(){langData();if(DEMO){D=demoD();applyD();}commit();});return;}if(DEMO){D=demoD();applyD();}commit();},
+  lang:function(v){state.lang=v;langData();if(v==='en'&&!window.EN){loadEn(function(){langData();if(DEMO&&!GUEST){D=demoD();applyD();}commit();});return;}if(DEMO&&!GUEST){D=demoD();applyD();}commit();},
   seg:function(v){var t=state.sub||state.tab;state.seg[t]=v;state.sel=null;commit();},
   day:function(v){state.day=v;commit();},
   sheet:function(v){state.sheet=v;state.sheetData=null;render();},
@@ -3883,6 +3954,7 @@ var forms={
     var ev={id:state.sheetData==='new'?'':state.sheetData,type:fd.get('type'),dow:fd.getAll('dow').map(Number),dates:dates,time:fd.get('time'),kind:fd.get('kind'),
       title:{uk:fd.get('t_uk'),ru:fd.get('t_ru')},who:{uk:fd.get('w_uk'),ru:fd.get('w_ru')},where:{uk:fd.get('p_uk'),ru:fd.get('p_ru')},desc:{uk:fd.get('d_uk'),ru:fd.get('d_ru')},link:(fd.get('link')||'').trim(),active:!!fd.get('active')};
     run('eventSave',{event:ev},x('Подію збережено','Событие сохранено')).then(function(ok){if(ok){state.sheet=null;render();}});},
+  qrSrc:function(fd){var v=String(fd.get('src')||'').trim().toLowerCase();if(!/^[a-z0-9]{1,20}$/.test(v)){toast(x('Лише латинські літери й цифри, до 20 символів','Только латинские буквы и цифры, до 20 символов','Latin letters and digits only, up to 20'),1);return;}state.qrSrc=v;commit();},
   settings:function(fd){var o={};SETTING_KEYS.forEach(function(k){if(fd.has(k))o[k]=fd.get(k);});run('settingsSave',{settings:o},x('Налаштування збережено','Настройки сохранены'));},
   bsearch:function(fd){state.q=(fd.get('q')||'').trim();commit();var i=document.getElementById('bq');if(i&&!state.q)i.focus();},
   step:function(fd){var t=(fd.get('text')||'').trim();if(!t)return;state.step={text:t,done:false};commit(SAVED());},
