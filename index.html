@@ -1133,6 +1133,7 @@ i.add{font-style:italic;color:var(--muted)}
 .g-cta{position:sticky;bottom:10px;z-index:3;margin-top:-10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
 .g-cta.on{opacity:1;transform:none;pointer-events:auto}.g-cta .btn{width:100%;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 @media (prefers-reduced-motion:reduce){.g-cta{transition:none}}
+.rm-callset{display:flex;flex-direction:column;gap:4px}.rm-calll{margin:0;font-size:14px;word-break:break-all;color:var(--ink)}
 .pr-card{display:grid;grid-template-columns:86px 1fr;gap:16px;align-items:center;background:radial-gradient(120% 120% at 0% 50%,#2A1F14 0,#120F1A 60%,#0B0A12 100%);color:#F6EFE4;border-radius:28px;padding:20px 18px 20px 14px;overflow:hidden}
 .pr-card-tx h2{font:800 24px/1.05 var(--font-display);letter-spacing:-.02em;margin:0 0 6px;color:#FFF6E6}.pr-card-tx p{margin:0;font-size:14.5px;line-height:1.45;color:rgba(246,239,228,.78)}
 .pr-go{margin:14px 0 10px;border:0;border-radius:999px;padding:0 20px;min-height:46px;background:linear-gradient(180deg,#FFE1A0,#F2B24F);color:#2A1A05;font:700 15.5px/1 var(--font-body);box-shadow:0 6px 20px rgba(242,178,79,.35)}
@@ -1600,7 +1601,7 @@ function demoD(){if(!DS)demoInit();var lang=state.lang,tx=function(t){return t&&
     myTests:DS.tests.filter(function(t){return t.mine;}).map(function(t){return {id:t.id,text:tx(t.text),sign:t.sign,status:t.status};}),
     ads:DS.ads.filter(function(a){return a.status==='active'&&!a.mine;}).map(function(a){return {id:a.id,type:a.type,text:tx(a.text),area:a.area,who:tx(a.who),username:'',uid:'',sample:!!a.sample,created:a.created};}),
     myAds:DS.ads.filter(function(a){return a.mine;}).map(function(a){return {id:a.id,type:a.type,text:tx(a.text),area:a.area,status:a.status};}),
-    personal:null,leader:leader,today:iso(new Date()),
+    personal:null,leader:leader,calls:DS.calls||{},today:iso(new Date()),
     admin:{tests:pendT.map(function(t){return {id:t.id,text:tx(t.text),sign:t.sign,who:t.mine?meName:tx(t.who),created:t.created};}),
       ads:pendA.map(function(a){return {id:a.id,type:a.type,text:tx(a.text),area:a.area,who:a.mine?meName:tx(a.who),created:a.created};}),
       needs:needs.slice(0,40).map(function(n){return {id:n.id,text:n.text,vis:n.vis,who:n.mine?meName:(n.who||x('Анонімно','Анонимно')),created:n.created};}),
@@ -2553,13 +2554,20 @@ function heavenPast(){var past=rooms().filter(function(r){return r.status==='end
       '<small>'+x('Збиралися ','Собирались ','Planned ')+(s.going||0)+x(', онлайн ',', онлайн ',', online ')+(s.online||0)+(s.prayers&&s.prayers.length?x(', молитов ',', молитв ')+s.prayers.length:'')+'</small></span></button></li>';}).join('')+'</ul></section>';}
 
 /* leader sheet: choose meeting, card of the week, call link */
+/* ---------- the group's call: Telegram (opens the video chat straight away for public groups), Zoom, Meet, Discord ---------- */
+function callHost(l){l=String(l||'');return /^https:\/\/t\.me\//.test(l)?'tg':/zoom\.us\//.test(l)?'zoom':/meet\.google\.com\//.test(l)?'meet':/discord\.(gg|com)\//.test(l)?'discord':'';}
+function callUrl(l){var m=String(l||'').match(/^https:\/\/t\.me\/([A-Za-z][A-Za-z0-9_]{4,31})\/?$/);return m?'https://t.me/'+m[1]+'?videochat':l;}
+function callLabel(l){var h=callHost(l);return h==='tg'?x('Приєднатися до дзвінка в Telegram','Присоединиться к звонку в Telegram','Join the call in Telegram'):h==='zoom'?x('Приєднатися до дзвінка в Zoom','Присоединиться к звонку в Zoom','Join the call in Zoom'):h==='meet'?x('Приєднатися до дзвінка в Google Meet','Присоединиться к звонку в Google Meet','Join the call in Google Meet'):h==='discord'?x('Приєднатися до дзвінка в Discord','Присоединиться к звонку в Discord','Join the call in Discord'):x('Приєднатися до дзвінка','Присоединиться к звонку','Join the call');}
+function callSaved(key){var c=(D&&D.calls)||{};return c[String(key||'').split('@')[0]]||'';}
+var CALL_HINT=['Telegram: посилання на групу (t.me/назва_групи). Якщо група публічна, кнопка одразу відкриє відеочат. Підійде й Zoom чи Google Meet.','Telegram: ссылка на группу (t.me/название_группы). Если группа публичная, кнопка сразу откроет видеочат. Подойдёт и Zoom или Google Meet.','Telegram: the group link (t.me/group_name). For a public group the button opens the video chat right away. Zoom or Google Meet also work.'];
 function roomNewSheet(){var occ=heavenOcc(DEMO?7:1),cur=state.roomPick||todayCard();
   return '<h2>'+x('Відкрити кімнату групи','Открыть комнату группы')+'</h2><form data-form="roomNew" class="stack">'+
-    '<label class="f" for="rn-key">'+x('Зустріч','Встреча')+'<select id="rn-key" name="key">'+occ.map(function(o){return '<option value="'+o.key+'">'+esc(WD[state.lang][o.d.getDay()]+', '+fmtDay(o.d)+', '+o.r.time+(o.r.who?' — '+L(o.r.who):''))+'</option>';}).join('')+'</select></label>'+
+    '<label class="f" for="rn-key">'+x('Зустріч','Встреча')+'<select id="rn-key" name="key" data-change="rnKey">'+occ.map(function(o){return '<option value="'+o.key+'">'+esc(WD[state.lang][o.d.getDay()]+', '+fmtDay(o.d)+', '+o.r.time+(o.r.who?' — '+L(o.r.who):''))+'</option>';}).join('')+'</select></label>'+
     '<div class="stack" style="gap:8px"><p class="f" style="margin:0">'+x('Картка тижня','Карточка недели')+'</p><p class="note">'+x('Її побачать усі в кімнаті, а після зустрічі вона стане карткою тижня для твоєї групи.','Её увидят все в комнате, а после встречи она станет карточкой недели для твоей группы.')+'</p>'+
       '<div class="rm-cards">'+CARDS.map(function(c,i){var n=i+1;return '<button type="button" class="rm-pick" data-act="roomPick" data-v="'+n+'" aria-pressed="'+(n===cur)+'" aria-label="'+n+'. '+esc(c[0])+'"><img src="cards/'+pad2(n)+'.jpg" alt="" loading="lazy"><b>'+n+'</b></button>';}).join('')+'</div>'+
       '<input type="hidden" name="card" value="'+cur+'"><p class="sub" id="rn-name">'+cur+'. '+esc(CARDS[cur-1][0])+'</p></div>'+
-    '<label class="f" for="rn-link">'+x('Посилання на відеодзвінок (необов’язково)','Ссылка на видеозвонок (необязательно)')+'<input type="url" id="rn-link" name="link" placeholder="https://t.me/… або Zoom, Meet" maxlength="300"></label>'+
+    '<label class="f" for="rn-link">'+x('Посилання на дзвінок групи (необов’язково)','Ссылка на звонок группы (необязательно)','Group call link (optional)')+'<input type="url" id="rn-link" name="link" placeholder="https://t.me/…" maxlength="300" value="'+esc(callSaved(occ[0]&&occ[0].key))+'"></label>'+
+    '<p class="note">'+nm(CALL_HINT)+' '+x('Посилання запам’ятається: наступного разу підставиться саме.','Ссылка запомнится: в следующий раз подставится сама.','The link is remembered for next time.')+'</p>'+
     '<p class="note">'+x('Тим, хто позначив «Я буду», прийде повідомлення в Telegram з кнопкою «Приєднатися».','Тем, кто отметил «Я буду», придёт сообщение в Telegram с кнопкой «Присоединиться».')+'</p>'+
     '<button class="btn accent" type="submit">'+x('Відкрити кімнату','Открыть комнату')+'</button></form>';}
 
@@ -2573,7 +2581,7 @@ function roomTop(r){var live=r.status==='live',cd=CARDS[r.card-1]||CARDS[0],st=0
     (live?'<span class="rm-badge"><i></i>'+x('НАЖИВО','В ЭФИРЕ')+'</span>':'<span class="rm-badge off">'+x('Завершено','Завершено')+'</span>')+'</header>';
   if(live){h+='<div class="rm-online"><div class="rm-avs">'+(r.online||[]).slice(0,9).map(function(n){return '<i title="'+esc(n)+'">'+esc(String(n).charAt(0))+'</i>';}).join('')+'</div><span>'+
       (r.onlineN?r.onlineN+x(' онлайн зараз',' онлайн сейчас'):x('Будь першим онлайн','Будь первым онлайн'))+'</span></div>';
-    if(r.link)h+='<button class="btn accent wide rm-call" data-act="roomCall">'+x('Приєднатися до відеодзвінка','Присоединиться к видеозвонку')+'</button>';
+    if(r.link)h+='<button class="btn accent wide rm-call" data-act="roomCall">'+callLabel(r.link)+'</button>';
     if(!r.joined)h+='<button class="btn wide" data-act="roomJoin">'+x('Я з вами онлайн','Я с вами онлайн')+'</button>';
     h+='<ol class="rm-stages" aria-label="'+x('Етапи зустрічі','Этапы встречи')+'">'+RSTAGES.map(function(s,i){return '<li class="'+(i<st?'done':i===st?'now':'')+'">'+rL(s[1])+'</li>';}).join('')+'</ol>';}
   h+='<div class="rm-card"><button class="rm-cimg" data-act="card" data-v="'+r.card+'" aria-label="'+esc(cd[0])+'"><img src="cards/'+pad2(r.card)+'.jpg" alt="'+esc(cd[0])+'"></button><div><p class="note">'+x('Картка тижня','Карточка недели')+'</p><h2 class="rm-ct">'+esc(cd[0])+'</h2><p class="rm-cmd">'+esc(cd[1])+'</p>'+
@@ -2604,11 +2612,16 @@ function hm(ms){var d=new Date(ms);return pad2(d.getHours())+':'+pad2(d.getMinut
 function roomQs(r){var cd=CARDS[r.card-1]||CARDS[0];return [x('Що в картці «','Что в карточке «')+cd[0]+x('» зачепило тебе найбільше?','» зацепило тебя больше всего?'),x('Де ти бачиш це у своєму тижні?','Где ты видишь это в своей неделе?'),x('Яка частина команди для тебе найважча?','Какая часть команды для тебя самая трудная?'),x('Чим ми можемо підтримати одне одного?','Чем мы можем поддержать друг друга?')];}
 function roomLeader(r){return '<section class="card rm-ctl"><h2 class="t3">'+x('Пульт лідера','Пульт лидера')+'</h2>'+
   '<p class="note">'+x('Етап зустрічі','Этап встречи')+'</p><div class="chips">'+RSTAGES.map(function(s){return '<button class="chip" data-act="roomStage" data-v="'+s[0]+'" aria-pressed="'+(r.stage===s[0])+'">'+rL(s[1])+'</button>';}).join('')+'</div>'+
+  '<div class="rm-callset"><p class="note">'+x('Дзвінок','Звонок','Call')+'</p>'+(r.link?
+     '<p class="rm-calll">'+esc(r.link)+'</p><div class="row"><button class="btn tint small" data-act="roomLinkEdit">'+x('Змінити','Изменить','Change')+'</button><button class="link mod-x" data-act="roomUnlink">'+x('Прибрати','Убрать','Remove')+'</button></div>'+(roomLinkEdit?roomLinkForm(r.link):''):
+     roomLinkForm(callSaved(r.key)))+'</div>'+
   '<div id="rm-hands">'+roomHands(r)+'</div>'+
   '<form data-form="roomPin" class="stack" style="gap:8px"><label class="f" for="rm-pin">'+x('Питання для всіх','Вопрос для всех')+'<input id="rm-pin" name="pin" type="text" maxlength="300" autocomplete="off" value="'+esc(roomPinDraft)+'" placeholder="'+x('Напиши або обери нижче','Напиши или выбери ниже')+'"></label>'+
     '<div class="chips">'+roomQs(r).map(function(q,i){return '<button type="button" class="chip" data-act="roomQ" data-v="'+i+'">'+esc(q)+'</button>';}).join('')+'</div><button class="btn tint" type="submit">'+x('Показати всім','Показать всем')+'</button></form>'+
   '<form data-form="roomClose" class="stack" style="gap:8px"><label class="f" for="rm-sum">'+x('Підсумок для групи','Итог для группы')+'<textarea id="rm-sum" name="summary" rows="3" maxlength="1500" placeholder="'+x('Головна думка вечора, що далі','Главная мысль вечера, что дальше')+'">'+esc(roomSumDraft)+'</textarea></label>'+
     '<button class="btn" type="submit">'+x('Завершити зустріч і підвести підсумок','Завершить встречу и подвести итог')+'</button></form></section>';}
+var roomLinkEdit=false;
+function roomLinkForm(v){return '<form data-form="roomLink" class="inline" style="margin-top:6px"><label class="sr" for="rm-link">'+x('Посилання на дзвінок','Ссылка на звонок','Call link')+'</label><input id="rm-link" name="link" type="url" class="field" maxlength="300" autocomplete="off" placeholder="https://t.me/…" value="'+esc(v||'')+'"><button class="btn accent small" type="submit">'+x('Додати','Добавить','Add')+'</button></form><p class="note">'+nm(CALL_HINT)+'</p>';}
 function roomHands(r){if(!r.hands||!r.hands.length)return '<p class="note">'+x('Ніхто не просить слова.','Никто не просит слова.')+'</p>';
   return '<p class="note">'+x('Хочуть сказати','Хотят сказать')+'</p><ul class="rm-hands">'+r.hands.map(function(h){return '<li><span>✋ '+esc(h.n)+'</span><button class="btn tint small" data-act="roomHandDone" data-v="'+esc(h.id)+'">'+x('Слово дано','Слово дано')+'</button></li>';}).join('')+'</ul>';}
 
@@ -2654,7 +2667,7 @@ function demoRoomView(key){var r=demoRoomsInit()[key];if(!r)return {room:null};d
     feed:r.feed.map(function(q){return {id:q.id,t:q.t,n:nm(q.u),x:q.x,at:q.at,mine:q.u==='me',c:q.p?q.p.length:0,prayed:q.p?q.p.indexOf('me')>-1:false};})}};}
 function demoRoom(a,d){var R=demoRoomsInit(),r=R[d.key],now=Date.now(),mine=function(){if(!r)demoErr(x('Кімнату ще не відкрито','Комнату ещё не открыли'));};
   if(a==='room')return demoRoomView(d.key);
-  if(a==='roomOpen'){var card=Math.max(1,Math.min(36,+d.card||1));if(r&&r.status==='live'){r.card=card;r.link=d.link||'';}else R[d.key]={key:d.key,status:'live',card:card,link:/^https?:\/\//.test(d.link||'')?d.link:'',stage:'welcome',pin:'',leaderId:'me',opened:now,closed:0,reacts:{},hands:[],joined:{me:1},feed:[],done:{},summary:null};demoSave();return null;}
+  if(a==='roomOpen'){var card=Math.max(1,Math.min(36,+d.card||1));DS.calls=DS.calls||{};if(/^https?:\/\//.test(d.link||''))DS.calls[d.key.split('@')[0]]=d.link;else d.link=DS.calls[d.key.split('@')[0]]||'';if(r&&r.status==='live'){r.card=card;r.link=d.link||'';}else R[d.key]={key:d.key,status:'live',card:card,link:/^https?:\/\//.test(d.link||'')?d.link:'',stage:'welcome',pin:'',leaderId:'me',opened:now,closed:0,reacts:{},hands:[],joined:{me:1},feed:[],done:{},summary:null};demoSave();return null;}
   mine();
   if(a==='roomJoin'){r.joined.me=1;}
   if(a==='roomPost'){var ty=['msg','pray','step','hand','comment'].indexOf(d.type)>-1?d.type:'msg';if(r.status!=='live'&&ty!=='comment')demoErr(x('Зустріч завершено. Можна залишити коментар','Встреча завершена. Можно оставить комментарий'));
@@ -2663,7 +2676,7 @@ function demoRoom(a,d){var R=demoRoomsInit(),r=R[d.key],now=Date.now(),mine=func
   if(a==='roomPray'){r.feed.forEach(function(q){if(q.id===d.id&&q.p){var i=q.p.indexOf('me');if(i<0)q.p.push('me');else q.p.splice(i,1);}});}
   if(a==='roomReact'){r.reacts[d.kind]=(r.reacts[d.kind]||0)+1;}
   if(a==='roomDel'){r.feed=r.feed.filter(function(q){return q.id!==d.id;});}
-  if(a==='roomSet'){if(d.stage)r.stage=d.stage;if(d.pin!==undefined){r.pin=String(d.pin||'').trim().slice(0,300);if(r.pin)r.feed.push({id:'m'+now,t:'pin',u:'me',x:r.pin,at:now});}if(d.handDone)r.hands=r.hands.filter(function(h){return h!==d.handDone;});}
+  if(a==='roomSet'){if(d.stage)r.stage=d.stage;if(d.pin!==undefined){r.pin=String(d.pin||'').trim().slice(0,300);if(r.pin)r.feed.push({id:'m'+now,t:'pin',u:'me',x:r.pin,at:now});}if(d.handDone)r.hands=r.hands.filter(function(h){return h!==d.handDone;});if(d.link!==undefined){r.link=/^https?:\/\//.test(d.link||'')?d.link:'';if(r.link){DS.calls=DS.calls||{};DS.calls[d.key.split('@')[0]]=r.link;}}}
   if(a==='roomClose'){var cnt=function(t){return r.feed.filter(function(q){return q.t===t;}).length;},re=0;for(var k in r.reacts)re+=r.reacts[k];
     r.status='ended';r.closed=now;r.hands=[];r.summary={card:r.card,hall:DS.present?Object.keys(DS.present).filter(function(k){return k.indexOf(d.key+'|')===0;}).length:0,going:0,online:Object.keys(r.joined).length,msgs:cnt('msg'),steps:cnt('step'),reacts:re,
       prayers:r.feed.filter(function(q){return q.t==='pray';}).map(function(q){return q.x;}),pins:r.feed.filter(function(q){return q.t==='pin';}).map(function(q){return q.x;}),text:String(d.summary||'').trim().slice(0,1500),by:(DS.me.name||'').split(' ')[0],minutes:Math.round((now-r.opened)/60000)};demoSave();return null;}
@@ -4005,7 +4018,7 @@ var actions={
   roomOpenView:function(v){openRoom(v);},
   roomBack:function(){leaveRoom();},
   roomJoin:function(){roomCall('roomJoin',{}).then(function(){toast(x('Ти в кімнаті. Група бачить, що ти з нами','Ты в комнате. Группа видит, что ты с нами'));});},
-  roomCall:function(){var l=ROOM&&ROOM.link;if(!l)return;if(LIVE&&/^https:\/\/t\.me\//.test(l)&&tg.openTelegramLink)tg.openTelegramLink(l);else if(LIVE&&tg.openLink)tg.openLink(l);else window.open(l,'_blank');},
+  roomCall:function(){var l=ROOM&&ROOM.link;if(!l)return;l=callUrl(l);if(LIVE&&/^https:\/\/t\.me\//.test(l)&&tg.openTelegramLink)tg.openTelegramLink(l);else if(LIVE&&tg.openLink)tg.openLink(l);else window.open(l,'_blank');},
   roomType:function(v){roomType=v;render();var i=document.getElementById('rm-in');if(i)i.focus();},
   roomReact:function(v,el){if(el){var b=el.querySelector('b');if(b)b.textContent=(+b.textContent||0)+1;}roomCall('roomReact',{kind:v},true);},
   roomPray:function(v){roomCall('roomPray',{id:v});},
@@ -4013,6 +4026,8 @@ var actions={
   roomHand:function(){if(ROOM&&ROOM.handUp)return;roomCall('roomPost',{type:'hand'}).then(function(r){if(r&&r.room)toast(x('Лідер бачить, що ти хочеш сказати','Лидер видит, что ты хочешь сказать'));});},
   roomHandDone:function(v){roomCall('roomSet',{handDone:v});},
   roomStage:function(v){roomCall('roomSet',{stage:v});},
+  roomLinkEdit:function(){roomLinkEdit=!roomLinkEdit;render();var i=document.getElementById('rm-link');if(i)i.focus();},
+  roomUnlink:function(){roomLinkEdit=false;roomCall('roomSet',{link:''}).then(function(r){if(r&&r.room)toast(x('Дзвінок прибрано','Звонок убран','Call removed'));});},
   roomQ:function(v){var q=ROOM?roomQs(ROOM)[+v]:'';var i=document.getElementById('rm-pin');if(i){i.value=q;roomPinDraft=q;i.focus();}},
   roomPick:function(v){state.roomPick=+v;document.querySelectorAll('.rm-pick').forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.v===String(v)));});var f=document.querySelector('[data-form="roomNew"] input[name=card]');if(f)f.value=v;var nm=document.getElementById('rn-name');if(nm)nm.textContent=v+'. '+CARDS[v-1][0];},
   /* Провідник */
@@ -4111,6 +4126,8 @@ var forms={
     run('verseAdd',{card:n,verses:list},x('Додано віршів: ','Добавлено стихов: ')+list.length).then(function(ok){if(ok){state.sheet='card';state.sheetData=n;state.cardAnim=false;render();}});},
   roomNew:function(fd){var key=fd.get('key');if(!key){toast(x('Оберіть зустріч','Выберите встречу'),1);return;}
     run('roomOpen',{key:key,card:+fd.get('card')||todayCard(),link:String(fd.get('link')||'').trim()},x('Кімнату відкрито','Комната открыта')).then(function(ok){if(ok){state.sheet=null;state.roomPick=null;openRoom(key);}});},
+  roomLink:function(fd){var l=String(fd.get('link')||'').trim();if(!/^https:\/\/\S+$/.test(l)){toast(x('Встав посилання, що починається з https://','Вставь ссылку, которая начинается с https://','Paste a link that starts with https://'),1);return;}
+    roomLinkEdit=false;roomCall('roomSet',{link:l}).then(function(r){if(r&&r.room)toast(x('Кнопка дзвінка вже в усіх у кімнаті','Кнопка звонка уже у всех в комнате','Everyone in the room now has the call button'));});},
   roomPost:function(fd){var t=String(fd.get('text')||'').trim();if(!t)return;var i=document.getElementById('rm-in');roomCall('roomPost',{type:roomType,text:t}).then(function(r){if(r&&r.room){roomInDraft='';if(i)i.value='';if(roomType==='step'){state.step={text:t.slice(0,120),done:false};save();}
     toast(roomType==='pray'?x('Група молитиметься за це','Группа помолится об этом'):roomType==='step'?x('Крок збережено і в твоєму кабінеті','Шаг сохранён и в твоём кабинете'):x('Надіслано групі','Отправлено группе'));}});},
   roomComment:function(fd){var t=String(fd.get('text')||'').trim();if(!t)return;roomCall('roomPost',{type:'comment',text:t}).then(function(r){if(r&&r.room)toast(x('Дякуємо за відгук','Спасибо за отзыв'));});},
@@ -4136,7 +4153,7 @@ var forms={
 };
 document.addEventListener('click',function(e){var el=e.target.closest('[data-act]');if(!el||el.disabled)return;var a=actions[el.dataset.act];if(a){haptic();if(!SFX_SILENT[el.dataset.act])sfxPlay(sfxKind(el.dataset.act));justKey=el.dataset.act+'|'+(el.dataset.v||'');a(el.dataset.v,el,e);}});
 document.addEventListener('click',function(e){if(!LIVE)return;var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var h=a.getAttribute('href')||'';if(/^https:\/\/t\.me\//.test(h)){e.preventDefault();tg.openTelegramLink(h);}else if(/^https?:/.test(h)){e.preventDefault();tg.openLink(h);}},true);
-document.addEventListener('change',function(e){var el=e.target;if(el&&el.dataset&&el.dataset.change==='role')run('role',{userId:el.dataset.v,role:el.value},x('Роль змінено','Роль изменена'));});
+document.addEventListener('change',function(e){var el=e.target;if(el&&el.dataset&&el.dataset.change==='rnKey'){var li=document.getElementById('rn-link');if(li)li.value=callSaved(el.value);return;}if(el&&el.dataset&&el.dataset.change==='role')run('role',{userId:el.dataset.v,role:el.value},x('Роль змінено','Роль изменена'));});
 document.addEventListener('input',function(e){if(!e.target||e.target.id!=='pq')return;var q=e.target.value.toLowerCase().trim(),n=0;document.querySelectorAll('#plist [data-s]').forEach(function(li){var ok=!q||li.dataset.s.indexOf(q)>-1;li.hidden=!ok;if(ok)n++;});var c=document.getElementById('pcount');if(c)c.textContent=x('Знайдено: ','Найдено: ')+n;});
 document.addEventListener('input',function(e){if(e.target&&e.target.id==='reg-name')REG.name=e.target.value;});
 document.addEventListener('input',function(e){if(!e.target||e.target.id!=='dvrep'||!state.dvCard)return;var p=dvP(state.dvCard);p.draft=e.target.value;save();var len=p.draft.trim().length,c=document.getElementById('dvcnt'),b=document.getElementById('dvclose');

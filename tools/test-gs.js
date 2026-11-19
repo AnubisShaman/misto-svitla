@@ -392,5 +392,18 @@ assert.strictEqual(call(petro, 'load').me.name, 'Петро Іваненко', '
   assert.strictEqual(call(anna, 'load').lit, before + 30, 'max 30 per person per day');
 }
 
+// --- the group's call link is remembered and reused; it can be changed while the room is live
+{ const wk = Object.keys(call(admin, 'load').leader || {}).find(k => /^wed@/.test(k)) || wedKey;
+  let r = call(admin, 'roomOpen', { key: wedKey, card: 3, link: 'https://t.me/heavenos_wed' });
+  assert.strictEqual(call(admin, 'load').calls.wed, 'https://t.me/heavenos_wed', 'link remembered for the group');
+  call(admin, 'roomClose', { key: wedKey, summary: '' });
+  r = call(admin, 'roomOpen', { key: wedKey, card: 3 });
+  assert.strictEqual(call(admin, 'room', { key: wedKey }).room.link, 'https://t.me/heavenos_wed', 'reused next time');
+  r = call(admin, 'roomSet', { key: wedKey, link: 'https://meet.google.com/abc-defg-hij' });
+  assert.strictEqual(r.room.link, 'https://meet.google.com/abc-defg-hij', 'changed while live');
+  assert.strictEqual(call(admin, 'load').calls.wed, 'https://meet.google.com/abc-defg-hij');
+  assert.strictEqual(call(petro, 'load').calls, null, 'members do not get the list');
+}
+
 console.log('ALL GOOD. messages sent:', sent.length, '| log rows:', (sheets.Log ? sheets.Log.data.length - 1 : 0));
 if (sheets.Log && sheets.Log.data.length > 1) console.log(sheets.Log.data.slice(1));

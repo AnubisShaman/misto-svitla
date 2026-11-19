@@ -517,7 +517,7 @@ function buildD(u) {
     me: { id: myId, name: u.name, role: role, phone: String(u.phone) },
     settings: settingsAll(), events: events, att: att, needs: needs, lit: lit,
     tests: tests.slice(0, 60), myTests: myTests, ads: ads.slice(0, 80), myAds: myAds,
-    personal: parseJ(u.personal, {}), leader: isLeader ? leader : null, admin: null, today: today
+    personal: parseJ(u.personal, {}), leader: isLeader ? leader : null, calls: isLeader ? callLinks() : null, admin: null, today: today
   };
   D.rooms = roomsList(myId, today);
   D.verses = versesMap();
@@ -914,11 +914,20 @@ function roomSlow(u) {
 }
 
 ACTIONS.roleInvite.admin = true;
+/** Посилання на дзвінок для кожної групи (за id події), щоб лідер не вставляв його щотижня. */
+function callOf(evId) { return prop('call:' + evId); }
+function callSave(evId, link) { PropertiesService.getScriptProperties().setProperty('call:' + evId, link); }
+function callLinks() {
+  var o = {};
+  rows('Events').forEach(function (e) { if (e.kind === 'heaven') { var l = callOf(String(e.id)); if (l) o[String(e.id)] = l; } });
+  return o;
+}
 ACTIONS.roomOpen = function (u, b) {
   var x = eventByKey(b.key);
   if (!x || x.ev.kind !== 'heaven' || !occursOn(x.ev, x.date)) throw new Error('Оберіть зустріч HeavenOS з розкладу');
   var card = Math.max(1, Math.min(36, Number(b.card) || 1));
   var link = /^https?:\/\//.test(txt(b.link)) ? txt(b.link, 300) : '';
+  if (link) callSave(x.ev.id, link); else link = callOf(x.ev.id); // посилання групи запам’ятовується: наступного разу підставиться саме
   var r = roomRow(b.key), now = Date.now(), first_ = !r;
   if (!r) addRow('Rooms', { key: b.key, status: 'live', card: card, link: link, stage: 'welcome', pin: '', leaderId: u.id, opened: now, closed: '', reacts: '{}', summary: '', hands: '[]' });
   else { r.status = 'live'; r.card = card; r.link = link; r.leaderId = u.id; if (!r.opened) r.opened = now; r.closed = ''; r.summary = ''; setRow('Rooms', r); }
@@ -1001,7 +1010,7 @@ ACTIONS.roomSet = function (u, b) {
   if (b.stage !== undefined) { if (ROOM_STAGES.indexOf(b.stage) < 0) throw new Error('Невідомий етап'); st.stage = patch.stage = b.stage; }
   if (b.pin !== undefined) { st.pin = patch.pin = txt(b.pin, 300); if (st.pin) roomAdd(st, u, 'pin', st.pin); }
   if (b.card !== undefined) { st.card = patch.card = Math.max(1, Math.min(36, Number(b.card) || 1)); }
-  if (b.link !== undefined) { st.link = patch.link = /^https?:\/\//.test(txt(b.link)) ? txt(b.link, 300) : ''; }
+  if (b.link !== undefined) { st.link = patch.link = /^https?:\/\//.test(txt(b.link)) ? txt(b.link, 300) : ''; if (st.link) callSave(String(st.key).split('@')[0], st.link); }
   if (b.handDone !== undefined) { st.hands = st.hands.filter(function (h) { return h !== String(b.handDone); }); patch.hands = JSON.stringify(st.hands); }
   roomSaveRow(st, patch);
   roomPut(st);
