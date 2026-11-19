@@ -352,6 +352,12 @@ assert.strictEqual(call(petro, 'load').me.name, 'Петро Іваненко', '
   x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', video: 'javascript:alert(1)' } }); assert.ok(/https/.test(x.error), 'bad video link rejected');
   x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', video: 'https://youtu.be/abc' } });
   assert.strictEqual(x.sermons.find(s => s.title.uk === 'Відео').video, 'https://youtu.be/abc', 'video saved');
+  x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', video: 'https://youtu.be/abc', vfrom: '52:10', vto: '1:31:40' } });
+  { const v = x.sermons.find(s => s.title.uk === 'Відео'); assert.strictEqual(v.vfrom, '52:10'); assert.strictEqual(v.vto, '1:31:40'); }
+  x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', vfrom: '52 хв' } }); assert.ok(/формат/.test(x.error), 'bad clock rejected');
+  x = call(admin, 'sermonSave', { sermon: { date: '2026-11-22', title_uk: 'Відео', vfrom: '1:00:00', vto: '59:00' } }); assert.ok(/пізніше/.test(x.error), 'end must follow start');
+  x = call(admin, 'settingsSave', { settings: { ytChannel: 'abc' } }); assert.ok(/UC/.test(x.error), 'bad channel id rejected');
+  x = call(admin, 'settingsSave', { settings: { ytChannel: 'UCmK9YFNcVwyrPgj060EM3-g' } }); assert.strictEqual(x.settings.ytChannel, 'UCmK9YFNcVwyrPgj060EM3-g');
 }
 
 // --- where people come from: bot /start src_…, app start_param, admin list, weekly digest, public page data

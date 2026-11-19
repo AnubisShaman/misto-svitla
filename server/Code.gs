@@ -32,7 +32,7 @@ var SHEETS = {
   Rooms: ['key', 'status', 'card', 'link', 'stage', 'pin', 'leaderId', 'opened', 'closed', 'reacts', 'summary', 'hands'],
   RoomFeed: ['id', 'key', 'userId', 'type', 'text', 'at', 'extra'],
   CardVerses: ['id', 'card', 'ref', 'text_uk', 'text_ru', 'userId', 'who', 'created'],
-  Sermons: ['id', 'date', 'time', 'title_uk', 'title_ru', 'speaker', 'verse', 'ask', 'text', 'status', 'created', 'video'],
+  Sermons: ['id', 'date', 'time', 'title_uk', 'title_ru', 'speaker', 'verse', 'ask', 'text', 'status', 'created', 'video', 'vfrom', 'vto'],
   Cheers: ['key', 'fromId', 'toId', 'kind', 'at'],
   Mission: ['key', 'week', 'userId', 'path', 'swaps', 'status', 'text', 'anon', 'created', 'done'],
   Settings: ['key', 'value'],
@@ -44,6 +44,7 @@ var SETTINGS_DEFAULT = {
   address_uk: 'Київ, пр. Степана Бандери, 23, метро «Почайна»',
   address_ru: 'Киев, пр. Степана Бандеры, 23, метро «Почайна»',
   map: 'проспект Степана Бандери 23 Київ',
+  ytChannel: 'UCmK9YFNcVwyrPgj060EM3-g', // ID каналу YouTube (UC…): за ним застосунок показує поточну трансляцію
   monoJar: '', // посилання на банку: https://send.monobank.ua/jar/…
   mono: '4441 1110 4143 8320',
   iban: 'UA783052990000026005030102192',
@@ -393,10 +394,17 @@ function versesMap() {
 }
 
 /* ---------- sermons: announce before Sunday, prepared summary after ---------- */
+/** Відмітка часу в записі: «52:10» або «1:31:40». Порожнє дозволено. */
+function clockTxt(v, what) {
+  v = txt(v, 10);
+  if (v && !/^(\d{1,2}:)?[0-5]?\d:[0-5]\d$/.test(v)) throw new Error(what + ': вкажіть час у форматі 52:10 або 1:31:40');
+  return v;
+}
+function clockSecs(v) { return String(v).split(':').reduce(function (a, n) { return a * 60 + Number(n); }, 0); }
 function sermonsOut() {
   return rows('Sermons').map(function (r) {
     return { id: String(r.id), date: String(r.date), time: String(r.time || ''), title: { uk: String(r.title_uk), ru: String(r.title_ru || r.title_uk) }, speaker: String(r.speaker || ''),
-      verse: String(r.verse || ''), ask: String(r.ask || ''), text: String(r.text || ''), video: String(r.video || ''), status: r.status === 'published' ? 'published' : 'announce' };
+      verse: String(r.verse || ''), ask: String(r.ask || ''), text: String(r.text || ''), video: String(r.video || ''), vfrom: String(r.vfrom || ''), vto: String(r.vto || ''), status: r.status === 'published' ? 'published' : 'announce' };
   }).sort(function (a, b) { return a.date < b.date ? 1 : -1; }).slice(0, 40);
 }
 
@@ -697,6 +705,8 @@ var ACTIONS = {
     o.title_uk = needText(s.title_uk, 120, 'Тема'); o.title_ru = txt(s.title_ru, 120) || o.title_uk;
     o.speaker = txt(s.speaker, 80); o.verse = txt(s.verse, 80); o.ask = txt(s.ask, 600); o.text = txt(s.text, 8000);
     o.video = txt(s.video, 300); if (o.video && !/^https:\/\/\S+$/.test(o.video)) throw new Error('Посилання на відео має починатися з https://');
+    o.vfrom = clockTxt(s.vfrom, 'Початок'); o.vto = clockTxt(s.vto, 'Кінець');
+    if (o.vfrom && o.vto && clockSecs(o.vto) <= clockSecs(o.vfrom)) throw new Error('Кінець проповіді має бути пізніше за початок');
     o.status = s.status === 'published' ? 'published' : 'announce';
     if (o.status === 'published' && !o.text) throw new Error('Додайте текст підсумку, щоб опублікувати');
     if (o._new) addRow('Sermons', o); else setRow('Sermons', o);
@@ -752,6 +762,7 @@ var ACTIONS = {
       if (!(k in SETTINGS_DEFAULT)) continue;
       var v = txt(s[k], 3000);
       if (k === 'verseTime' && !/^([01]\d|2[0-3]):[0-5]\d$/.test(v)) throw new Error('Час вірша вкажіть у форматі 07:30');
+      if (k === 'ytChannel' && v && !/^UC[\w-]{22}$/.test(v)) throw new Error('ID каналу YouTube має починатися з UC і мати 24 символи');
       if (k === 'monoJar' && v && !/^https:\/\/send\.monobank\.ua\//.test(v)) throw new Error('Посилання на банку має починатися з https://send.monobank.ua/');
       if (k === 'cardStart' && !/^\d{4}-\d{2}-\d{2}$/.test(v)) throw new Error('Дату старту карток вкажіть як 2026-11-09');
       var r = all.filter(function (x) { return x.key === k; })[0];

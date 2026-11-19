@@ -1133,6 +1133,8 @@ i.add{font-style:italic;color:var(--muted)}
 .g-cta{position:sticky;bottom:10px;z-index:3;margin-top:-10px;opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .25s,transform .25s}
 .g-cta.on{opacity:1;transform:none;pointer-events:auto}.g-cta .btn{width:100%;justify-content:center;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 @media (prefers-reduced-motion:reduce){.g-cta{transition:none}}
+.yt{position:relative;flex:none;aspect-ratio:16/9;border-radius:18px;overflow:hidden;background:#000;width:100%}.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.sm-intent{font-size:16px;line-height:1.5;margin:0 0 8px}
 .qr-card{gap:14px}.qr-img{width:100%;max-width:300px;align-self:center;border-radius:16px;box-shadow:0 0 0 1px var(--line)}
 .g-demo{text-align:center}.g-demo a{color:var(--muted)}
 .mark-l b{color:#A3ACFF}
@@ -1436,7 +1438,7 @@ var ROLES=['member','prayer','leader','minister','admin'];
 var ROLE_NAMES={member:['Учасник','Участник'],prayer:['Молитовна команда','Молитвенная команда'],leader:['Лідер групи','Лидер группы'],minister:['Служитель','Служитель'],admin:['Адміністратор','Администратор']};
 var REQ_NAMES={pastoral:['Розмова з пастором','Разговор с пастором'],serve:['Хоче служити','Хочет служить'],hello:['Хоче познайомитися','Хочет познакомиться']};
 var PERSONAL=['bookPos','log','path','read','notes','hl','marks','step','done','cardDay','skills','serve','verseOn','verseAt','fs','skin','sfx','lang','hello','pastoral','openBook','bible','devs','thanks','wxLoc','shareWay','sermSaved'];
-var DEFAULT_SETTINGS={playlist:'',address_uk:'Київ, пр. Степана Бандери, 23, метро «Почайна»',address_ru:'Киев, пр. Степана Бандеры, 23, метро «Почайна»',map:'проспект Степана Бандери 23 Київ',
+var DEFAULT_SETTINGS={playlist:'',ytChannel:'UCmK9YFNcVwyrPgj060EM3-g',address_uk:'Київ, пр. Степана Бандери, 23, метро «Почайна»',address_ru:'Киев, пр. Степана Бандеры, 23, метро «Почайна»',map:'проспект Степана Бандери 23 Київ',
   mono:'4441 1110 4143 8320',monoJar:'',iban:'UA783052990000026005030102192',recipient:'РО РГ ХМЦ МІСТО СВІТЛА',edrpou:'19261358',purpose:'добровільні пожертвування',paypal:'centreofdm@gmail.com',
   verseTime:'07:30',remind:'60',cardStart:'2026-11-09',youth_uk:'Тут будуть свої події, стрічка та посилання на чат молоді.',youth_ru:'Здесь будут свои события, лента и ссылка на чат молодёжи.',
   tg:'https://t.me/mistosvitlachurchkyiv',ig:'https://www.instagram.com/mistosvitlachurch/',yt:'https://www.youtube.com/user/infogorodsveta',fb:'https://www.facebook.com/mistosvitlachurch/',
@@ -1581,8 +1583,8 @@ function demoApi(a,d){if(!DS)demoInit();if(a==='roleInvite')return {role:d.role,
   var me=DS.me.name||x('Ти','Ты');
   if(a==='personal'||a==='sendImage')return {ok:true};
   if(a==='verseAdd'){if(['leader','minister','admin'].indexOf(DS.me.role)<0)demoErr(x('Лише для лідерів','Только для лидеров'));var vl=DS.verses[d.card]||(DS.verses[d.card]=[]);(d.verses||[]).forEach(function(v,i){if(vl.length<30)vl.push({id:'v'+now+'_'+i,ref:v.ref,uk:v.uk,who:DS.me.name||x('Ти','Ты')});});}
-  if(a==='sermonSave'){var so=d.sermon||{};if(!/^\d{4}-\d{2}-\d{2}$/.test(so.date||''))demoErr(x('Вкажіть дату проповіді','Укажите дату проповеди'));if(!String(so.title_uk||'').trim())demoErr(x('Заповніть поле «Тема»','Заполните поле «Тема»'));if(so.status==='published'&&!String(so.text||'').trim())demoErr(x('Додайте текст підсумку, щоб опублікувати','Добавьте текст итога, чтобы опубликовать'));
-    DS.sermons=DS.sermons||[];var ex=DS.sermons.filter(function(q){return q.id===so.id;})[0],rec={id:so.id||('s'+now),date:so.date,time:so.time||'11:00',title:{uk:so.title_uk,ru:so.title_ru||so.title_uk},speaker:so.speaker||'',verse:so.verse||'',ask:so.ask||'',text:so.text||'',video:/^https:\/\//.test(so.video||'')?so.video:'',status:so.status==='published'?'published':'announce'};
+  if(a==='sermonSave'){var so=d.sermon||{};if(!/^\d{4}-\d{2}-\d{2}$/.test(so.date||''))demoErr(x('Вкажіть дату проповіді','Укажите дату проповеди'));if(!String(so.title_uk||'').trim())demoErr(x('Заповніть поле «Тема»','Заполните поле «Тема»'));if(!/^$|^(\d{1,2}:)?[0-5]?\d:[0-5]\d$/.test(String(so.vfrom||'').trim())||!/^$|^(\d{1,2}:)?[0-5]?\d:[0-5]\d$/.test(String(so.vto||'').trim()))demoErr(x('Час у записі вкажіть як 52:10 або 1:31:40','Время в записи укажите как 52:10 или 1:31:40'));if(so.status==='published'&&!String(so.text||'').trim())demoErr(x('Додайте текст підсумку, щоб опублікувати','Добавьте текст итога, чтобы опубликовать'));
+    DS.sermons=DS.sermons||[];var ex=DS.sermons.filter(function(q){return q.id===so.id;})[0],rec={id:so.id||('s'+now),date:so.date,time:so.time||'11:00',title:{uk:so.title_uk,ru:so.title_ru||so.title_uk},speaker:so.speaker||'',verse:so.verse||'',ask:so.ask||'',text:so.text||'',video:/^https:\/\//.test(so.video||'')?so.video:'',vfrom:String(so.vfrom||'').trim(),vto:String(so.vto||'').trim(),status:so.status==='published'?'published':'announce'};
     if(ex)Object.assign(ex,rec);else DS.sermons.push(rec);DS.sermons.sort(function(p,q){return p.date<q.date?1:-1;});}
   if(a==='msDraw'){demoMission();var dm=DS.ms;if(!dm.mine)dm.mine={path:d.path,swaps:0,status:'drawn'};else if(d.swap){if(dm.mine.swaps>=1)demoErr(x('Шлях можна змінити лише один раз','Путь можно сменить только один раз'));if(dm.mine.status!=='drawn')demoErr(x('Ти вже поділився історією цього тижня','Ты уже поделился историей на этой неделе'));dm.mine.path=d.path;dm.mine.swaps=1;}}
   if(a==='msDone'){demoMission();if(!DS.ms.mine)demoErr(x('Спершу витягни свій шлях','Сначала вытяни свой путь'));DS.ms.mine.status='done';DS.ms.mine.text=String(d.text).slice(0,500);DS.ms.mine.anon=!!d.anon;}
@@ -2963,9 +2965,11 @@ function vCommunity(){var s=state.seg.community,body='',st=D.settings;
       (mineAds||others?'<ul class="list">'+mineAds+others+'</ul>':'<p class="sub">'+x('Поки порожньо.','Пока пусто.')+'</p>')+
       '<p class="note">'+x('Оголошення з’являється після перевірки й активне 30 днів. Зв’язок через Telegram, телефон не показується.','Объявление появляется после проверки и активно 30 дней. Связь через Telegram, телефон не показывается.')+'</p></section>';}
   return back()+'<h1>'+x('Спільнота','Сообщество')+'</h1>'+seg('community',[['serve',x('Служіння','Служение')],['youth',x('Молодь','Молодёжь')],['help',x('Допомога','Помощь')]])+body;}
+function liveOk(){return !!(D&&D.settings&&/^UC[\w-]{22}$/.test(D.settings.ytChannel||''));}
 function vMedia(){return back()+'<h1>'+x('Проповіді','Проповеди')+'</h1>'+
   '<section class="night"><div class="night-pad"><p class="when">'+x('Трансляція служіння','Трансляция служения')+'</p><p class="big">'+x('Неділя, 11:00','Воскресенье, 11:00')+'</p>'+
-  '<div class="row"><a class="btn light small" href="'+YT+'" target="_blank" rel="noopener">'+x('Відкрити YouTube','Открыть YouTube')+'</a></div></div></section>'+
+  (liveOk()&&liveOpen?ytFrame('https://www.youtube.com/embed/live_stream?channel='+D.settings.ytChannel+'&rel=0&playsinline=1',x('Трансляція служіння','Трансляция служения','Live service'))+'<p class="when">'+x('Якщо ефіру ще немає, YouTube напише, що відео недоступне. Трансляція з’явиться, коли почнеться служіння.','Если эфира ещё нет, YouTube напишет, что видео недоступно. Трансляция появится, когда начнётся служение.','If nothing is live yet, YouTube says the video is unavailable. The stream appears when the service starts.')+'</p>':'')+
+  '<div class="row">'+(liveOk()?'<button class="btn light small" data-act="liveToggle">'+(liveOpen?x('Сховати трансляцію','Скрыть трансляцию','Hide the stream'):x('Дивитися тут','Смотреть здесь','Watch here'))+'</button>':'')+'<a class="btn '+(liveOk()?'ghost-l':'light')+' small" href="'+YT+'" target="_blank" rel="noopener">'+x('Відкрити YouTube','Открыть YouTube')+'</a></div></div></section>'+
   '<section class="stack"><h2>'+x('Підсумки проповідей','Итоги проповедей')+'</h2>'+sermonArchive()+'</section>';}
 
 function vEvents(){var now=new Date(),t0=day0(now),y=now.getFullYear(),mo=now.getMonth();
@@ -3225,7 +3229,7 @@ function vAdmin(){if(!isAdmin())return back()+'<h1>'+x('Адмінка','Адм�
      '<h2>'+x('Пожертви','Пожертвования')+'</h2>'+f('mono','Monobank')+f('iban','IBAN')+f('recipient',x('Отримувач','Получатель'))+f('edrpou',x('Код ЄДРПОУ','Код ЕГРПОУ'))+f('purpose',x('Призначення платежу','Назначение платежа'))+f('paypal','PayPal')+
      '<h2>'+x('Молодь','Молодёжь')+'</h2>'+f('youth_uk','Текст (укр)','area')+f('youth_ru','Текст (рус)','area')+
      '<h2>'+x('Команди служіння','Команды служения')+'</h2>'+f('teams',x('Кожна команда з нового рядка: Назва | Название','Каждая команда с новой строки: Назва | Название'),'area')+
-     '<h2>'+x('Соцмережі','Соцсети')+'</h2>'+f('tg','Telegram','url')+f('ig','Instagram','url')+f('yt','YouTube','url')+f('playlist',x('Плейлист церкви (Spotify, YouTube Music, Apple Music)','Плейлист церкви (Spotify, YouTube Music, Apple Music)'),'url')+f('fb','Facebook','url')+
+     '<h2>'+x('Соцмережі','Соцсети')+'</h2>'+f('tg','Telegram','url')+f('ig','Instagram','url')+f('yt','YouTube','url')+f('ytChannel',x('ID каналу YouTube для трансляції (починається з UC)','ID канала YouTube для трансляции (начинается с UC)','YouTube channel ID for the live stream (starts with UC)'))+f('playlist',x('Плейлист церкви (Spotify, YouTube Music, Apple Music)','Плейлист церкви (Spotify, YouTube Music, Apple Music)'),'url')+f('fb','Facebook','url')+
      '<button class="btn accent" type="submit">'+x('Зберегти налаштування','Сохранить настройки')+'</button></form>';}
   else if(s==='qr')body=adminQr();
   else{var n=S.users||0,cf=state.confirm==='send';
@@ -3380,9 +3384,10 @@ function thanksCard(){var t=iso(new Date()),list=(state.thanks||{})[t]||[],h=new
     '<p class="note">'+x('«За все дякуйте». ','«За всё благодарите». ')+'<button class="link" data-act="bible" data-v="19:5:18">'+x('1 Солунян 5:18','1 Фессалоникийцам 5:18')+'</button></p></section>';}
 /* ---------- sermons: announce before Sunday, summary from prepared text after, keepsake card ---------- */
 var SM_LABELS=[['core',/^(суть|головне|главное|головна думка|главная мысль|коротко)(?=[\s:])/i],['points',/^(тези|тезиси|тезисы|основні думки|основные мысли|думки|мысли)(?=[\s:])/i],
+  ['intent',/^(що хотів донести пастор|що хотів донести|задум пастора|задум|что хотел донести пастор|что хотел донести|замысел пастора|замысел)(?=[\s:])/i],
   ['verses',/^(вірші|стихи|писання|писание|місця писання|места писания)(?=[\s:])/i],['qs',/^(питання|вопросы)(?=[\s:])/i],['practice',/^(практика|крок|шаг|завдання|задание)(?=[\s:])/i]];
-var SM_TEMPLATE='Суть: одне речення, головна думка проповіді\n\nТези:\n- перша думка\n- друга думка\n- третя думка\n\nВірші: Римлян 8:28; Ісаї 43:18–19\n\nПитання для груп:\n- Що мене зачепило?\n- Що Бог говорить мені через це?\n\nПрактика: один конкретний крок на тиждень';
-function parseSermon(t){var o={core:'',points:[],verses:[],qs:[],practice:''},cur=null,any=false,loose=[];
+var SM_TEMPLATE='Суть: одне речення, головна думка проповіді\n\nТези:\n- перша думка\n- друга думка\n- третя думка\n\nЗадум: що пастор хотів донести, до чого закликав і чому це важливо (2–3 короткі абзаци, кожен з нового рядка)\n\nВірші: Римлян 8:28; Ісаї 43:18–19\n\nПитання для груп:\n- Що мене зачепило?\n- Що Бог говорить мені через це?\n\nПрактика: один конкретний крок на тиждень';
+function parseSermon(t){var o={core:'',points:[],intent:[],verses:[],qs:[],practice:''},cur=null,any=false,loose=[];
   String(t||'').replace(/\r/g,'').split('\n').forEach(function(line){var l=line.trim();if(!l)return;
     for(var i=0;i<SM_LABELS.length;i++){var m=l.match(SM_LABELS[i][1]);if(m&&/^[^:]{0,30}:/.test(l)){cur=SM_LABELS[i][0];any=true;l=l.slice(l.indexOf(':')+1).trim();break;}}
     if(!l)return;var item=l.replace(/^([-–—•*]|\d{1,2}[.)])\s*/,'').trim();if(!item)return;
@@ -3392,6 +3397,13 @@ function parseSermon(t){var o={core:'',points:[],verses:[],qs:[],practice:''},cu
     else o[cur].push(item);});
   if(!any&&loose.length){o.core=loose[0];o.points=loose.slice(1);}else if(loose.length&&!o.core)o.core=loose.join(' ');
   return o;}
+/* ---------- YouTube inside the app: live stream by channel, a sermon as a clip between two timestamps ---------- */
+var liveOpen=false,smPlayId=null;
+function ytId(u){var m=String(u||'').match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:[^#]*&)?v=|embed\/|live\/|shorts\/|v\/))([\w-]{11})/);return m?m[1]:'';}
+function clockSecs(v){v=String(v||'').trim();if(!/^(\d{1,2}:)?[0-5]?\d:[0-5]\d$/.test(v))return 0;return v.split(':').reduce(function(a,n){return a*60+Number(n);},0);}
+function ytFrame(src,title){return '<div class="yt"><iframe src="'+esc(src)+'" title="'+esc(title)+'" allow="accelerometer; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe></div>';}
+function smClip(s){var id=ytId(s.video);if(!id)return '';var a=clockSecs(s.vfrom),b=clockSecs(s.vto);
+  return 'https://www.youtube.com/embed/'+id+'?rel=0&playsinline=1&modestbranding=1'+(a?'&start='+a:'')+(b>a?'&end='+b:'');}
 function smTitle(s){return L(s.title)||'';}
 function smDate(s){return fromIso(s.date);}
 function smWhen(s){var d=smDate(s);return WD[state.lang][d.getDay()]+', '+fmtDay(d)+(s.time?', '+s.time:'');}
@@ -3411,15 +3423,18 @@ function sermonToday(){var nx=smNext(),last=smLast(7),h='';
       (nx.verse?'<div class="row">'+smVerseBtn(nx.verse,'btn tint small')+'</div>':'')+'</section>';}
   return h;}
 function sermonFull(s){var P=parseSermon(s.text),saved=!!(state.sermSaved||{})[s.id];
+  var clip=smClip(s),playing=!!clip&&smPlayId===s.id;
   return '<p class="note">'+esc(smWhen(s))+(s.speaker?' · '+esc(s.speaker):'')+'</p><h2>'+esc(smTitle(s))+'</h2>'+
+    (clip?'<div class="row"><button class="btn '+(playing?'tint':'accent')+'" data-act="smPlay" data-v="'+esc(s.id)+'">'+(playing?x('Сховати відео','Скрыть видео','Hide the video'):x('Дивитися проповідь','Смотреть проповедь','Watch the sermon'))+'</button></div>':'')+(playing?ytFrame(clip,smTitle(s)):'')+
     (P.core?'<p class="sm-core big">'+esc(P.core)+'</p>':'')+
     (P.points.length?'<h3>'+x('Головні думки','Главные мысли')+'</h3><ol class="sm-pts">'+P.points.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ol>':'')+
+    (P.intent.length?'<h3>'+x('Що хотів донести пастор','Что хотел донести пастор','What the pastor wanted to say')+'</h3>'+P.intent.map(function(q){return '<p class="sm-intent">'+esc(q)+'</p>';}).join(''):'')+
     (P.verses.length?'<h3>'+x('Місця Писання','Места Писания')+'</h3><div class="chips">'+P.verses.map(function(v){return smVerseBtn(v);}).join('')+'</div>':'')+
     (P.qs.length?'<h3>'+x('Питання для групи','Вопросы для группы')+'</h3><ul class="sm-qs">'+P.qs.map(function(q){return '<li>'+esc(q)+'</li>';}).join('')+'</ul>':'')+
     (P.practice?'<div class="sm-pr"><p class="note">'+x('Практика на тиждень','Практика на неделю')+'</p><p>'+esc(P.practice)+'</p></div>':'')+
     '<div class="row">'+(saved?'<span class="sm-saved">'+CHECK+x('Пам’ятна картка збережена','Памятная карточка сохранена')+'</span>':'<button class="btn accent" data-act="smSave" data-v="'+esc(s.id)+'">'+x('Зберегти пам’ятну картку','Сохранить памятную карточку')+'</button>')+
-    '<button class="btn tint" data-act="smImg" data-v="'+esc(s.id)+'">'+x('Картинка для сторіс','Картинка для сторис')+'</button>'+smVideo(s,'btn tint')+'</div>';}
-function smVideo(s,cls){return /^https:\/\//.test(s.video||'')?'<a class="'+cls+'" href="'+esc(s.video)+'" target="_blank" rel="noopener">'+x('Дивитися запис','Смотреть запись','Watch the video')+'</a>':'';}
+    '<button class="btn tint" data-act="smImg" data-v="'+esc(s.id)+'">'+x('Картинка для сторіс','Картинка для сторис')+'</button>'+(ytId(s.video)?'':smVideo(s,'btn tint'))+'</div>';}
+function smVideo(s,cls){var id=ytId(s.video),a=clockSecs(s.vfrom),href=id&&a?'https://youtu.be/'+id+'?t='+a:s.video;return /^https:\/\//.test(s.video||'')?'<a class="'+cls+'" href="'+esc(href)+'" target="_blank" rel="noopener">'+x('Дивитися запис','Смотреть запись','Watch the video')+'</a>':'';}
 function sermonById(id){var l=(D&&D.sermons)||[];for(var i=0;i<l.length;i++)if(l[i].id===id)return l[i];return null;}
 function sermonArchive(){var l=((D&&D.sermons)||[]).filter(function(s){return s.status==='published';});
   if(!l.length)return '<p class="sub">'+x('Тут з’являтимуться підсумки проповідей: суть, головні думки, вірші й питання для групи.','Здесь будут появляться итоги проповедей: суть, главные мысли, стихи и вопросы для группы.')+'</p>';
@@ -3454,17 +3469,23 @@ function adminSermons(){var l=(D&&D.sermons)||[];
       '<label class="f" for="sm-t">'+x('Тема (укр)','Тема (укр)')+'<input id="sm-t" name="title_uk" required maxlength="120" value="'+esc(s.title.uk||'')+'" placeholder="Що з нами буде?"></label>'+
       '<label class="f" for="sm-tr">'+x('Тема (рос), необов’язково','Тема (рус), необязательно')+'<input id="sm-tr" name="title_ru" maxlength="120" value="'+esc(s.title.ru&&s.title.ru!==s.title.uk?s.title.ru:'')+'"></label>'+
       '<label class="f" for="sm-vd">'+x('Посилання на запис (YouTube), можна додати пізніше','Ссылка на запись (YouTube), можно добавить позже','Video link (YouTube), can be added later')+'<input type="url" id="sm-vd" name="video" maxlength="300" value="'+esc(s.video||'')+'" placeholder="https://youtu.be/…"></label>'+
+      '<div class="grid2"><label class="f" for="sm-vf">'+x('Початок проповіді в записі','Начало проповеди в записи','Sermon starts at')+'<input id="sm-vf" name="vfrom" maxlength="10" inputmode="numeric" autocomplete="off" value="'+esc(s.vfrom||'')+'" placeholder="52:10"></label><label class="f" for="sm-vt">'+x('Кінець проповіді','Конец проповеди','Sermon ends at')+'<input id="sm-vt" name="vto" maxlength="10" inputmode="numeric" autocomplete="off" value="'+esc(s.vto||'')+'" placeholder="1:31:40"></label></div>'+
+      '<p class="note">'+x('Запис на YouTube йде цілим служінням. Вкажи, з якої до якої хвилини сама проповідь: люди побачать у застосунку лише її. Монтувати відео не треба.','Запись на YouTube идёт целым служением. Укажи, с какой по какую минуту сама проповедь: люди увидят в приложении только её. Монтировать видео не нужно.','The YouTube recording is the whole service. Set where the sermon starts and ends: people see only that part. No video editing needed.')+'</p>'+
       '<label class="f" for="sm-sp">'+x('Хто проповідує','Кто проповедует')+'<input id="sm-sp" name="speaker" maxlength="80" value="'+esc(s.speaker)+'"></label>'+
       '<label class="f" for="sm-v">'+x('Вірш для підготовки','Стих для подготовки')+'<input id="sm-v" name="verse" maxlength="80" value="'+esc(s.verse)+'" placeholder="Ісаї 43:19"></label>'+
       '<label class="f" for="sm-a">'+x('Питання «подумай до неділі», кожне з нового рядка','Вопросы «подумай до воскресенья», каждый с новой строки')+'<textarea id="sm-a" name="ask" rows="3" maxlength="600">'+esc(s.ask)+'</textarea></label>'+
-      '<h2>'+x('Підсумок після служіння','Итог после служения')+'</h2><p class="note">'+x('Встав заздалегідь підготовлений текст. Мітки «Суть:», «Тези:», «Вірші:», «Питання:», «Практика:» розкладуть його по блоках. Без міток перший рядок стане суттю, решта тезами.','Вставь заранее подготовленный текст. Метки «Суть:», «Тези:», «Вірші:», «Питання:», «Практика:» разложат его по блокам. Без меток первая строка станет сутью, остальное тезисами.')+'</p>'+
+      '<h2>'+x('Підсумок після служіння','Итог после служения')+'</h2><p class="note">'+x('Встав заздалегідь підготовлений текст. Мітки «Суть:», «Тези:», «Задум:», «Вірші:», «Питання:», «Практика:» розкладуть його по блоках. Без міток перший рядок стане суттю, решта тезами.','Вставь заранее подготовленный текст. Метки «Суть:», «Тези:», «Задум:», «Вірші:», «Питання:», «Практика:» разложат его по блокам. Без меток первая строка станет сутью, остальное тезисами.')+'</p>'+
+      '<section class="card" style="gap:10px"><h3>'+x('Чернетка підсумку без ШІ-сервісів і без оплати','Черновик итога без ИИ-сервисов и без оплаты','A free draft of the summary')+'</h3>'+
+        '<p class="note">'+x('1) Відкрий запис на YouTube (на комп’ютері), під відео «…ще» → «Показати розшифровку», виділи й скопіюй текст. 2) Встав його сюди. 3) Натисни кнопку, відкрий будь-який чат з ШІ (Claude, ChatGPT) і встав скопійоване. 4) Відповідь встав у «Текст підсумку» нижче. Обов’язково прочитай і виправ перед публікацією: ШІ може помилитися у змісті.','1) Открой запись на YouTube (на компьютере), под видео «…ещё» → «Показать текст видео», выдели и скопируй текст. 2) Вставь его сюда. 3) Нажми кнопку, открой любой чат с ИИ (Claude, ChatGPT) и вставь скопированное. 4) Ответ вставь в «Текст итога» ниже. Обязательно прочитай и поправь перед публикацией: ИИ может ошибиться в смысле.','1) Open the recording on YouTube (on a computer), «…more» → «Show transcript», select and copy. 2) Paste it here. 3) Tap the button, open any AI chat and paste what was copied. 4) Paste the answer into the summary field below. Read and fix it before publishing: AI can get the meaning wrong.')+'</p>'+
+        '<label class="f" for="sm-tr2">'+x('Розшифровка проповіді (не зберігається)','Расшифровка проповеди (не сохраняется)','Sermon transcript (not saved)')+'<textarea id="sm-tr2" name="transcript" rows="5"></textarea></label>'+
+        '<div class="row"><button type="button" class="btn tint small" data-act="smPrompt">'+x('Скопіювати запит для ШІ','Скопировать запрос для ИИ','Copy the prompt for AI')+'</button></div></section>'+
       '<label class="f" for="sm-x">'+x('Текст підсумку','Текст итога')+'<textarea id="sm-x" name="text" rows="12" maxlength="8000">'+esc(s.text)+'</textarea></label>'+
       '<div class="row"><button type="button" class="btn tint small" data-act="smTpl">'+x('Вставити шаблон','Вставить шаблон')+'</button></div><p class="note" id="sm-prev" aria-live="polite">'+smPrevText(P)+'</p>'+
       '<label class="f" for="sm-st">'+x('Стан','Статус')+'<select id="sm-st" name="status"><option value="announce"'+(s.status!=='published'?' selected':'')+'>'+x('Анонс (люди бачать тему й питання)','Анонс (люди видят тему и вопросы)')+'</option><option value="published"'+(s.status==='published'?' selected':'')+'>'+x('Опубліковано (люди бачать підсумок)','Опубликовано (люди видят итог)')+'</option></select></label>'+
       '<button class="btn accent" type="submit">'+x('Зберегти','Сохранить')+'</button>'+(s.id?'<button type="button" class="link mod-x" data-act="smDel" data-v="'+esc(s.id)+'">'+(state.confirm==='sd:'+s.id?x('Точно видалити?','Точно удалить?'):x('Видалити проповідь','Удалить проповедь'))+'</button>':'')+'</form>';}
   return '<button class="btn accent wide" data-act="smEdit" data-v="new">'+x('Додати проповідь','Добавить проповедь')+'</button>'+
     (l.length?'<div class="menu">'+l.map(function(s){return '<button class="cell-row" data-act="smEdit" data-v="'+esc(s.id)+'"><i class="bar b-'+(s.status==='published'?'sunday':'daily')+'"></i><div><strong>'+esc(smTitle(s))+'</strong><span>'+esc(smWhen(s))+', '+(s.status==='published'?x('опубліковано','опубликовано'):x('анонс','анонс'))+'</span></div>'+CHEV+'</button>';}).join('')+'</div>':'<p class="sub">'+x('Поки немає. Додай анонс найближчої проповіді: тема, дата й питання, щоб люди прийшли вже думаючи.','Пока нет. Добавь анонс ближайшей проповеди: тема, дата и вопросы, чтобы люди пришли уже думая.')+'</p>');}
-function smPrevText(P){var n=[];if(P.core)n.push(x('суть','суть'));if(P.points.length)n.push(x('тез: ','тезисов: ')+P.points.length);if(P.verses.length)n.push(x('віршів: ','стихов: ')+P.verses.length);if(P.qs.length)n.push(x('питань: ','вопросов: ')+P.qs.length);if(P.practice)n.push(x('практика','практика'));
+function smPrevText(P){var n=[];if(P.core)n.push(x('суть','суть'));if(P.points.length)n.push(x('тез: ','тезисов: ')+P.points.length);if(P.intent.length)n.push(x('задум','замысел'));if(P.verses.length)n.push(x('віршів: ','стихов: ')+P.verses.length);if(P.qs.length)n.push(x('питань: ','вопросов: ')+P.qs.length);if(P.practice)n.push(x('практика','практика'));
   return n.length?x('Розпізнано: ','Распознано: ')+n.join(', '):x('Текст ще порожній','Текст ещё пустой');}
 function nextSundayIso(){var d=day0(new Date());while(d.getDay()!==0)d=addDays(d,1);return iso(d);}
 
@@ -3915,6 +3936,14 @@ var actions={
   serve:function(v){var on=tog(state.serve,v);save();run(on?'request':'requestCancel',{kind:'serve',topic:v},on?x('Лідер команди напише тобі','Лидер команды напишет тебе'):'');},
   skill:function(v){tog(state.skills,v);commit();},
   sermon:function(v){state.sheet='sermon';state.sheetData=v;render();var sh=document.querySelector('.sheet');if(sh)sh.scrollTop=0;},
+  liveToggle:function(){liveOpen=!liveOpen;render();},
+  smPlay:function(v){smPlayId=smPlayId===v?null:v;render();},
+  smPrompt:function(){var tr=document.getElementById('sm-tr2'),t=tr?tr.value.trim():'';
+    if(t.length<200){toast(x('Спочатку встав розшифровку проповіді в поле вище','Сначала вставь расшифровку проповеди в поле выше','Paste the sermon transcript in the box above first'),1);return;}
+    var g=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+    var q='Ти помічник церковної команди. Нижче розшифровка проповіді (автосубтитри YouTube, у словах можуть бути помилки). Підготуй з неї пам’ятку для прихожан СТРОГО за шаблоном, українською мовою.\n\nПравила:\n- Спирайся лише на текст розшифровки. Нічого не вигадуй і не додавай від себе богословських тверджень.\n- У «Вірші» пиши лише ті місця Писання, які пастор прямо назвав. Якщо не впевнений у посиланні, познач [?].\n- «Задум» це 2–3 короткі абзаци: що пастор хотів донести, до чого закликав, чому це важливо. Його акценти, не твої. Кожен абзац з нового рядка.\n- «Тези» це 3–5 коротких думок, по одній у рядку.\n- Пиши просто, короткими реченнями, без пафосу.\n- Не змінюй назви міток (Суть:, Тези:, Задум:, Вірші:, Питання для груп:, Практика:). Нічого не пиши до першої мітки і після останньої.\n\nШаблон:\n'+SM_TEMPLATE+'\n\nПроповідь: '+(g('sm-t')||'без назви')+(g('sm-sp')?'. Проповідує: '+g('sm-sp'):'')+'.\n\nРозшифровка:\n'+t;
+    var ok=function(){toast(x('Запит скопійовано. Встав його в чат з ШІ, а відповідь у поле «Текст підсумку»','Запрос скопирован. Вставь его в чат с ИИ, а ответ в поле «Текст итога»','Prompt copied. Paste it into an AI chat, then paste the answer into the summary field'));},no=function(){toast(x('Не вдалося скопіювати','Не удалось скопировать','Could not copy'),1);};
+    try{navigator.clipboard.writeText(q).then(ok,no);}catch(e){no();}},
   smSave:function(v){state.sermSaved=state.sermSaved||{};state.sermSaved[v]=Date.now();commit(x('Пам’ятну картку збережено в «Мій кабінет»','Памятная карточка сохранена в «Мой кабинет»'));},
   smImg:function(v){var sm=sermonById(v);if(!sm)return;toast(x('Готую картинку…','Готовлю картинку…'));sermonImage(sm).then(function(u){state.img=u;imgTitle=smTitle(sm);state.sheet='img';render();},function(){toast(x('Не вдалося створити картинку','Не удалось создать картинку'),1);});},
   smEdit:function(v){smEdit=v||null;state.confirm=null;render();var m=document.querySelector('main');if(m)m.scrollTop=0;},
@@ -3938,7 +3967,7 @@ var actions={
 var forms={
   msDone:function(fd){var t=String(fd.get('text')||'').trim();if(t.length<10){toast(x('Розкажи хоча б одним реченням, як це було','Расскажи хотя бы одним предложением, как это было'),1);return;}
     run('msDone',{text:t,anon:!!fd.get('anon')},x('Дякуємо! Твою історію побачить уся церква','Спасибо! Твою историю увидит вся церковь'));},
-  sermon:function(fd){var o={};['id','date','time','title_uk','title_ru','speaker','verse','ask','text','status','video'].forEach(function(k){o[k]=String(fd.get(k)||'').trim();});
+  sermon:function(fd){var o={};['id','date','time','title_uk','title_ru','speaker','verse','ask','text','status','video','vfrom','vto'].forEach(function(k){o[k]=String(fd.get(k)||'').trim();});
     run('sermonSave',{sermon:o},o.status==='published'?x('Підсумок опубліковано','Итог опубликован'):x('Анонс збережено','Анонс сохранён')).then(function(ok){if(ok){smEdit=null;render();}});},
   thanks:function(fd){var l=[0,1,2].map(function(i){return String(fd.get('t'+i)||'').trim().slice(0,120);});if(!l.some(function(q){return q;})){toast(x('Напиши хоча б одну подяку','Напиши хотя бы одну благодарность'),1);return;}
     thEdit=false;var t=iso(new Date());state.thanks=state.thanks||{};state.thanks[t]=l;var old=iso(addDays(new Date(),-60));Object.keys(state.thanks).forEach(function(d){if(d<old)delete state.thanks[d];});
